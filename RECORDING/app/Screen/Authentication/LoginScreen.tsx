@@ -1,16 +1,14 @@
 import React from 'react'
 import { Text, SafeAreaView, StyleSheet, TextInput, View, Image, TouchableOpacity, ImageBackground } from 'react-native'
 import { Header } from "react-native-elements";
+import NavigationUtil from '../../navigation/NavigationUtil'
 import Imgae from '../../assets/imagesAsset';
-const LoginScreen = () => {
-    const onPress = () => {
-
-    };
+import { SCREEN_ROUTER } from '../../utils/Constant'
+const LoginScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
             <Header
                 containerStyle={{ backgroundColor: "#C47B49" }}
-                leftContainerStyle={{ justifyContent: 'center', paddingTop: 5 }}
                 centerComponent={
                     <Text
                         style={{
@@ -18,20 +16,6 @@ const LoginScreen = () => {
                         }}>
                         Login
                   </Text>
-                }
-                leftComponent={
-                    <TouchableOpacity
-
-                    >
-                        <Image
-                            style={{
-                                width: 14,
-                                height: 14,
-                                resizeMode: "contain",
-                            }}
-                            source={Imgae.ic_back}>
-                        </Image>
-                    </TouchableOpacity>
                 }
                 statusBarProps={{ backgroundColor: "#C47B49" }}
             />
@@ -85,7 +69,7 @@ const LoginScreen = () => {
                     </View>
                 </View>
                 <TouchableOpacity
-                    onPress={onPress}
+                    onPress={() => navigation.navigate(SCREEN_ROUTER.HOME)}
                     style={{
                         backgroundColor: "#C47B49",
                         width: 350,

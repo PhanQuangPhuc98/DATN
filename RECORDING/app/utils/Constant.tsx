@@ -1,5 +1,4 @@
 
-
 const SCREEN_ROUTER = {
     SPLASH: 'splash',
     MAIN: 'main',
