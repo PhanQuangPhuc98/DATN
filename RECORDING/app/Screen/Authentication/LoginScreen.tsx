@@ -3,7 +3,7 @@ import { Text, SafeAreaView, StyleSheet, TextInput, View, Image, TouchableOpacit
 import { Header } from "react-native-elements";
 import NavigationUtil from '../../navigation/NavigationUtil'
 import Imgae from '../../assets/imagesAsset';
-import { SCREEN_ROUTER } from '../../utils/Constant'
+import { SCREEN_ROUTER_APP } from '../../utils/Constant'
 const LoginScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={{ flex: 1 }}>
@@ -69,7 +69,7 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                 </View>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate(SCREEN_ROUTER.HOME)}
+                    onPress={() => navigation.navigate(SCREEN_ROUTER_APP.HOME)}
                     style={{
                         backgroundColor: "#C47B49",
                         width: 350,

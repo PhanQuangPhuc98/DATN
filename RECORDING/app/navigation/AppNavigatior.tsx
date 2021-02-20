@@ -7,21 +7,13 @@ import NavigationUtil from './NavigationUtil'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import LoginScreen from '../Screen/Authentication/LoginScreen'
 import SplashScreen from '../Screen/Authentication/SplashScreen'
-import { SCREEN_ROUTER } from '../utils/Constant';
+import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP } from '../utils/Constant';
+import HomeScreen from '../Screen/Home/HomeScreen'
 import Imgae from '../assets/imagesAsset';
 
-const { LOGIN, MAIN } = SCREEN_ROUTER;
-const HomeScreen = ({ navigation }) => {
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'green' }}>
-      <Button
-        title="go to Setting"
-        onPress={() => navigation.navigate(SCREEN_ROUTER.CUSTOMER)}
-      >
-      </Button>
-    </View>
-  );
-}
+const { LOGIN } = SCREEN_ROUTER_AUTH;
+const { HOME } = SCREEN_ROUTER_APP
+
 const SettingsScreen = ({ navigation }) => {
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: 'orange' }}>
@@ -44,13 +36,13 @@ const MainTab = () => {
     <NavigationContainer>
       <Stack.Navigator headerMode='none'>
         <Stack.Screen
-          name={SCREEN_ROUTER.LOGIN} component={LoginScreen}
+          name={SCREEN_ROUTER_AUTH.LOGIN} component={LoginScreen}
         />
         <Stack.Screen
-          name={SCREEN_ROUTER.HOME} component={HomeScreen}
+          name={SCREEN_ROUTER_APP.HOME} component={HomeScreen}
         />
         <Stack.Screen
-          name={SCREEN_ROUTER.CUSTOMER} component={SettingsScreen}
+          name={"SettingsScreen"} component={SettingsScreen}
         />
       </Stack.Navigator>
     </NavigationContainer>
