@@ -33,7 +33,7 @@ const Tab = createBottomTabNavigator();
 const MainTab = () => {
   const [isSigned, setSigned] = useState(false);
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={ref => NavigationUtil.setTopLevelNavigator(ref)}>
       <Stack.Navigator headerMode='none'>
         <Stack.Screen
           name={SCREEN_ROUTER_AUTH.LOGIN} component={LoginScreen}

@@ -69,7 +69,7 @@ const LoginScreen = ({ navigation }) => {
                     </View>
                 </View>
                 <TouchableOpacity
-                    onPress={() => navigation.navigate(SCREEN_ROUTER_APP.HOME)}
+                    onPress={() => NavigationUtil.navigate(SCREEN_ROUTER_APP.HOME)}
                     style={{
                         backgroundColor: "#C47B49",
                         width: 350,

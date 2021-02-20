@@ -15,11 +15,12 @@ import {
   Text,
   StatusBar,
 } from 'react-native';
-import Navigation from './app/navigation/AppNavigatior'
+import AppNavigatior from './app/navigation/AppNavigatior';
+import NavigationUtil from './app/navigation/NavigationUtil'
 const App= () => {
   return (
-        <Navigation>
-        </Navigation>
+        <AppNavigatior>
+        </AppNavigatior>
   )
 };
 
