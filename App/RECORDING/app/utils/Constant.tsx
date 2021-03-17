@@ -12,6 +12,8 @@ export const SCREEN_ROUTER_AUTH = {
 };
 export const SCREEN_ROUTER_APP = {
     HOME: 'HOME',
+    PRODUCT:'PRODUCT',
+    PUTCALENDAR:'PUTCALENDAR',
     NOTIFY: 'NOTIFY',
     USER: 'USER',
 }
