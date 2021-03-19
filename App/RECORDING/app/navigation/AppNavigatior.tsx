@@ -1,13 +1,14 @@
-
 import React, { useState } from 'react';
 import { Text, View, Image, Button } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import NavigationUtil from './NavigationUtil'
+import {colors} from '../constants/Theme'
+import images from '../assets/imagesAsset';
+import NavigationUtil from './NavigationUtil';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import StackAuth from '../navigation/stack/StackAuth'
-import StackApp from '../navigation/stack/StackApp'
-import SplashScreen from '../Screen/Authentication/SplashScreen'
+import StackAuth from '../navigation/stack/StackAuth';
+import StackApp from '../navigation/stack/StackApp';
+import SplashScreen from '../Screen/Authentication/SplashScreen';
 import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP,SCREEN_ROUTER} from '../utils/Constant';
 
 const { HOME,PRODUCT,PUTCALENDAR,NOTIFY,USER } = SCREEN_ROUTER_APP
@@ -23,25 +24,140 @@ const ButtonTab =()=>{
         component={StackApp[HOME]}
         options={{
           tabBarIcon:({focused,color, size})=>{
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
             return(
               <View>
-                
+                <Image 
+                source={images.ic_Home}
+                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                >
+                </Image>
               </View>
+            )
+          },
+          tabBarLabel:({focused, color})=>{
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <Text
+              children={"Trang chủ"}
+              style={{color:tintColor}}
+              />
             )
           }
         }}
        />
        <Tab.Screen
-        name={SCREEN_ROUTER_APP.PRODUCT} component={StackApp[PRODUCT]}
+        name={SCREEN_ROUTER_APP.PRODUCT} 
+        component={StackApp[PRODUCT]}
+        options={{
+          tabBarIcon:({focused,color, size})=>{
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <View>
+                <Image 
+                source={images.ic_Product}
+                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                >
+                </Image>
+              </View>
+            )
+          },
+          tabBarLabel:({focused, color})=>{
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <Text
+              children={"Sản phẩm"}
+              style={{color:tintColor}}
+              />
+            )
+          }
+        }}
        />
        <Tab.Screen
-        name={SCREEN_ROUTER_APP.PUTCALENDAR} component={StackApp[PUTCALENDAR]}
+        name={SCREEN_ROUTER_APP.PUTCALENDAR} 
+        component={StackApp[PUTCALENDAR]}
+        options={{
+          tabBarIcon:({focused,color, size})=>{
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <View>
+                <Image 
+                source={images.ic_PutCalender}
+                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                >
+                </Image>
+              </View>
+            )
+          },
+          tabBarLabel:({focused, color})=>{
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <Text
+              children={"Đặt lịch"}
+              style={{color:tintColor}}
+              />
+            )
+          }
+        }}
        />
        <Tab.Screen
-        name={SCREEN_ROUTER_APP.NOTIFY} component={StackApp[NOTIFY]}
+        name={SCREEN_ROUTER_APP.NOTIFY} 
+        component={StackApp[NOTIFY]}
+        options={{
+          tabBarIcon:({focused,color, size})=>{
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <View>
+                <Image 
+                source={images.ic_Notification}
+                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                >
+                </Image>
+              </View>
+            )
+          },
+          tabBarLabel:({focused, color})=>{
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <Text
+              children={"Thông báo"}
+              style={{color:tintColor}}
+              />
+            )
+          }
+        }}
        />
        <Tab.Screen
-        name={SCREEN_ROUTER_APP.USER} component={StackApp[USER]}
+        name={SCREEN_ROUTER_APP.USER} 
+        component={StackApp[USER]}
+        options={{
+          tabBarIcon:({focused,color, size})=>{
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <View>
+                <Image 
+                source={images.ic_User}
+                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                >
+                </Image>
+              </View>
+            )
+          },
+          tabBarLabel:({focused, color})=>{
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return(
+              <Text
+              children={"Tài khoản"}
+              style={{color:tintColor}}
+              />
+            )
+          }
+        }}
        />
     </Tab.Navigator>
   )
