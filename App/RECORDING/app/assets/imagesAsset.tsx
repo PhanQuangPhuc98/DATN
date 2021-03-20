@@ -12,5 +12,13 @@ const images= {
     img_Recoding:require("./images/Recording_Studio.jpg"),
     img_RecodingA:require("./images/Recording_Studio_1.jpg"),
     img_RecodingB:require("./images/Recording_Studio_3.jpg"),
+    img_Equalizer:require("./images/img_Equalizer.jpg"),
+    img_HeadPhone:require("./images/img_HeadPhone.jpg"),
+    img_Mixer:require("./images/img_Mixer.jpg"),
+    img_Audio:require("./images/img_Audio.jpg"),
+    img_Turbor:require("./images/img_Turbor.jpg"),
+    img_Wepcam:require("./images/img_Wepcam.jpg"), 
+    img_Cap_Ugreen:require("./images/img_Cap_Ugreen.jpg"),
+    ic_Date:require("./images/ic_Oclock.png")
 }
 export default images
