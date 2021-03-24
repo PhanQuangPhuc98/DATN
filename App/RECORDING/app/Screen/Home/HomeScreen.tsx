@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Text, View, StyleSheet,ScrollView, SafeAreaView, TouchableOpacity, Dimensions, FlatList } from 'react-native';
+import React, { useState, useEffect, useRef } from 'react';
+import { Text, View, StyleSheet, ScrollView, StatusBar, SafeAreaView, TouchableOpacity, Dimensions, FlatList } from 'react-native';
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
 import image from '../../assets/imagesAsset';
@@ -7,13 +7,14 @@ import FastImage from 'react-native-fast-image';
 import { Header } from "react-native-elements";
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import Mockup from '../../constants/Mockup';
+import ButtonAnimation from '../../components/ButtonAnimation'
+import ModalDropdown from 'react-native-modal-dropdown';
 const { height, width } = Dimensions.get("window");
 const Search = () => {
     return (
         <TouchableOpacity
             style={styles.SearchStyle}
-            onPress={() => {
-            }}
+            onPress={() => { }}
         >
             <View style={styles.HeaderSearch}>
                 <FastImage
@@ -75,12 +76,12 @@ const SliderBar = () => {
 }
 const RenderItemProduct = ({ index, item }) => {
     return (
-        <View style={[styles.StyleProduct, { height: 164, width: 121, backgroundColor: colors.primary, marginHorizontal: 5, borderRadius: 7 }]}>
+        <View style={[styles.StyleProduct, { height: 164, width: 121, backgroundColor: colors.Sienna1, marginHorizontal: 5, borderRadius: 7 }]}>
             <FastImage
-                style={{ height: 89, width: 121, borderTopRightRadius: 7, borderTopLeftRadius: 7 }}
+                style={styles.ImgProduct}
                 source={item.img}
             />
-            <View style={{ backgroundColor: colors.white, height: 76, padding: 5, borderBottomLeftRadius: 7, borderBottomRightRadius: 7 }}>
+            <View style={styles.TextProduct}>
                 <Text style={[styles.TextSearch, { fontSize: 14, fontFamily: R.fonts.bold, color: colors.black, height: 36 }]}>
                     {item.name}
                 </Text>
@@ -93,23 +94,23 @@ const RenderItemProduct = ({ index, item }) => {
 }
 const RenderItemPromotion = ({ index, item }) => {
     return (
-        <View style={{ flexDirection: "row", marginHorizontal: 5, marginVertical: 5 }}>
+        <View style={styles.ViewPromotion}>
             <FastImage
-                style={{ height: 88, width: 88, borderRadius: 5 }}
+                style={styles.imgPromotion}
                 source={item.img}
             />
             <View>
                 <View style={{ marginHorizontal: 5 }}>
-                    <Text style={{fontSize:15,fontFamily:R.fonts.bold}}>
+                    <Text style={styles.TextPromotion}>
                         {item.name}
                     </Text>
-                    <Text style={{ height: 32, width: 291,fontSize:11,fontFamily:R.fonts.bold, color:colors.focus }}>
+                    <Text style={[styles.TextPromotion, { height: 32, width: 291, fontSize: 11, color: colors.focus }]}>
                         {item.content}
                     </Text>
                 </View>
                 <View style={{ flexDirection: 'row' }}>
                     <FastImage
-                        style={{ height: 11.74, width: 11.87, marginHorizontal: 5, marginTop: 5 }}
+                        style={styles.imgDate}
                         source={image.ic_Date}
                     />
                     <Text>
@@ -136,7 +137,8 @@ const ListImage = () => {
 const ListPromotion = () => {
     return (
         <ScrollView
-         showsVerticalScrollIndicator={false}
+            style={{ backgroundColor: colors.white }}
+            showsVerticalScrollIndicator={false}
         >
             <FlatList
                 data={Mockup.DataPromotion}
@@ -147,84 +149,45 @@ const ListPromotion = () => {
     )
 }
 const HomeScreen = () => {
-    useEffect(() => {
-        console.log(Mockup.DataImage);
-    }, [])
     return (
         <SafeAreaView style={styles.Container}>
-            <Header
-                containerStyle={styles.HeaderStyle}
-                centerComponent={Search()}
-                statusBarProps={styles.HeaderStyle}
-            />
-            <View style={{flex:1}}>
+            <View style={styles.Container}>
+                <StatusBar barStyle='light-content' backgroundColor={colors.Sienna1} />
+                <View style={{ height: width / 5, backgroundColor: colors.Sienna1, alignItems:"center"}}>
+                    {Search()}
+                </View>
                 {SliderBar()}
                 {Information('SẢN PHẨM', 'Xem thêm >>')}
                 {ListImage()}
+                <View style={{ backgroundColor: colors.white, marginTop: 10 }}>
                 {Information('KHUYẾN MẠI', 'Xem thêm >>')}
+                </View>
                 {ListPromotion()}
+                <View style={styles.Animated}>
+                    <ButtonAnimation></ButtonAnimation>
+                </View>
             </View>
         </SafeAreaView>
     );
 }
 const styles = StyleSheet.create({
-    Container: {
-        flex: 1,
-        backgroundColor: colors.primary
-    },
-    HeaderStyle: {
-        backgroundColor: colors.Sienna1
-    },
-    SearchStyle: {
-        width: 303,
-        height: 31,
-        backgroundColor: colors.white,
-        flexDirection: "row",
-        borderRadius: 5
-    },
-    TextSearch: {
-        fontSize: 20,
-        fontFamily: R.fonts.regular
-    },
-    HeaderSearch: {
-        height: "100%",
-        width: 30,
-        alignItems: "center",
-        justifyContent: "center"
-    },
-    ImageSearch: {
-        height: 16,
-        width: 16,
-    },
-    StyleList: {
-        width: width - 10,
-        height: 170,
-        borderRadius: 7,
-        marginHorizontal: 5
-    },
-    FontSlider: {
-        backgroundColor: colors.Sienna1,
-        borderBottomRightRadius: 140,
-        borderBottomLeftRadius: 140
-    },
-    NormalDot: {
-        height: 12,
-        width: 12,
-        borderRadius: 12,
-        backgroundColor: colors.Sienna1,
-        marginHorizontal: 4
-    },
-    StyleProduct: {
-        width: width - 10,
-        height: 76,
-        borderRadius: 5,
-        backgroundColor: colors.white
-    },
-    ContainerInfor: {
-        height: 30,
-        flexDirection: "row",
-        //backgroundColor:"green",
-        marginHorizontal: 10,
-    },
+    Container: { flex: 1, backgroundColor: colors.primary },
+    HeaderStyle: { backgroundColor: colors.Sienna1 },
+    SearchStyle: { width: 303, height: 31, backgroundColor: colors.white, flexDirection: "row", borderRadius: 5, marginTop: 40 },
+    TextSearch: { fontSize: 20, fontFamily: R.fonts.regular },
+    HeaderSearch: { height: "100%", width: 30, alignItems: "center", justifyContent: "center" },
+    ImageSearch: { height: 16, width: 16 },
+    StyleList: { width: width - 10, height: 170, borderRadius: 7, marginHorizontal: 5 },
+    FontSlider: { backgroundColor: colors.Sienna1, borderBottomRightRadius: 140, borderBottomLeftRadius: 140 },
+    NormalDot: { height: 12, width: 12, borderRadius: 12, backgroundColor: colors.Sienna1, marginHorizontal: 4 },
+    StyleProduct: { width: width - 10, height: 76, borderRadius: 5, backgroundColor: colors.white },
+    ContainerInfor: { height: 30, flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 10, },
+    ImgProduct: { height: 89, width: 121, borderTopRightRadius: 7, borderTopLeftRadius: 7 },
+    TextProduct: { backgroundColor: colors.white, height: 76, padding: 5, borderBottomLeftRadius: 7, borderBottomRightRadius: 7 },
+    ViewPromotion: { flexDirection: "row", marginHorizontal: 5, marginVertical: 5 },
+    imgPromotion: { height: 88, width: 88, borderRadius: 5 },
+    imgDate: { height: 11.74, width: 11.87, marginHorizontal: 5, marginTop: 5 },
+    TextPromotion: { fontSize: 15, fontFamily: R.fonts.bold },
+    Animated:{top:40, marginLeft:370,position:"absolute" }
 })
 export default HomeScreen;

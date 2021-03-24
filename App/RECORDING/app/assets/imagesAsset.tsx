@@ -19,6 +19,10 @@ const images= {
     img_Turbor:require("./images/img_Turbor.jpg"),
     img_Wepcam:require("./images/img_Wepcam.jpg"), 
     img_Cap_Ugreen:require("./images/img_Cap_Ugreen.jpg"),
-    ic_Date:require("./images/ic_Oclock.png")
+    ic_Date:require("./images/ic_Oclock.png"),
+    ic_Group:require("./images/ic_Group.png"),
+    ic_Phone:require("./images/ic_Phone.png"),
+    ic_Messenger:require("./images/ic_Messenger.png"),
+    img_Map:require("./images/img_Map.png")
 }
 export default images
