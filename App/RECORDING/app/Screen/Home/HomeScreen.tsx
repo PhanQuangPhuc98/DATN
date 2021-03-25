@@ -3,13 +3,16 @@ import { Text, View, StyleSheet, ScrollView, StatusBar, SafeAreaView, TouchableO
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
 import image from '../../assets/imagesAsset';
+import NavigationUtil from '../../navigation/NavigationUtil'
+import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
-import { Header } from "react-native-elements";
+import { showConfirm } from '../../utils/AlertHelper'
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import Mockup from '../../constants/Mockup';
-import ButtonAnimation from '../../components/ButtonAnimation'
-import ModalDropdown from 'react-native-modal-dropdown';
+import ButtonAnimation from '../../components/ButtonAnimation';
+import ModalDrop from '../../components/ModalDrop'
 const { height, width } = Dimensions.get("window");
+const ID = 1;
 const Search = () => {
     return (
         <TouchableOpacity
@@ -149,23 +152,46 @@ const ListPromotion = () => {
     )
 }
 const HomeScreen = () => {
+    const [token, setToken] = useState(null)
+    const [isModalVisible, setModalVisible] = useState(false);
+
+    const toggleModal = () => {
+        setModalVisible(!isModalVisible);
+    };
     return (
         <SafeAreaView style={styles.Container}>
             <View style={styles.Container}>
                 <StatusBar barStyle='light-content' backgroundColor={colors.Sienna1} />
-                <View style={{ height: width / 5, backgroundColor: colors.Sienna1, alignItems:"center"}}>
+                <View style={{ height: width / 5, backgroundColor: colors.Sienna1, alignItems: "center" }}>
                     {Search()}
                 </View>
                 {SliderBar()}
                 {Information('SẢN PHẨM', 'Xem thêm >>')}
                 {ListImage()}
                 <View style={{ backgroundColor: colors.white, marginTop: 10 }}>
-                {Information('KHUYẾN MẠI', 'Xem thêm >>')}
+                    {Information('KHUYẾN MẠI', 'Xem thêm >>')}
                 </View>
                 {ListPromotion()}
                 <View style={styles.Animated}>
-                    <ButtonAnimation></ButtonAnimation>
+                    <ButtonAnimation
+                        ButtonMess={() => {
+                            if (!token) {
+                                showConfirm("Thông báo", 'Vui lòng đăng nhập để thực hiện chức năng này', () =>
+                                    NavigationUtil.navigate(SCREEN_ROUTER.AUTH), null, 'Đăng nhập' );
+                                return;
+                            }
+                        }}
+                    ></ButtonAnimation>
                 </View>
+                {/* <ModalDrop
+                    toggleModal={toggleModal}
+                    isModalVisible={isModalVisible}
+                    onPress={() => {
+                        toggleModal();
+                        NavigationUtil.navigate(SCREEN_ROUTER.AUTH, { screen: SCREEN_ROUTER_AUTH.LOGIN })
+                    }
+                    }
+                /> */}
             </View>
         </SafeAreaView>
     );
@@ -188,6 +214,6 @@ const styles = StyleSheet.create({
     imgPromotion: { height: 88, width: 88, borderRadius: 5 },
     imgDate: { height: 11.74, width: 11.87, marginHorizontal: 5, marginTop: 5 },
     TextPromotion: { fontSize: 15, fontFamily: R.fonts.bold },
-    Animated:{top:40, marginLeft:370,position:"absolute" }
+    Animated: { top: 40, marginLeft: 370, position: "absolute" }
 })
 export default HomeScreen;
