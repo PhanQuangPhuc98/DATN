@@ -23,6 +23,9 @@ const images= {
     ic_Group:require("./images/ic_Group.png"),
     ic_Phone:require("./images/ic_Phone.png"),
     ic_Messenger:require("./images/ic_Messenger.png"),
-    img_Map:require("./images/img_Map.png")
+    img_Map:require("./images/img_Map.png"),
+    ic_LogoFacebook:require("./images/ic_LogoFacebook.png"),
+    ic_LogoGoogle:require("./images/ic_LogoGoogle.png"),
+
 }
 export default images

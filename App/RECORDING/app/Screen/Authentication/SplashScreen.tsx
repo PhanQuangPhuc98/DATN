@@ -4,28 +4,23 @@ import NavigationUtil from '../../navigation/NavigationUtil';
 import { SCREEN_ROUTER_AUTH,SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
 import {colors} from '../../constants/Theme'
 import { Header } from "react-native-elements";
-import Images from '../../assets/imagesAsset'
+import Images from '../../assets/imagesAsset';
+import FastImage from 'react-native-fast-image';
 const SplashScreen = () => {
     useEffect(() => {
         setTimeout(() => {
-            NavigationUtil.navigate(SCREEN_ROUTER.MAIN, { screen: SCREEN_ROUTER_APP.HOME })
+            NavigationUtil.navigate(SCREEN_ROUTER.MAIN)
         }, 2000);
     },[])
     return (
         <SafeAreaView style={styles.Container}>
-             <Header
-                containerStyle={styles.HeaderContainer}
-                statusBarProps={styles.StatusBar}
-            />
+             <Header containerStyle={styles.HeaderContainer} statusBarProps={styles.StatusBar}/>
             <View style={styles.BoderSplash}>
-                <Image style={styles.ImgSplash}  source={Images.ic_Splash}>
-
-                </Image>
+                <FastImage style={styles.ImgSplash}  source={Images.ic_Splash} resizeMode="contain"/>
             </View>
             <View style={styles.BoderText}>
                <Text style={styles.TextSplash}> RECORDING STUDIO </Text>
             </View>
-
         </SafeAreaView>
     )
 }
@@ -39,18 +34,18 @@ const styles=StyleSheet.create({
     Container:{
         flex:1,
         backgroundColor:"#FFFFFF",
-        alignItems:"center"
+        alignItems:"center", 
     },
     BoderSplash:{
-        marginTop:84,
-        marginRight:50
+        marginTop:180,
+        marginHorizontal:50, 
     },
     ImgSplash:{
-        height:327,
-        width:458,
+        height:300,
+        width:350,
     },
     BoderText:{
-        marginTop:86,        
+        marginTop:30,        
     },
     TextSplash:{
        fontSize:32,

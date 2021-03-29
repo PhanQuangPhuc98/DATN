@@ -32,6 +32,6 @@ const ButtonAnimation = (props) => {
 }
 const styles = StyleSheet.create({
     container:{alignItems:"center"},
-    Img: {height: 32,width: 32,},
+    Img: {height: 44,width: 44,},
     Aniamnted: {position: "absolute"}})
 export default ButtonAnimation;

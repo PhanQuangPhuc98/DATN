@@ -26,8 +26,8 @@ const Search = () => {
                     resizeMode={FastImage.resizeMode.contain}
                 />
             </View>
-            <Text style={styles.TextSearch}>
-                Tìm kiếm sản phẩm
+            <Text style={[styles.TextSearch,{marginVertical:5}]}>
+               {R.string.search}
             </Text>
         </TouchableOpacity>
     )
@@ -162,7 +162,7 @@ const HomeScreen = () => {
         <SafeAreaView style={styles.Container}>
             <View style={styles.Container}>
                 <StatusBar barStyle='light-content' backgroundColor={colors.Sienna1} />
-                <View style={{ height: width / 5, backgroundColor: colors.Sienna1, alignItems: "center" }}>
+                <View style={{ height: width / 4, backgroundColor: colors.Sienna1, alignItems: "center" }}>
                     {Search()}
                 </View>
                 {SliderBar()}
@@ -176,8 +176,8 @@ const HomeScreen = () => {
                     <ButtonAnimation
                         ButtonMess={() => {
                             if (!token) {
-                                showConfirm("Thông báo", 'Vui lòng đăng nhập để thực hiện chức năng này', () =>
-                                    NavigationUtil.navigate(SCREEN_ROUTER.AUTH), null, 'Đăng nhập' );
+                                showConfirm(R.string.notification, 'Vui lòng đăng nhập để thực hiện chức năng này', () =>
+                                    NavigationUtil.navigate(SCREEN_ROUTER.AUTH,{scree:SCREEN_ROUTER_AUTH.LOGIN}), null, 'Đăng nhập' );
                                 return;
                             }
                         }}
@@ -199,8 +199,8 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     Container: { flex: 1, backgroundColor: colors.primary },
     HeaderStyle: { backgroundColor: colors.Sienna1 },
-    SearchStyle: { width: 303, height: 31, backgroundColor: colors.white, flexDirection: "row", borderRadius: 5, marginTop: 40 },
-    TextSearch: { fontSize: 20, fontFamily: R.fonts.regular },
+    SearchStyle: { width: 303, height: 44, backgroundColor: colors.white, flexDirection: "row", borderRadius: 5, marginTop: 40, marginRight:40 },
+    TextSearch: { fontSize: 20, fontFamily: R.fonts.regular},
     HeaderSearch: { height: "100%", width: 30, alignItems: "center", justifyContent: "center" },
     ImageSearch: { height: 16, width: 16 },
     StyleList: { width: width - 10, height: 170, borderRadius: 7, marginHorizontal: 5 },
@@ -214,6 +214,6 @@ const styles = StyleSheet.create({
     imgPromotion: { height: 88, width: 88, borderRadius: 5 },
     imgDate: { height: 11.74, width: 11.87, marginHorizontal: 5, marginTop: 5 },
     TextPromotion: { fontSize: 15, fontFamily: R.fonts.bold },
-    Animated: { top: 40, marginLeft: 370, position: "absolute" }
+    Animated: { top: 40, marginLeft: 360, position: "absolute" }
 })
 export default HomeScreen;

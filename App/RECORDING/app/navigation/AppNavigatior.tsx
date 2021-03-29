@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Text, View, Image, Button } from 'react-native';
+import { Text, View, Image, Button,StyleSheet } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {colors} from '../constants/Theme'
@@ -10,6 +10,7 @@ import StackAuth from '../navigation/stack/StackAuth';
 import StackApp from '../navigation/stack/StackApp';
 import SplashScreen from '../Screen/Authentication/SplashScreen';
 import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP,SCREEN_ROUTER} from '../utils/Constant';
+import R from '../assets/R'
 
 const { HOME,PRODUCT,PUTCALENDAR,NOTIFY,USER } = SCREEN_ROUTER_APP
 const { LOGIN,REGISTER,FORGOT_PASS } = SCREEN_ROUTER_AUTH
@@ -40,8 +41,8 @@ const ButtonTab =()=>{
             const tintColor = focused ? colors.Sienna1 : colors.focus;
             return(
               <Text
-              children={"Trang chủ"}
-              style={{color:tintColor}}
+              children={R.string.home}
+              style={[styles.LableTabButon,{color:tintColor}]}
               />
             )
           }
@@ -68,8 +69,8 @@ const ButtonTab =()=>{
             const tintColor = focused ? colors.Sienna1 : colors.focus;
             return(
               <Text
-              children={"Sản phẩm"}
-              style={{color:tintColor}}
+              children={R.string.product}
+              style={[styles.LableTabButon,{color:tintColor}]}
               />
             )
           }
@@ -96,8 +97,8 @@ const ButtonTab =()=>{
             const tintColor = focused ? colors.Sienna1 : colors.focus;
             return(
               <Text
-              children={"Đặt lịch"}
-              style={{color:tintColor}}
+              children={R.string.putcalender}
+              style={[styles.LableTabButon,{color:tintColor}]}
               />
             )
           }
@@ -124,8 +125,8 @@ const ButtonTab =()=>{
             const tintColor = focused ? colors.Sienna1 : colors.focus;
             return(
               <Text
-              children={"Thông báo"}
-              style={{color:tintColor}}
+              children={R.string.notification}
+              style={[styles.LableTabButon,{color:tintColor}]}
               />
             )
           }
@@ -152,8 +153,8 @@ const ButtonTab =()=>{
             const tintColor = focused ? colors.Sienna1 : colors.focus;
             return(
               <Text
-              children={"Tài khoản"}
-              style={{color:tintColor}}
+              children={R.string.user}
+              style={[styles.LableTabButon,{color:tintColor}]}
               />
             )
           }
@@ -197,4 +198,7 @@ const MainTab = () => {
     </NavigationContainer>
   );
 }
+const styles = StyleSheet.create({
+  LableTabButon:{fontSize:11, fontFamily:R.fonts.bold}
+})
 export default MainTab;

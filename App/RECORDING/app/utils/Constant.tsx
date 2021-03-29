@@ -1,4 +1,3 @@
-
 export const SCREEN_ROUTER = {
     MAIN: 'MAIN',
     AUTH: 'AUTH',
