@@ -1,6 +1,6 @@
 import images from '../assets/imagesAsset'
-const Mockup = {
-    "DataImage": [
+
+    const DataImage= [
         {
             ID: 1,
             img: images.img_Recoding
@@ -13,8 +13,8 @@ const Mockup = {
             ID: 3,
             img: images.img_RecodingB
         }
-    ],
-    "DataImageProduct": [
+    ];
+   const DataImageProduct= [
         {
             ID: 1,
             img: images.img_Equalizer,
@@ -40,8 +40,8 @@ const Mockup = {
             price: "2.550.000"
         },
 
-    ],
-    "DataPromotion": [
+    ];
+     const DataPromotion= [
         {
             ID: 1,
             img: images.img_Turbor,
@@ -70,8 +70,8 @@ const Mockup = {
             content: "Thực hiện cuộc gọi vcity_ideo có độ phân giải cao trên các nền tảng ưa thích của bạn như Skype™. Ở tốc độ 30 khung hình/giây, chất lượng vcity_ideo trở nên mượt mà, trong khi hình ảnh rõ ràng, đầy màu sắc và có độ tương phản.",
             Date: "01/03/2020"
         }
-    ],
-    DataCity: [
+    ];
+   const DataCity= [
         {
             name: "Hà Nội",
             city_id: 0
@@ -128,6 +128,95 @@ const Mockup = {
             name: "Cao Bằng",
             city_id: 13
         },
-    ]
+    ];
+  const DataSearch=[
+        {
+            ID_Search:"0",
+            img:images.img_Gen3,
+            name:"Focusrite scarlett 2i2 gen3",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"1",
+            img:images.img_Icon_Upod,
+            name:"Upod nano sound card 5",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"2",
+            img:images.img_Wepcam,
+            name:"Logitech webcam",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"3",
+            img:images.img_M_track,
+            name:"M Audio M Track",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"4",
+            img:images.img_Mackie,
+            name:"Mackie cr3",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"5",
+            img:images.img_Headphone_akg,
+            name:"Headphone akg 240",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"6",
+            img:images.img_Headphone_akg,
+            name:"Headphone akg 240",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"7",
+            img:images.img_Headphone_akg,
+            name:"Headphone akg 240",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"8",
+            img:images.img_Headphone_akg,
+            name:"Headphone akg 240",
+            price:"3.000.000"
+        },
+        {
+            ID_Search:"9",
+            img:images.img_Headphone_akg,
+            name:"Headphone akg 240",
+            price:"3.000.000"
+        },
+         {
+            ID_Search:"10",
+            img:images.img_Wepcam,
+            name:"Logitech webcam",
+            price:"3.000.000"
+        }, 
+        {
+            ID_Search:"11",
+            img:images.img_Wepcam,
+            name:"Logitech webcam",
+            price:"3.000.000"
+        }, 
+        {
+            ID_Search:"12",
+            img:images.img_Wepcam,
+            name:"Logitech webcam",
+            price:"3.000.000"
+        },
+         {
+            ID_Search:"13",
+            img:images.img_M_track,
+            name:"M Audio M Track",
+            price:"3.000.000"
+        },
+
+    ];
+
+export {
+DataImage,DataImageProduct,DataPromotion,DataCity,DataSearch
 }
-export default Mockup;

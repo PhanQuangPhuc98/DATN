@@ -9,7 +9,7 @@ import FastImage from 'react-native-fast-image';
 const SplashScreen = () => {
     useEffect(() => {
         setTimeout(() => {
-            NavigationUtil.navigate(SCREEN_ROUTER.MAIN)
+            NavigationUtil.navigate(SCREEN_ROUTER.MAIN);
         }, 2000);
     },[])
     return (

@@ -1,6 +1,5 @@
 const images= {
     ic_back: require("./images/ic_back.png"),
-    ic_Music: require("./images/ic_Music.png"), 
     ic_Setting: require("./images/ic_Setting.png"), 
     ic_User: require("./images/ic_User.png"),
     ic_Splash:require("./images/ic_Splash.png"),
@@ -26,6 +25,10 @@ const images= {
     img_Map:require("./images/img_Map.png"),
     ic_LogoFacebook:require("./images/ic_LogoFacebook.png"),
     ic_LogoGoogle:require("./images/ic_LogoGoogle.png"),
-
+    img_Gen3:require("./images/img_Gen3.jpg"),
+    img_Headphone_akg:require("./images/img_Headphone_akg.jpg"),
+    img_Icon_Upod:require("./images/img_Icon_Upod.jpg"),
+    img_Mackie:require("./images/img_Mackie.jpg"),
+    img_M_track:require("./images/img_M_Track.jpg")
 }
 export default images

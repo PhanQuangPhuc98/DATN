@@ -2,6 +2,7 @@ export const SCREEN_ROUTER = {
     MAIN: 'MAIN',
     AUTH: 'AUTH',
     SPLASH: 'SPLASH',
+    APP:'APP',
     MAIN_ADMIN: 'MAIN_ADMIN'
 }
 export const SCREEN_ROUTER_AUTH = {
@@ -15,4 +16,5 @@ export const SCREEN_ROUTER_APP = {
     PUTCALENDAR:'PUTCALENDAR',
     NOTIFY: 'NOTIFY',
     USER: 'USER',
+    SEARCH:'SEARCH'
 }

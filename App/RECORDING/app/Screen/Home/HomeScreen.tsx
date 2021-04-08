@@ -4,33 +4,45 @@ import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
 import image from '../../assets/imagesAsset';
 import NavigationUtil from '../../navigation/NavigationUtil'
-import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
+import {
+  SCREEN_ROUTER_AUTH,
+  SCREEN_ROUTER,
+  SCREEN_ROUTER_APP,
+} from '../../utils/Constant';
+import AsyncStorage from '@react-native-community/async-storage';
 import FastImage from 'react-native-fast-image';
 import { showConfirm } from '../../utils/AlertHelper'
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
-import Mockup from '../../constants/Mockup';
+import {
+  DataImageProduct,
+  DataImage,
+  DataPromotion,
+} from '../../constants/Mockup';
 import ButtonAnimation from '../../components/ButtonAnimation';
+import Reactotron from 'reactotron-react-native';
 import ModalDrop from '../../components/ModalDrop'
-const { height, width } = Dimensions.get("window");
-const ID = 1;
+const {height, width} = Dimensions.get('window');
 const Search = () => {
     return (
-        <TouchableOpacity
-            style={styles.SearchStyle}
-            onPress={() => { }}
-        >
-            <View style={styles.HeaderSearch}>
-                <FastImage
-                    style={styles.ImageSearch}
-                    source={image.ic_Search}
-                    resizeMode={FastImage.resizeMode.contain}
-                />
-            </View>
-            <Text style={[styles.TextSearch,{marginVertical:5}]}>
-               {R.string.search}
-            </Text>
-        </TouchableOpacity>
-    )
+      <TouchableOpacity
+        style={styles.SearchStyle}
+        onPress={() => {
+          NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+            screen: SCREEN_ROUTER_APP.SEARCH,
+          });
+        }}>
+        <View style={styles.HeaderSearch}>
+          <FastImage
+            style={styles.ImageSearch}
+            source={image.ic_Search}
+            resizeMode={FastImage.resizeMode.contain}
+          />
+        </View>
+        <Text style={[styles.TextSearch, {marginVertical: 5}]}>
+          {R.string.search}
+        </Text>
+      </TouchableOpacity>
+    );
 }
 const Information = (label, Add, onPress) => {
     return (
@@ -60,22 +72,28 @@ const RenderImage = ({ index, item }) => {
 }
 const SliderBar = () => {
     return (
-        <View style={styles.FontSlider}>
-            <SwiperFlatList
-                autoplay
-                autoplayDelay={3}
-                autoplayLoop
-                data={Mockup.DataImage}
-                index={0}
-                renderItem={RenderImage}
-                showPagination={true}
-                paginationActiveColor={colors.Sienna1}
-                paginationStyleItem={styles.NormalDot}
-                paginationStyleItemActive={[styles.NormalDot, { height: 16, width: 16 }]}
-                paginationStyleItemInactive={[styles.NormalDot, { backgroundColor: colors.Sienna1 }]}
-            />
-        </View>
-    )
+      <View style={styles.FontSlider}>
+        <SwiperFlatList
+          autoplay
+          autoplayDelay={3}
+          autoplayLoop
+          data={DataImage}
+          index={0}
+          renderItem={RenderImage}
+          showPagination={true}
+          paginationActiveColor={colors.Sienna1}
+          paginationStyleItem={styles.NormalDot}
+          paginationStyleItemActive={[
+            styles.NormalDot,
+            {height: 16, width: 16},
+          ]}
+          paginationStyleItemInactive={[
+            styles.NormalDot,
+            {backgroundColor: colors.Sienna1},
+          ]}
+        />
+      </View>
+    );
 }
 const RenderItemProduct = ({ index, item }) => {
     return (
@@ -126,64 +144,92 @@ const RenderItemPromotion = ({ index, item }) => {
 }
 const ListImage = () => {
     return (
-        <View>
-            <FlatList
-                data={Mockup.DataImageProduct}
-                keyExtractor={(item, index) => { item.ID }}
-                showsHorizontalScrollIndicator={false}
-                renderItem={RenderItemProduct}
-                horizontal={true}
-            />
-        </View>
-    )
+      <View>
+        <FlatList
+          data={DataImageProduct}
+          keyExtractor={(item, index) => {
+            item.ID;
+          }}
+          showsHorizontalScrollIndicator={false}
+          renderItem={RenderItemProduct}
+          horizontal={true}
+        />
+      </View>
+    );
 }
 const ListPromotion = () => {
     return (
-        <ScrollView
-            style={{ backgroundColor: colors.white }}
-            showsVerticalScrollIndicator={false}
-        >
-            <FlatList
-                data={Mockup.DataPromotion}
-                keyExtractor={(item, index) => { item.ID }}
-                renderItem={RenderItemPromotion}
-            />
-        </ScrollView>
-    )
+      <ScrollView
+        style={{backgroundColor: colors.white}}
+        showsVerticalScrollIndicator={false}>
+        <FlatList
+          data={DataPromotion}
+          keyExtractor={(index, item) => {
+            index.ID;
+          }}
+          renderItem={RenderItemPromotion}
+        />
+      </ScrollView>
+    );
 }
 const HomeScreen = () => {
-    const [token, setToken] = useState(null)
-    const [isModalVisible, setModalVisible] = useState(false);
 
-    const toggleModal = () => {
-        setModalVisible(!isModalVisible);
-    };
-    return (
-        <SafeAreaView style={styles.Container}>
-            <View style={styles.Container}>
-                <StatusBar barStyle='light-content' backgroundColor={colors.Sienna1} />
-                <View style={{ height: width / 4, backgroundColor: colors.Sienna1, alignItems: "center" }}>
-                    {Search()}
-                </View>
-                {SliderBar()}
-                {Information('SẢN PHẨM', 'Xem thêm >>')}
-                {ListImage()}
-                <View style={{ backgroundColor: colors.white, marginTop: 10 }}>
-                    {Information('KHUYẾN MẠI', 'Xem thêm >>')}
-                </View>
-                {ListPromotion()}
-                <View style={styles.Animated}>
-                    <ButtonAnimation
-                        ButtonMess={() => {
-                            if (!token) {
-                                showConfirm(R.string.notification, 'Vui lòng đăng nhập để thực hiện chức năng này', () =>
-                                    NavigationUtil.navigate(SCREEN_ROUTER.AUTH,{scree:SCREEN_ROUTER_AUTH.LOGIN}), null, 'Đăng nhập' );
-                                return;
-                            }
-                        }}
-                    ></ButtonAnimation>
-                </View>
-                {/* <ModalDrop
+  //const data = props.data;
+  const [token, setToken] = useState('');
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible);
+  };
+
+    const checkToken = async () => {
+      let token = await AsyncStorage.getItem('key');
+      if(token){
+            setToken(token);
+      }
+    }; 
+   useEffect(() => {
+     checkToken();
+   }, []);
+  Reactotron.log('data', token);
+  return (
+    <SafeAreaView style={styles.Container}>
+      <View style={styles.Container}>
+        <StatusBar barStyle="light-content" backgroundColor={colors.Sienna1} />
+        <View
+          style={{
+            height: width / 4,
+            backgroundColor: colors.Sienna1,
+            alignItems: 'center',
+          }}>
+          {Search()}
+        </View>
+        {SliderBar()}
+        {Information('SẢN PHẨM', 'Xem thêm >>')}
+        {ListImage()}
+        <View style={{backgroundColor: colors.white, marginTop: 10}}>
+          {Information('KHUYẾN MẠI', 'Xem thêm >>')}
+        </View>
+        {ListPromotion()}
+        <View style={styles.Animated}>
+          <ButtonAnimation
+            ButtonMess={() => {
+              if (!token) {
+                showConfirm(
+                  R.string.notification,
+                  'Vui lòng đăng nhập để thực hiện chức năng này',
+                  () =>
+                    NavigationUtil.navigate(SCREEN_ROUTER.AUTH, {
+                      screen: SCREEN_ROUTER_AUTH.LOGIN,
+                    }),
+                  null,
+                  'Đăng nhập',
+                );
+                return;
+              }
+            }}></ButtonAnimation>
+        </View>
+        {/* <ModalDrop
                     toggleModal={toggleModal}
                     isModalVisible={isModalVisible}
                     onPress={() => {
@@ -192,10 +238,10 @@ const HomeScreen = () => {
                     }
                     }
                 /> */}
-            </View>
-        </SafeAreaView>
-    );
-}
+      </View>
+    </SafeAreaView>
+  );
+};
 const styles = StyleSheet.create({
     Container: { flex: 1, backgroundColor: colors.primary },
     HeaderStyle: { backgroundColor: colors.Sienna1 },

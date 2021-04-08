@@ -4,13 +4,11 @@ import ProductScreen from '../../Screen/Product/ProductScreen';
 import PutCalendarScreen from '../../Screen/PutCalendar/PutCalendarScreen'
 import Notification from '../../Screen/Notification/NotificationScreen';
 import UserScreen from '../../Screen/User/UserScreen';
-import SearchScreen from '../../Screen/Home/SearchScreen'
-const { HOME,PRODUCT,PUTCALENDAR,NOTIFY,USER,SEARCH } = SCREEN_ROUTER_APP
+const { HOME,PRODUCT,PUTCALENDAR,NOTIFY,USER } = SCREEN_ROUTER_APP
 export default {
     [HOME]: HomeScreen,
     [PRODUCT]:ProductScreen,
     [PUTCALENDAR]:PutCalendarScreen,
     [NOTIFY]: Notification,
     [USER]: UserScreen,
-    [SEARCH]:SearchScreen
 }

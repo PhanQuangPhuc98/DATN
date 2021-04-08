@@ -3,7 +3,6 @@ import { Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity } fro
 import { Header } from "react-native-elements";
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
-import Mockup from '../../constants/Mockup';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";

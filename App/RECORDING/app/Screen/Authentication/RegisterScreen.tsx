@@ -3,7 +3,7 @@ import { Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity } fro
 import { Header } from "react-native-elements";
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
-import Mockup from '../../constants/Mockup';
+import {DataCity} from '../../constants/Mockup';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
@@ -40,7 +40,7 @@ const RenderCity = (onSelectedItemsChange,selectedItems,label) => {
         <View>
             <Text style={styles.TextLable}>{label}</Text>
             <SectionedMultiSelect
-                items={Mockup.DataCity}
+                items={DataCity}
                 IconRenderer={Icon}
                 single={true}
                 uniqueKey="city_id"
@@ -61,7 +61,7 @@ const RenderCity = (onSelectedItemsChange,selectedItems,label) => {
 }
 
 const RegisterScreen = () => {
-        console.log(Mockup.DataCity);
+        console.log(DataCity);
         
         const [Item, SetItem]= useState({
           selectedItems: [],
