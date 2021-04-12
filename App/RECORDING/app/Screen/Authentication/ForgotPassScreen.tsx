@@ -5,21 +5,22 @@ import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import AsyncStorage from '@react-native-community/async-storage';
+import auth from '@react-native-firebase/auth'
+import Reactotron from 'reactotron-react-native';
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import NavigationUtil from '../../navigation/NavigationUtil';
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
-const Confirm = () => {
-    return (
-        <View>
-            <TouchableOpacity
-                onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER_AUTH.LOGIN) }}
-                style={styles.ContainerConfirm}>
-                <Text style={styles.TextConfirm}>{R.string.registration}</Text>
-            </TouchableOpacity>
-        </View>
-    )
-}
+const Confirm = (onPress) => {
+  return (
+    <View>
+      <TouchableOpacity onPress={onPress} style={styles.ContainerConfirm}>
+        <Text style={styles.TextConfirm}>{R.string.registration}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 const RenderInput = (placeholder,UserInput, cover) => {
     return (
         <View style={{paddingVertical:10, alignItems:"center"}}>
@@ -48,25 +49,58 @@ const RenderImageLogo = ()=>{
     )
 }
 const ForgotPassScreen = () => {
+     const [email, setEmail] = useState('');
+     const [token, setToken] = useState(null);
+     const [isLoading, setLoading] = useState(true);
+     const ForgotPass = async () => {
+       isLoading;
+       const res = await auth().sendPasswordResetEmail(email);
+       try {
+         setLoading(false),
+           setToken(res),
+           await AsyncStorage.setItem(
+             'key',
+             JSON.stringify(res),
+           );
+         setTimeout(() => {
+           !token
+             ? NavigationUtil.navigate(SCREEN_ROUTER_AUTH.LOGIN)
+             : alert(R.string.pleaseForgotPass);
+         }, 500);
 
+         Reactotron.log('res', res), alert('data');
+       } catch (error) {
+         setLoading(true), Reactotron.log('error', error);
+       }
+     };
     return (
-        <SafeAreaView style={styles.Container}>
-            <Header
-                containerStyle={styles.ContainerHeader}
-                leftComponent={<TouchableOpacity style={styles.LeftHeader} onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER_AUTH.LOGIN) }}>
-                    <FastImage source={image.ic_back} style={styles.ImageBack} resizeMode="contain" />
-                    <Text style={styles.TextLeft}>{R.string.forgot_password}</Text>
-                </TouchableOpacity>}
-                statusBarProps={styles.ContainerHeader}
-            />
-            <View style={styles.Container}>
-                {RenderImageLogo()}
-                <Text style={styles.TextForgot}>{R.string.header_forgot}</Text>
-                {RenderInput(R.string.email)}
-                {Confirm()}
-            </View>
-        </SafeAreaView>
-    )
+      <SafeAreaView style={styles.Container}>
+        <Header
+          containerStyle={styles.ContainerHeader}
+          leftComponent={
+            <TouchableOpacity
+              style={styles.LeftHeader}
+              onPress={() => {
+                NavigationUtil.navigate(SCREEN_ROUTER_AUTH.LOGIN);
+              }}>
+              <FastImage
+                source={image.ic_back}
+                style={styles.ImageBack}
+                resizeMode="contain"
+              />
+              <Text style={styles.TextLeft}>{R.string.forgot_password}</Text>
+            </TouchableOpacity>
+          }
+          statusBarProps={styles.ContainerHeader}
+        />
+        <View style={styles.Container}>
+          {RenderImageLogo()}
+          <Text style={styles.TextForgot}>{R.string.header_forgot}</Text>
+          {RenderInput(R.string.email, (email) => setEmail(email), false)}
+          {Confirm(() => ForgotPass())}
+        </View>
+      </SafeAreaView>
+    );
 }
 const styles = StyleSheet.create({
     Container: { flex: 1, backgroundColor: colors.white, alignItems: "center" },

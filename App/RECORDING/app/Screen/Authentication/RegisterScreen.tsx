@@ -7,20 +7,21 @@ import {DataCity} from '../../constants/Mockup';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
+import Reactotron from 'reactotron-react-native';
 import NavigationUtil from '../../navigation/NavigationUtil';
+import AsyncStorage from '@react-native-community/async-storage';
+import auth from '@react-native-firebase/auth';
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
-const Confirm = () => {
-    return (
-        <View>
-            <TouchableOpacity
-                onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER.MAIN) }}
-                style={styles.ContainerConfirm}>
-                <Text style={styles.TextConfirm}>{R.string.registration}</Text>
-            </TouchableOpacity>
-        </View>
-    )
-}
+const Confirm = (onPress) => {
+  return (
+    <View>
+      <TouchableOpacity onPress={onPress} style={styles.ContainerConfirm}>
+        <Text style={styles.TextConfirm}>{R.string.registration}</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 const RenderInput = (label, UserInput, cover) => {
     return (
         <View style={{paddingVertical:10}}>
@@ -61,38 +62,80 @@ const RenderCity = (onSelectedItemsChange,selectedItems,label) => {
 }
 
 const RegisterScreen = () => {
-        console.log(DataCity);
+    //     console.log(DataCity);
         
-        const [Item, SetItem]= useState({
-          selectedItems: [],
-       })
-       const onSelectedItemsChange =(selectedItems)=>{
-           SetItem({
-               ...Item.selectedItems,
-               selectedItems:selectedItems
-           })
-       }
+    //     const [Item, SetItem]= useState({
+    //       selectedItems: [],
+    //    })
+    //    const onSelectedItemsChange =(selectedItems)=>{
+    //        SetItem({
+    //            ...Item.selectedItems,
+    //            selectedItems:selectedItems
+    //        })
+    //    }
+        const [Username, setUsername] = useState('admin');
+        const [Pass, setPass] = useState('123');
+         const [token, setToken] = useState(null);
+        const [isLoading, setLoading] = useState(true);
+        const CreatAcout = async () => {
+              isLoading;
+              const res = await auth().createUserWithEmailAndPassword(
+                Username,
+                Pass,
+              );
+              try {
+                setLoading(false),
+                  setToken(res),
+                  await AsyncStorage.setItem(
+                    'key',
+                    JSON.stringify(res.user.uid.toString()),
+                  );
+                setTimeout(() => {
+                  !token
+                    ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
+                        data: 'hello',
+                      })
+                    : alert(R.string.pleaseRegister);
+                }, 500);
+
+                Reactotron.log('res', res), alert('data');
+              } catch (error) {
+                setLoading(true), Reactotron.log('error', error);
+              }
+            };
     return (
-        <SafeAreaView style={styles.Container}>
-            <Header
-                containerStyle={styles.ContainerHeader}
-                leftComponent={<TouchableOpacity style={styles.LeftHeader} onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER_AUTH.LOGIN) }}>
-                    <FastImage source={image.ic_back} style={styles.ImageBack} resizeMode="contain" />
-                    <Text style={styles.TextLeft}>{R.string.sign_up_for_account}</Text>
-                </TouchableOpacity>}
-                statusBarProps={styles.ContainerHeader}
-            />
-            <View>
-                {RenderInput(R.string.name)}
+      <SafeAreaView style={styles.Container}>
+        <Header
+          containerStyle={styles.ContainerHeader}
+          leftComponent={
+            <TouchableOpacity
+              style={styles.LeftHeader}
+              onPress={() => {
+                NavigationUtil.navigate(SCREEN_ROUTER_AUTH.LOGIN);
+              }}>
+              <FastImage
+                source={image.ic_back}
+                style={styles.ImageBack}
+                resizeMode="contain"
+              />
+              <Text style={styles.TextLeft}>
+                {R.string.sign_up_for_account}
+              </Text>
+            </TouchableOpacity>
+          }
+          statusBarProps={styles.ContainerHeader}
+        />
+        <View>
+          {/* {RenderInput(R.string.name)}
                 {RenderInput(R.string.phone)}
-                {RenderCity(onSelectedItemsChange,Item.selectedItems, R.string.city)}
-                {RenderInput(R.string.pass, null, true)}
-                {RenderInput(R.string.confirm_password, null, true)}
-              
-            </View>
-              {Confirm()}
-        </SafeAreaView>
-    )
+                {RenderCity(onSelectedItemsChange,Item.selectedItems, R.string.city)} */}
+          {RenderInput(R.string.email, user => setUsername(user), false)}
+          {RenderInput(R.string.pass, pass => setPass(pass), true)}
+          {/* {RenderInput(R.string.confirm_password, null, true)} */}
+        </View>
+        {Confirm(() => CreatAcout())}
+      </SafeAreaView>
+    );
 }
 const styles = StyleSheet.create({
     Container: { flex: 1, backgroundColor: colors.white, alignItems: "center" },

@@ -4,12 +4,18 @@ import NavigationUtil from '../../navigation/NavigationUtil';
 import { SCREEN_ROUTER_AUTH,SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
 import {colors} from '../../constants/Theme'
 import { Header } from "react-native-elements";
+import {ASYNC_STORAGE} from '../../constants/Constant';
+import AsyncStorage from '@react-native-community/async-storage';
 import Images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
 const SplashScreen = () => {
     useEffect(() => {
-        setTimeout(() => {
-            NavigationUtil.navigate(SCREEN_ROUTER.MAIN);
+        setTimeout(async () => {
+          const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+          if (!token) {
+            await AsyncStorage.setItem(ASYNC_STORAGE.TOKEN, '');
+          }
+          NavigationUtil.navigate(SCREEN_ROUTER.MAIN);
         }, 2000);
     },[])
     return (

@@ -15,7 +15,9 @@ Reactotron.setAsyncStorageHandler(AsyncStorage) // AsyncStorage would either com
   })
   .connect();
 Reactotron.configure({
-  host: '192.168.1.8', // added code
+  enabled: true,
+  host: '192.168.1.9', // added code
+  port: 9090,
 })
   // ...
   .connect();

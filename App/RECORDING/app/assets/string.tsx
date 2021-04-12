@@ -13,6 +13,7 @@ const string = {
   AccountEmail: 'Tên đăng nhập hoặc email',
   pass: 'Mật khẩu',
   name: 'Họ tên',
+  phone: 'Số điện thoại',
   city: 'Tỉnh/thành phố',
   confirm_password: 'Xác nhận mật khẩu',
   confirm: 'Xác nhận',
@@ -21,5 +22,7 @@ const string = {
   email: 'Email',
   cancle: 'Hủy',
   pleaseLogin: 'Vui lòng nhập tài khoản và mật khẩu để đăng nhập',
+  pleaseRegister: 'Vui lòng nhập tài khoản và mật khẩu để đăng ký',
+  pleaseForgotPass:  'Vui lòng nhập email để lấy lại mật khẩu',
 };
 export default string;
