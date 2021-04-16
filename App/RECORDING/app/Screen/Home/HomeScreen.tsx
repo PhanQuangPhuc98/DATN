@@ -185,18 +185,14 @@ const HomeScreen = ({navigation}) => {
       setToken(null);
     }
   };
-  useEffect(() => {
-    checkToken();
-    
-  }, [navigation]);
   // useEffect(() => {
-  //   const unsubscribe = navigation.addListener('focus ', () => {
-  //     checkToken();
-  //   });
-  //   return unsubscribe;
-  // }, [navigation]);
+  //   checkToken();
+  // }, []);
+  useEffect(() => {
+     checkToken();
+  }, []);
   Reactotron.log('setToken', token);
-  console.log('token', token);
+  //console.log('token', token);
   return (
     <SafeAreaView style={styles.Container}>
       <View style={styles.Container}>
