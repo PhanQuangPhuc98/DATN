@@ -33,5 +33,6 @@ const images = {
   ic_Send: require('./images/ic_send.png'),
   ic_IMG: require('./images/ic_IMG.png'),
   ic_SendMess: require('./images/ic_send1.png'),
+  ic_ios_camera: require('./images/ic_ios_camera.png'),
 };
 export default images;
