@@ -232,6 +232,9 @@ const HomeScreen = ({navigation}) => {
                 // /console.log(token);
                 return;
               }
+              NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+                screen: SCREEN_ROUTER_APP.CHAT,
+              });
             }}></ButtonAnimation>
         </View>
         {/* <ModalDrop

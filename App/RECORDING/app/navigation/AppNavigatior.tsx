@@ -13,7 +13,15 @@ import SplashScreen from '../Screen/Authentication/SplashScreen';
 import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP,SCREEN_ROUTER} from '../utils/Constant';
 import R from '../assets/R'
 
-const { HOME,PRODUCT,PUTCALENDAR,NOTIFY,USER, SEARCH } = SCREEN_ROUTER_APP
+const {
+  HOME,
+  PRODUCT,
+  PUTCALENDAR,
+  NOTIFY,
+  USER,
+  SEARCH,
+  CHAT,
+} = SCREEN_ROUTER_APP;
 const { LOGIN,REGISTER,FORGOT_PASS } = SCREEN_ROUTER_AUTH
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
@@ -183,30 +191,38 @@ const AuthStackScreen = () => {
     );
   };
 const App=()=>{
-  return(
-    <AppStack.Navigator
-     headerMode='none'>
+  return (
+    <AppStack.Navigator headerMode="none">
       <AppStack.Screen
-       name={SCREEN_ROUTER_APP.HOME} component={StackApp[HOME]}
+        name={SCREEN_ROUTER_APP.HOME}
+        component={StackApp[HOME]}
       />
       <AppStack.Screen
-       name={SCREEN_ROUTER_APP.PRODUCT} component={StackApp[PRODUCT]}
+        name={SCREEN_ROUTER_APP.PRODUCT}
+        component={StackApp[PRODUCT]}
       />
       <AppStack.Screen
-       name={SCREEN_ROUTER_APP.PUTCALENDAR} component={StackApp[PUTCALENDAR]}
+        name={SCREEN_ROUTER_APP.PUTCALENDAR}
+        component={StackApp[PUTCALENDAR]}
       />
       <AppStack.Screen
-       name={SCREEN_ROUTER_APP.NOTIFY} component={StackApp[NOTIFY]}
+        name={SCREEN_ROUTER_APP.NOTIFY}
+        component={StackApp[NOTIFY]}
       />
       <AppStack.Screen
-       name={SCREEN_ROUTER_APP.USER} component={StackApp[USER]}
+        name={SCREEN_ROUTER_APP.USER}
+        component={StackApp[USER]}
       />
       <AppStack.Screen
-       name={SCREEN_ROUTER_APP.SEARCH} component={StackApp[SEARCH]}
+        name={SCREEN_ROUTER_APP.SEARCH}
+        component={StackApp[SEARCH]}
       />
-
+      <AppStack.Screen
+        name={SCREEN_ROUTER_APP.CHAT}
+        component={StackApp[CHAT]}
+      />
     </AppStack.Navigator>
-  )
+  );
 }
 const MainTab = () => {
   const [isSigned, setSigned] = useState(false);

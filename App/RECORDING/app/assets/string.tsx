@@ -1,6 +1,7 @@
 const string = {
   home: 'Trang chủ',
   product: 'Sản phẩm',
+  Chat:'Chát với quản trị',
   putcalender: 'Đặt lịch',
   notification: 'Thông báo',
   user: 'Tài khoản',
@@ -24,5 +25,6 @@ const string = {
   pleaseLogin: 'Vui lòng nhập tài khoản và mật khẩu để đăng nhập',
   pleaseRegister: 'Vui lòng nhập tài khoản và mật khẩu để đăng ký',
   pleaseForgotPass:  'Vui lòng nhập email để lấy lại mật khẩu',
+  messenger:'Nhập tin nhắn'
 };
 export default string;
