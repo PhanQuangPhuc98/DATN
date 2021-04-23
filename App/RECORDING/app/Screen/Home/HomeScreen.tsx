@@ -204,7 +204,9 @@ const HomeScreen = ({navigation}) => {
             alignItems: 'center',
           }}>
           {Search(() => {
-            if (token == null) alert('hello');
+             NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+               screen: SCREEN_ROUTER_APP.SEARCH,
+             });
           })}
         </View>
         {SliderBar()}

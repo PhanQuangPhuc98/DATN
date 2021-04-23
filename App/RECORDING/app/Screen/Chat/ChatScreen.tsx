@@ -45,36 +45,14 @@ const renderSend = (props) => {
         <FastImage
           style={styles.ImgAction}
           resizeMode="contain"
-          source={image.ic_SendMess}></FastImage>
+          source={image.ic_SendMess}
+          tintColor={colors.Sienna1}></FastImage>
       </View>
     </Send>
   );
 };
 const Infor = (onSend, User, messages) => {
   return (
-    // <View style={styles.CantainerInfor}>
-    //   <TouchableOpacity style={styles.HeaderImg}>
-    //     <FastImage
-    //       style={styles.ImageSearch}
-    //       source={image.ic_IMG}
-    //       resizeMode={FastImage.resizeMode.contain}></FastImage>
-    //   </TouchableOpacity>
-    //   <TextInput
-    //     style={styles.TextInputStyle}
-    //     onChangeText={onChangeText}
-    //     placeholder={placeholder}
-    //     placeholderTextColor={colors.focus}
-    //     value={value}
-    //     secureTextEntry={secureTextEntry}
-    //     autoCompleteType={'off'}
-    //   />
-    //   <TouchableOpacity style={styles.HeaderImg}>
-    //     <FastImage
-    //       style={[styles.ImageSearch, {height: 26, width: 26}]}
-    //       source={image.ic_Send}
-    //       resizeMode={FastImage.resizeMode.contain}></FastImage>
-    //   </TouchableOpacity>
-    // </View>
     <GiftedChat
       textInputStyle={styles.TextInputStyle}
       timeFormat="HH:mm:ss"
@@ -148,7 +126,12 @@ const styles = StyleSheet.create({
   Action: {justifyContent: 'center', alignItems: 'center', marginBottom: 12},
   ImgAction: {width: 25, aspectRatio: 1, marginLeft: 5},
   HeaderImg: {paddingTop: 10},
-  Send: {justifyContent: 'center', alignItems: 'center', marginBottom: 12},
+  Send: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 12,
+    marginRight: 5,
+  },
   ImageSearch: {height: 19, width: 37},
   ContainerHeader: {backgroundColor: colors.Sienna1},
   ic_Back: {height: 16, width: 10, marginTop: 10, marginRight: 15},

@@ -216,7 +216,15 @@ import images from '../assets/imagesAsset'
         },
 
     ];
-
+    const DataUser = {
+      name: 'Phan Quang Phúc',
+      phone: '0364177852',
+    };
 export {
-DataImage,DataImageProduct,DataPromotion,DataCity,DataSearch
-}
+  DataImage,
+  DataImageProduct,
+  DataPromotion,
+  DataCity,
+  DataSearch,
+  DataUser,
+};

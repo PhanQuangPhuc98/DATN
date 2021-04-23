@@ -34,5 +34,12 @@ const images = {
   ic_IMG: require('./images/ic_IMG.png'),
   ic_SendMess: require('./images/ic_send1.png'),
   ic_ios_camera: require('./images/ic_ios_camera.png'),
+  img_Avatar: require('./images/Avatar.jpg'),
+  ic_ChangePass: require('./images/ic_ChangePass.png'),
+  ic_InforUser: require('./images/ic_Infor_User.png'),
+  ic_Language: require('./images/ic_Language.png'),
+  ic_Logout: require('./images/ic_logout.png'),
+  ic_Orderproduct: require('./images/ic_Orderproduct.png'),
+  ic_BackRight: require('./images/ic_BackRight.png'),
 };
 export default images;
