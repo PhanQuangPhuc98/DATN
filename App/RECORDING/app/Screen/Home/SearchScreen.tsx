@@ -122,14 +122,39 @@ const SearchScreen = () => {
     )
 }
 const styles = StyleSheet.create({
-    HeaderStyle: { backgroundColor: colors.Sienna1 },
-    SearchStyle: { width: 303, height: 44, backgroundColor: colors.white, flexDirection: "row", borderRadius: 5, marginRight: 40 },
-    TextSearch: { height: 40 },
-    HeaderSearch: { height: "100%", width: 30, alignItems: "center", justifyContent: "center" },
-    ImageSearch: { height: 16, width: 16 },
-    TextCancle: { fontFamily: R.fonts.regular, fontSize: 16, color: colors.white },
-    ContainerItem: { height: 234, backgroundColor: colors.white, width: 180, borderRadius: 10, marginLeft: 10, marginVertical: 5 },
-    ImgItem: { height: 146, width: 180 },
-    StyleTextItem: { fontSize: 16, fontFamily: R.fonts.bold, color: colors.black }
-})
+  HeaderStyle: {backgroundColor: colors.Sienna1},
+  SearchStyle: {
+    width: 303,
+    height: 44,
+    backgroundColor: colors.white,
+    flexDirection: 'row',
+    borderRadius: 5,
+    marginRight: 40,
+  },
+  TextSearch: {height: 40},
+  HeaderSearch: {
+    height: '100%',
+    width: 30,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ImageSearch: {height: 16, width: 16},
+  TextCancle: {
+    fontFamily: R.fonts.regular,
+    fontSize: 16,
+    color: colors.white,
+    marginVertical: 10,
+    marginHorizontal: 5,
+  },
+  ContainerItem: {
+    height: 234,
+    backgroundColor: colors.white,
+    width: 180,
+    borderRadius: 10,
+    marginLeft: 10,
+    marginVertical: 5,
+  },
+  ImgItem: {height: 146, width: 180},
+  StyleTextItem: {fontSize: 16, fontFamily: R.fonts.bold, color: colors.black},
+});
 export default SearchScreen;

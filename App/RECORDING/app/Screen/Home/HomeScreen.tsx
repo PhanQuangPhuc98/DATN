@@ -168,14 +168,11 @@ const ListPromotion = () => {
   );
 }
 const HomeScreen = ({navigation}) => {
-  //const data = props.data;
   const [token, setToken] = useState(null);
-  const [isModalVisible, setModalVisible] = useState(false);
-
+  const [isModalVisible, setModalVisible] = useState(false);;
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };
-
   const checkToken = async () => {
     const res = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
     Reactotron.log('res', res);
@@ -185,14 +182,13 @@ const HomeScreen = ({navigation}) => {
       setToken(null);
     }
   };
-  // useEffect(() => {
-  //   checkToken();
-  // }, []);
   useEffect(() => {
-     checkToken();
-  }, []);
+    const unsubscribe = navigation.addListener('focus', () => {
+      checkToken();
+    });
+    return unsubscribe;
+  }, [navigation]);
   Reactotron.log('setToken', token);
-  //console.log('token', token);
   return (
     <SafeAreaView style={styles.Container}>
       <View style={styles.Container}>
@@ -204,9 +200,9 @@ const HomeScreen = ({navigation}) => {
             alignItems: 'center',
           }}>
           {Search(() => {
-             NavigationUtil.navigate(SCREEN_ROUTER.APP, {
-               screen: SCREEN_ROUTER_APP.SEARCH,
-             });
+            NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+              screen: SCREEN_ROUTER_APP.SEARCH,
+            });
           })}
         </View>
         {SliderBar()}
@@ -230,24 +226,23 @@ const HomeScreen = ({navigation}) => {
                   null,
                   'Đăng nhập',
                 );
-                //alert("hello")
-                // /console.log(token);
                 return;
+              } else {
+                NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+                  screen: SCREEN_ROUTER_APP.CHAT,
+                });
               }
-              NavigationUtil.navigate(SCREEN_ROUTER.APP, {
-                screen: SCREEN_ROUTER_APP.CHAT,
-              });
-            }}></ButtonAnimation>
+            }}
+            //ButtonPhone={toggleModal}
+          />
         </View>
-        {/* <ModalDrop
-                    toggleModal={toggleModal}
-                    isModalVisible={isModalVisible}
-                    onPress={() => {
-                        toggleModal();
-                        NavigationUtil.navigate(SCREEN_ROUTER.AUTH, { screen: SCREEN_ROUTER_AUTH.LOGIN })
-                    }
-                    }
-                /> */}
+        <ModalDrop
+          toggleModal={toggleModal}
+          isModalVisible={isModalVisible}
+          cancle={R.string.cancle}
+          confirm={R.string.confirm}
+          content={R.string.calladmin}
+        />
       </View>
     </SafeAreaView>
   );

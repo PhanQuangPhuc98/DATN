@@ -17,6 +17,7 @@ import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
+import ModalDrop from '../../components/ModalDrop'
 const { height, width } = Dimensions.get('window');
 const left = () => {
   return (
@@ -57,6 +58,7 @@ const Logout = async () => {
     const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
     if (token) {
       await AsyncStorage.setItem(ASYNC_STORAGE.TOKEN, '');
+
     }
     Reactotron.log('res', res);
     return;
@@ -67,9 +69,11 @@ const Logout = async () => {
 const Line = () => {
   return <View style={styles.ContainerLine}></View>;
 };
-const ChildScreen = (source, lable, url) => {
+const ChildScreen = (source, lable, url,onPress) => {
   return (
-    <TouchableOpacity style={styles.ContainerScreen}>
+    <TouchableOpacity
+    onPress={onPress} 
+    style={styles.ContainerScreen}>
       <FastImage
         source={source}
         resizeMode={FastImage.resizeMode.contain}
@@ -91,8 +95,12 @@ const ChildScreen = (source, lable, url) => {
 };
 
 const UserScreen = () => {
+  const [isModalVisible, setModalVisible]=useState(false);
+  const toggleModal=()=>{
+    setModalVisible(!isModalVisible);
+  }
   return (
-    <SafeAreaView style={{backgroundColor: colors.primary, flex: 1}}>
+    <SafeAreaView style={{ backgroundColor: colors.primary, flex: 1 }}>
       <ScreenComponent
         leftComponent={left()}
         containerStyle={styles.ContainerHeader}
@@ -100,32 +108,55 @@ const UserScreen = () => {
         children={
           <View>
             {personal()}
-            <View style={{backgroundColor: colors.white}}>
+            <View style={{ backgroundColor: colors.white }}>
               {ChildScreen(
                 images.ic_InforUser,
-                'Thông tin cá nhân',
-                images.ic_BackRight,
+                R.string.information,
+                images.ic_BackRight
               )}
               {Line()}
               {ChildScreen(
                 images.ic_Orderproduct,
-                'Đơn hàng',
-                images.ic_BackRight,
+                R.string.order,
+                images.ic_BackRight
               )}
               {Line()}
-              {ChildScreen(images.ic_Language, 'Ngôn ngữ', images.ic_BackRight)}
+              {ChildScreen(
+                images.ic_Language,
+                R.string.language,
+                images.ic_BackRight,
+              )}
               {Line()}
               {ChildScreen(
                 images.ic_ChangePass,
-                'Đổi mật khẩu',
-                images.ic_BackRight,
+                R.string.changepass,
+                images.ic_BackRight
               )}
               {Line()}
-              {ChildScreen(images.ic_Logout, 'Đăng xuất', images.ic_BackRight)}
+              {ChildScreen(
+                images.ic_Logout,
+                R.string.logout,
+                images.ic_BackRight,
+                ()=>{toggleModal()}
+              )}
             </View>
+            <ModalDrop
+        toggleModal={toggleModal}
+        isModalVisible={isModalVisible}
+        onPress={() => {
+          toggleModal();
+          Logout();
+          NavigationUtil.navigate(SCREEN_ROUTER.AUTH, { screen: SCREEN_ROUTER_AUTH.LOGIN })
+        }
+        }
+        cancle={R.string.cancle}
+        confirm={R.string.confirm}
+        content={R.string.logoutmess}
+      />
           </View>
         }
       />
+      
     </SafeAreaView>
   );
 };
@@ -156,7 +187,5 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
   },
   ContainerLine: { borderWidth: 0.65, marginHorizontal: 24, borderColor: colors.line }
-
 });
-
 export default UserScreen;

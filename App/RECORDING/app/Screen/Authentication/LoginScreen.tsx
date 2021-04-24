@@ -104,8 +104,10 @@ const LoginScreen = ({ navigation }) => {
                 );
             setTimeout(() => {
                 !token
-                    ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN)
-                    : alert(R.string.pleaseLogin);
+                  ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
+                      screen: SCREEN_ROUTER_APP.HOME,
+                    })
+                  : alert(R.string.pleaseLogin);
             }, 500);
 
             Reactotron.log('res', res.user.uid)
@@ -117,7 +119,7 @@ const LoginScreen = ({ navigation }) => {
 
 
     }
-    Reactotron.log('payload', payload);
+    console.log('payload', payload);
     //console.log('pass', payload);
 
     return (
@@ -128,7 +130,9 @@ const LoginScreen = ({ navigation }) => {
             <TouchableOpacity
               style={styles.LeftHeader}
               onPress={() => {
-                NavigationUtil.navigate(SCREEN_ROUTER.MAIN);
+                NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
+                  screen: SCREEN_ROUTER_APP.HOME,
+                });
               }}>
               <FastImage
                 source={image.ic_back}
