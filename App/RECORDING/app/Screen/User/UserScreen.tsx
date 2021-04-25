@@ -112,7 +112,10 @@ const UserScreen = () => {
               {ChildScreen(
                 images.ic_InforUser,
                 R.string.information,
-                images.ic_BackRight
+                images.ic_BackRight,
+                ()=>{NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+                  screen: SCREEN_ROUTER_APP.INFORUSER,
+                });}
               )}
               {Line()}
               {ChildScreen(
@@ -130,7 +133,8 @@ const UserScreen = () => {
               {ChildScreen(
                 images.ic_ChangePass,
                 R.string.changepass,
-                images.ic_BackRight
+                images.ic_BackRight,
+                ()=>{NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.CHANGEPASS})}
               )}
               {Line()}
               {ChildScreen(

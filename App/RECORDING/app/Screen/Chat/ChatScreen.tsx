@@ -136,6 +136,11 @@ const styles = StyleSheet.create({
   ContainerHeader: {backgroundColor: colors.Sienna1},
   ic_Back: {height: 16, width: 10, marginTop: 10, marginRight: 15},
   HeaderBack: {flexDirection: 'row', width: width},
-  TextHeader: {fontSize: 23, fontFamily: R.fonts.bold, color: colors.white},
+  TextHeader: {
+    fontSize: 18,
+    fontFamily: R.fonts.bold,
+    color: colors.white,
+    marginTop: 5,
+  },
 });
 export default ChatScreen;

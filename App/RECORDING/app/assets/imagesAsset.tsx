@@ -41,5 +41,7 @@ const images = {
   ic_Logout: require('./images/ic_logout.png'),
   ic_Orderproduct: require('./images/ic_Orderproduct.png'),
   ic_BackRight: require('./images/ic_BackRight.png'),
+  ic_invisible: require('./images/ic_invisible.png'),
+  ic_visibility: require('./images/ic_visibility.png'),
 };
 export default images;

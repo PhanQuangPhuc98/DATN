@@ -21,6 +21,8 @@ const {
   USER,
   SEARCH,
   CHAT,
+  CHANGEPASS,
+  INFORUSER,
 } = SCREEN_ROUTER_APP;
 const { LOGIN,REGISTER,FORGOT_PASS } = SCREEN_ROUTER_AUTH
 const Stack = createStackNavigator();
@@ -220,6 +222,14 @@ const App=()=>{
       <AppStack.Screen
         name={SCREEN_ROUTER_APP.CHAT}
         component={StackApp[CHAT]}
+      />
+      <AppStack.Screen
+        name={SCREEN_ROUTER_APP.CHANGEPASS}
+        component={StackApp[CHANGEPASS]}
+      />
+      <AppStack.Screen
+        name={SCREEN_ROUTER_APP.INFORUSER}
+        component={StackApp[INFORUSER]}
       />
     </AppStack.Navigator>
   );

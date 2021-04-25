@@ -31,7 +31,10 @@ const string = {
   language: 'Ngôn ngữ',
   changepass: 'Đổi mật khẩu',
   logout: 'Đăng xuất',
-  logoutmess:  'Bạn thực sự muốn đăng xuất ? ',
-  calladmin:'Bạn muốn gọi hỗ trợ 0364177852'
+  logoutmess: 'Bạn thực sự muốn đăng xuất ? ',
+  calladmin: 'Bạn muốn gọi hỗ trợ 0364177852',
+  old_password: 'Mật khẩu cũ',
+  new_password: 'Mật khẩu mới',
+  confirm_new_password: 'Xác nhận mật khẩu mới',
 };
 export default string;
