@@ -6,12 +6,19 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  TextInput,
+  Button
 } from 'react-native';
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
 import {colors} from '../../constants/Theme';
+import {hasWhiteSpace} from '../../utils/FuncHelper'
 import ScreenComponent from '../../components/ScreenComponent';
+import Reactotron from 'reactotron-react-native';
+import {showMessages} from '../../utils/AlertHelper'
 import NavigationUtil from '../../navigation/NavigationUtil';
+import auth from '@react-native-firebase/auth'
+import firebase from '@react-native-firebase/app';
 import R from '../../assets/R';
 import { Input } from 'react-native-elements';
 const {height, width} = Dimensions.get('window');
@@ -35,31 +42,58 @@ const Confirm = (onPress) => {
     </View>
   );
 };
-const renderInput = (label, value, secureTextEntry, placeHolder, onChangeText) => {
-    return (
-      <Input
-        label={label}
+const renderInput = (lable,source,onPress,secureTextEntry,value,onChangeText) => {
+  return (
+    <View style={{paddingHorizontal: 20}}>
+      <Text style={styles.lableInput}>{lable}</Text>
+      <View style={{flexDirection:"row"}}>
+      <TextInput
         value={value}
-        styleLabel={styles.txt}
+        style={styles.txt}
         secureTextEntry={secureTextEntry}
-        placeHolder={placeHolder}
-        isRequire
         onChangeText={onChangeText}
       />
-    );
-  };
+      <TouchableOpacity
+      onPress={onPress} 
+      style={{borderBottomWidth:0.5}}>
+        <FastImage 
+        source={source}
+        style={styles.imgText}
+        resizeMode={FastImage.resizeMode.contain}
+        />
+      </TouchableOpacity>
+      </View>
+    </View>
+  );
+};
 const ChangePassScreen = () => {
   const [Password, setPassword] = useState(true);
   const [NewPassword, setNewPassword] = useState(true);
   const [confirm_password, setconfirm_password] = useState(true);
-  const icon = Password ? R.images.ic_invisible : R.images.ic_visibility;
-  const iconNew = NewPassword ? R.images.ic_invisible : R.images.ic_visibility;
-  const iconConfirm = confirm_password? R.images.ic_invisible: R.images.ic_visibility;
+  const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
+  const iconNew = NewPassword ? R.images.ic_visibility : R.images.ic_invisible;
+  const iconConfirm = confirm_password? R.images.ic_visibility : R.images.ic_invisible;
   const [payLoad, setPayLoad] = useState({
     Password: '',
     NewPassword: '',
     confirm_password: '',
   });
+  const reauthenticate = (currentPassword) => {
+    var user = firebase.auth().currentUser;
+    var cred = firebase.auth.EmailAuthProvider.credential(
+        user.email, currentPassword);
+    return user.reauthenticateWithCredential(cred);
+  }
+  const changePassword = (currentPassword, newPassword) => {
+    reauthenticate(currentPassword).then(() => {
+      var user = firebase.auth().currentUser;
+      user.updatePassword(newPassword).then(() => {
+        showMessages(R.string.notification, 'Cập nhật thành công!');
+        Reactotron.log("Password updated!");
+        NavigationUtil.goBack();
+      }).catch((error) => { Reactotron.log(error); });
+    }).catch((error) => { Reactotron.log(error); });
+  }
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -69,10 +103,21 @@ const ChangePassScreen = () => {
         containerStyle={styles.ContainerHeader}
         statusBarProps={styles.ContainerHeader}
         children={<SafeAreaView>
-          {renderInput()} 
-          {renderInput()} 
-          {renderInput()}
-          {Confirm()}
+          {
+          renderInput(R.string.old_password,icon,()=>{setPassword(!Password)},Password,payLoad.Password,Password=>{setPayLoad({...payLoad,Password:Password});})
+          } 
+          {renderInput(R.string.new_password,iconNew,()=>{setNewPassword(!NewPassword)},NewPassword,payLoad.NewPassword,NewPassword=>{setPayLoad({...payLoad,NewPassword:NewPassword});})} 
+          {renderInput(R.string.confirm_new_password,iconConfirm,()=>{setconfirm_password(!confirm_password)},confirm_password,payLoad.confirm_password,confirm_password=>{setPayLoad({...payLoad,confirm_password:confirm_password});})}
+          {Confirm(()=>{
+            if (
+              payLoad.NewPassword.trim().length < 6 ||
+              payLoad.NewPassword != payLoad.confirm_password ||
+              (hasWhiteSpace(payLoad.NewPassword) && hasWhiteSpace(payLoad.confirm_password))
+            ) {
+              showMessages(R.string.notification, 'vui lòng nhập đầy đủ thông tin');
+              return;
+            }
+            changePassword(payLoad.Password,payLoad.NewPassword)})}
           </SafeAreaView>}
       />
     </SafeAreaView>
@@ -129,10 +174,12 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
   },
   TextConfirm: {fontSize: 14, fontFamily: R.fonts.bold, color: colors.white},
+  lableInput:{fontSize:14, fontFamily:R.fonts.bold, color:colors.black,marginTop:10},
   txt: {
-    fontSize:16,
-    fontFamily:R.fonts.regular,
-    color: 'black',
+    borderBottomWidth:0.5,
+    borderColor:colors.focus,
+    width:width-60
   },
+  imgText:{height:22,width:22}
 });
 export default ChangePassScreen;

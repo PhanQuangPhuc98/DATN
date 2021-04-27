@@ -8,6 +8,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage';
 import auth from '@react-native-firebase/auth'
 import Reactotron from 'reactotron-react-native';
+import {hasWhiteSpace,validateEmail} from '../../utils/FuncHelper';
+import {showMessages} from '../../utils/AlertHelper'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import NavigationUtil from '../../navigation/NavigationUtil';
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
@@ -97,7 +99,16 @@ const ForgotPassScreen = () => {
           {RenderImageLogo()}
           <Text style={styles.TextForgot}>{R.string.header_forgot}</Text>
           {RenderInput(R.string.email, (email) => setEmail(email), false)}
-          {Confirm(() => ForgotPass())}
+          {Confirm(() => 
+          {
+            if(!validateEmail(email)){
+              showMessages(R.string.notification, 'Email không đúng');
+              return;
+            }
+            ForgotPass()
+          }
+          )
+          }
         </View>
       </SafeAreaView>
     );

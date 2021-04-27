@@ -9,14 +9,17 @@ import Reactotron from 'reactotron-react-native'
 import image from '../../assets/imagesAsset';
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
+import {hasWhiteSpace,validateEmail} from '../../utils/FuncHelper';
+import {showMessages} from '../../utils/AlertHelper'
 import AsyncStorage from '@react-native-community/async-storage';
 import auth from '@react-native-firebase/auth'
 const { height, width } = Dimensions.get("window");
-const Infor = (placeholder, onChangeText, value, secureTextEntry) => {
+const Infor = (style,placeholder, onChangeText, value, secureTextEntry) => {
     return (
-      <View>
+      <View >
         <TextInput
-          style={styles.TextInputStyle}
+          // style={styles.TextInputStyle}
+          style={style}
           onChangeText={onChangeText}
           placeholder={placeholder}
           placeholderTextColor={colors.focus}
@@ -76,9 +79,11 @@ const Logo = (onPressFacebook, onPressGoogle) => {
 }
 const LoginScreen = ({ navigation }) => {
     const [isLoading, setLoading] = useState(true);
+    const [Password, setPassword] = useState(true);
     const [confirm, setConfirm] = useState(null);
     const [token, setToken] = useState(null);
     const [code, setCode] = useState('');
+    const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
     const [payload, setPayload] = useState({
         Username: '',
         Pass: ''
@@ -102,6 +107,7 @@ const LoginScreen = ({ navigation }) => {
                     ASYNC_STORAGE.TOKEN,
                     res.user.uid.toString(),
                 );
+            showMessages(R.string.notification, 'Đăng nhập thành công!');
             setTimeout(() => {
                 !token
                   ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
@@ -109,7 +115,6 @@ const LoginScreen = ({ navigation }) => {
                     })
                   : alert(R.string.pleaseLogin);
             }, 500);
-
             Reactotron.log('res', res.user.uid)
 
         } catch (error) {
@@ -119,7 +124,7 @@ const LoginScreen = ({ navigation }) => {
 
 
     }
-    console.log('payload', payload);
+    Reactotron.log('payload', payload);
     //console.log('pass', payload);
 
     return (
@@ -153,6 +158,7 @@ const LoginScreen = ({ navigation }) => {
         </View>
         <View style={styles.ContainerInput}>
           {Infor(
+            styles.TextInputStyle,
             R.string.email,
             (user) =>
               setPayload({
@@ -162,19 +168,38 @@ const LoginScreen = ({ navigation }) => {
             payload.Username,
             null,
           )}
-          {Infor(
-            R.string.pass,
-            (pass) =>
-              setPayload({
-                ...payload,
-                Pass: pass,
-              }),
-            payload.Pass,
-            true,
-          )}
+          {
+           <View style={{flexDirection:'row', paddingVertical:25}}>
+             {Infor([styles.TextInputStyle,{ width:width-90}], R.string.pass,(pass) =>setPayload({...payload,Pass: pass,}),payload.Pass,Password,)}
+             <TouchableOpacity
+              onPress={()=>{setPassword(!Password)}} 
+              style={{borderBottomWidth:0.5, paddingTop:15}}>
+             <FastImage 
+              source={icon}
+              style={styles.imgText}
+              resizeMode={FastImage.resizeMode.contain}
+             />
+             </TouchableOpacity>
+           </View>
+          }
           {ForgotPass()}
         </View>
-        {Confirm(() => signInWithEmail())}
+        {Confirm(() =>
+        {
+          if(!validateEmail(payload.Username)){
+            showMessages(R.string.notification, 'Email không đúng');
+            return;
+          }
+          if (
+            payload.Pass.trim().length < 6 ||
+            hasWhiteSpace(payload.Pass))
+           {
+            showMessages(R.string.notification, 'Mật khẩu không đúng');
+            return;
+          }
+          signInWithEmail()
+        } 
+        )}
         {Line()}
         {Logo()}
       </SafeAreaView>
@@ -189,7 +214,7 @@ const styles = StyleSheet.create({
     ContainerLogo: { alignItems: "center", paddingHorizontal: 50, paddingVertical: 20 },
     ContainerInput: { alignItems: "center" },
     ImageLogo: { height: 210, width: 395 },
-    TextInputStyle: { borderBottomWidth: 0.5, width: 328, borderColor: colors.focus, marginVertical: 10 },
+    TextInputStyle: { borderBottomWidth: 0.5, width: 328, borderColor: colors.focus},
     ForgotPass: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.focus, marginLeft: 220 },
     ContainerConfirm: {
         height: 46, backgroundColor: colors.Sienna1, borderRadius: 30, width: 330,
@@ -199,6 +224,7 @@ const styles = StyleSheet.create({
     ContainerRegister: { flexDirection: "row", paddingHorizontal: 75 },
     v_container_line: { marginTop: '5%', flexDirection: 'row', alignItems: 'center' },
     line: { height: 1, backgroundColor: colors.line, flex: 1 },
-    StyleLogo: { height: 66, width: 65 }
+    StyleLogo: { height: 66, width: 65 },
+    imgText:{height:22,width:22}
 });
 export default LoginScreen;

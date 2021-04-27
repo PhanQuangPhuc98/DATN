@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity,Dimensions } from 'react-native'
 import { Header } from "react-native-elements";
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
@@ -7,12 +7,15 @@ import {DataCity} from '../../constants/Mockup';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
+import {hasWhiteSpace,validateEmail} from '../../utils/FuncHelper';
+import {showMessages} from '../../utils/AlertHelper'
 import Reactotron from 'reactotron-react-native';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import AsyncStorage from '@react-native-community/async-storage';
 import auth from '@react-native-firebase/auth';
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
+const { height, width } = Dimensions.get("window");
 const Confirm = (onPress) => {
   return (
     <View>
@@ -22,12 +25,12 @@ const Confirm = (onPress) => {
     </View>
   );
 };
-const RenderInput = (label, UserInput, cover) => {
+const RenderInput = (style,label, UserInput, cover) => {
     return (
-        <View style={{paddingVertical:10}}>
+        <View>
             <Text style={styles.TextLable}>{label}</Text>
             <TextInput
-                style={styles.TextInputStyle}
+                style={style}
                 onChangeText={UserInput}
                 placeholderTextColor={colors.focus}
                 secureTextEntry={cover}
@@ -73,15 +76,19 @@ const RegisterScreen = () => {
     //            selectedItems:selectedItems
     //        })
     //    }
-        const [Username, setUsername] = useState('admin');
-        const [Pass, setPass] = useState('123');
-         const [token, setToken] = useState(null);
+        const [payload,setPayload]=useState({
+          Username:'admin',
+          Password:'123'
+        })
+        const [Password, setPassword] = useState(true);
+        const [token, setToken] = useState(null);
         const [isLoading, setLoading] = useState(true);
+        const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
         const CreatAcout = async () => {
               isLoading;
               const res = await auth().createUserWithEmailAndPassword(
-                Username,
-                Pass,
+                payload.Username,
+                payload.Password,
               );
               try {
                 setLoading(false),
@@ -90,6 +97,7 @@ const RegisterScreen = () => {
                     'key',
                     JSON.stringify(res.user.uid.toString()),
                   );
+                showMessages(R.string.notification, 'Đăng ký thành công!');
                 setTimeout(() => {
                   !token
                     ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
@@ -125,15 +133,44 @@ const RegisterScreen = () => {
           }
           statusBarProps={styles.ContainerHeader}
         />
-        <View>
+        <View style={{paddingVertical:15}}>
           {/* {RenderInput(R.string.name)}
                 {RenderInput(R.string.phone)}
                 {RenderCity(onSelectedItemsChange,Item.selectedItems, R.string.city)} */}
-          {RenderInput(R.string.email, user => setUsername(user), false)}
-          {RenderInput(R.string.pass, pass => setPass(pass), true)}
+          {RenderInput(styles.TextInputStyle,R.string.email, user => setPayload({...payload,Username:user}), false)}
+          {
+          <View style={{flexDirection:'row', paddingVertical:25}}>
+            {RenderInput([styles.TextInputStyle,{ width:width-90}],R.string.pass, pass => setPayload({...payload,Password:pass}), Password)}
+            <TouchableOpacity
+              onPress={()=>{setPassword(!Password)}} 
+              style={{borderBottomWidth:0.5, paddingTop:15}}>
+             <FastImage 
+              source={icon}
+              style={styles.imgText}
+              resizeMode={FastImage.resizeMode.contain}
+             />
+             </TouchableOpacity>
+          </View>
+        
+          }
           {/* {RenderInput(R.string.confirm_password, null, true)} */}
         </View>
-        {Confirm(() => CreatAcout())}
+        {Confirm(() => 
+        {
+          if(!validateEmail(payload.Username)){
+            showMessages(R.string.notification, 'Email không đúng');
+            return;
+          }
+          if (
+            payload.Password.trim().length < 6 ||
+            hasWhiteSpace(payload.Password))
+           {
+            showMessages(R.string.notification, 'Mật khẩu không đúng');
+            return;
+          }
+          CreatAcout()
+        }
+      )}
       </SafeAreaView>
     );
 }
@@ -148,7 +185,8 @@ const styles = StyleSheet.create({
     LeftHeader: { flexDirection: "row", width: 200, height: 40 },
     TextLeft: { marginTop: 3, fontFamily: R.fonts.bold, fontSize: 18, color: colors.white, marginLeft: 5 },
     ImageBack: { height: 14, width: 14, marginTop: 10 },
-    TextInputStyle: { borderBottomWidth: 0.5, width: 328, borderColor: colors.focus,height:40 },
-    TextLable: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.focus, }
+    TextInputStyle: { borderBottomWidth: 0.5, width: 328, borderColor: colors.focus},
+    TextLable: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.focus, },
+    imgText:{height:22,width:22}
 })
 export default RegisterScreen;
