@@ -6,6 +6,7 @@ import R from '../../assets/R';
 import {DataCity} from '../../constants/Mockup';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { ASYNC_STORAGE } from '../../constants/Constant';
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import {hasWhiteSpace,validateEmail} from '../../utils/FuncHelper';
 import {showMessages} from '../../utils/AlertHelper'
@@ -94,15 +95,15 @@ const RegisterScreen = () => {
                 setLoading(false),
                   setToken(res),
                   await AsyncStorage.setItem(
-                    'key',
-                    JSON.stringify(res.user.uid.toString()),
-                  );
+                    ASYNC_STORAGE.TOKEN,
+                    res.user.uid.toString(),
+                );
                 showMessages(R.string.notification, 'Đăng ký thành công!');
                 setTimeout(() => {
                   !token
                     ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
-                        data: 'hello',
-                      })
+                      screen: SCREEN_ROUTER_APP.HOME,
+                    })
                     : alert(R.string.pleaseRegister);
                 }, 500);
 

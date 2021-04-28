@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
-import { Text, View, Image, Button,StyleSheet } from 'react-native';
+import { Text, View, Image, Button,StyleSheet,Platform,Dimensions } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {colors} from '../constants/Theme'
 import images from '../assets/imagesAsset';
 import NavigationUtil from './NavigationUtil';
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator,BottomTabBar } from '@react-navigation/bottom-tabs';
 import StackBottom from './stack/StackBottom'
 import StackAuth from './stack/StackAuth';
 import StackApp from './stack/StackApp';
 import SplashScreen from '../Screen/Authentication/SplashScreen';
 import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP,SCREEN_ROUTER} from '../utils/Constant';
 import R from '../assets/R'
-
+const dimension = Dimensions.get('window');
+const { width, height } = dimension;
 const {
   HOME,
   PRODUCT,
@@ -31,7 +32,20 @@ const AuthStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const ButtonTab =()=>{
   return(
-    <Tab.Navigator>
+    <Tab.Navigator
+    tabBar={props => (
+      <BottomTabBar
+        {...props}
+        style={{
+          ...props.style,
+          height: Platform.OS != 'ios' ? height * 0.08 : height * 0.1
+        }}
+      />
+    )}
+    tabBarOptions={{
+        tabStyle:{paddingHorizontal:10, height:50}
+    }}
+    >
        <Tab.Screen
         name={SCREEN_ROUTER_APP.HOME} 
         component={StackBottom[HOME]}
@@ -58,7 +72,9 @@ const ButtonTab =()=>{
               />
             )
           }
+          
         }}
+
        />
        <Tab.Screen
         name={SCREEN_ROUTER_APP.PRODUCT} 
