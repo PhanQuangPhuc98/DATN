@@ -12,6 +12,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import FastImage from 'react-native-fast-image';
 import { showConfirm } from '../../utils/AlertHelper'
+import firebase from 'firebase'
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import {
   DataImageProduct,
@@ -183,8 +184,24 @@ const HomeScreen = ({navigation}) => {
     }
   };
   useEffect(() => {
+    firebase.auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log("state = definitely signed in")
+      }
+      else {
+        console.log("state = definitely signed out")
+      }
+    })
     const unsubscribe = navigation.addListener('focus', () => {
       checkToken();
+      firebase.auth().onAuthStateChanged(user => {
+        if (user) {
+          console.log("state = definitely signed in")
+        }
+        else {
+          console.log("state = definitely signed out")
+        }
+      })
     });
     return unsubscribe;
   }, [navigation]);

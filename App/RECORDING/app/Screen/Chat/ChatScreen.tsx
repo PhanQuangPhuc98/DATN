@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import {
   Text,
   View,
@@ -8,15 +8,21 @@ import {
   Dimensions,
   TouchableOpacity,
   StatusBar,
+  Platform,
 } from 'react-native';
 import R from '../../assets/R';
+import firebase from 'firebase'
+import Fire from '../../firebase/firebaseSvc'
 import image from '../../assets/imagesAsset';
-import {GiftedChat, Send, Actions} from 'react-native-gifted-chat';
+import Reactotron from 'reactotron-react-native';
+import { GiftedChat, Send, Actions } from 'react-native-gifted-chat';
 import FastImage from 'react-native-fast-image';
+import { ASYNC_STORAGE } from '../../constants/Constant'
 import ScreenComponent from '../../components/ScreenComponent';
-import {colors} from '../../constants/Theme';
+import AsyncStorage from '@react-native-community/async-storage';
+import { colors } from '../../constants/Theme';
 import NavigationUtil from '../../navigation/NavigationUtil';
-const {height, width} = Dimensions.get('window');
+const { height, width } = Dimensions.get('window');
 const Back = (onPress) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.HeaderBack}>
@@ -58,7 +64,9 @@ const Infor = (onSend, User, messages) => {
       timeFormat="HH:mm:ss"
       dateFormat="DD/MM/YYYY"
       placeholder={R.string.messenger}
+      primaryStyle={{ backgroundColor: 'white', marginHorizontal: 5, borderRadius: 20, marginTop: Platform.OS == 'android' ? 5 : 0}}
       renderSend={renderSend}
+      alwaysShowSend={true}
       renderActions={renderActions}
       messages={messages}
       onSend={onSend}
@@ -66,8 +74,31 @@ const Infor = (onSend, User, messages) => {
     />
   );
 };
-const ChatScreen = () => {
+const ChatScreen = ({ navigation }) => {
+  const [token, setToken] = useState(null);
   const [messages, setMessages] = useState([]);
+  const checkToken = async () => {
+    const res = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+    Reactotron.log('res', res);
+    if (res) {
+      setToken(res);
+    } else if (!res) {
+      setToken(null);
+    }
+  };
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      checkToken();
+    });
+    return unsubscribe;
+  }, [navigation]);
+  useEffect(() => {
+    Fire.on((messages = []) => {
+      setMessages((previousMessages) =>
+        GiftedChat.append(previousMessages, messages)
+      )
+    })
+  }, [])
   useEffect(() => {
     setMessages([
       {
@@ -82,11 +113,8 @@ const ChatScreen = () => {
       },
     ]);
   }, []);
-  const onSend = useCallback((messages = []) => {
-    setMessages((previousMessages) =>
-      GiftedChat.append(previousMessages, messages),
-    );
-  }, []);
+  Reactotron.log('id', firebase.auth().currentUser.uid);
+
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -95,22 +123,23 @@ const ChatScreen = () => {
         leftComponent={Back(() => {
           NavigationUtil.goBack();
         })}
-        leftContainerStyle={{width: 200}}
-        children={Infor(
-          (messages) => {
-            onSend(messages);
-          },
-          {
-            _id: 1,
-          },
-          messages,
-        )}
+        leftContainerStyle={{ width: 200 }}
+        children={
+          Infor(
+            Fire.send,
+            {
+              _id: Fire.uid,
+              name: Fire.name
+            },
+            messages,
+          )
+        }
       />
     </SafeAreaView>
   );
 };
 const styles = StyleSheet.create({
-  Container: {flex: 1},
+  Container: { flex: 1 },
   CantainerInfor: {
     flexDirection: 'row',
     paddingHorizontal: 5,
@@ -123,19 +152,19 @@ const styles = StyleSheet.create({
     marginRight: 7,
     borderRadius: 5,
   },
-  Action: {justifyContent: 'center', alignItems: 'center', marginBottom: 12},
-  ImgAction: {width: 25, aspectRatio: 1, marginLeft: 5},
-  HeaderImg: {paddingTop: 10},
+  Action: { justifyContent: 'center', alignItems: 'center', marginBottom: 12 },
+  ImgAction: { width: 25, aspectRatio: 1, marginLeft: 5 },
+  HeaderImg: { paddingTop: 10 },
   Send: {
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 12,
     marginRight: 5,
   },
-  ImageSearch: {height: 19, width: 37},
-  ContainerHeader: {backgroundColor: colors.Sienna1},
-  ic_Back: {height: 16, width: 10, marginTop: 10, marginRight: 15},
-  HeaderBack: {flexDirection: 'row', width: width},
+  ImageSearch: { height: 19, width: 37 },
+  ContainerHeader: { backgroundColor: colors.Sienna1 },
+  ic_Back: { height: 16, width: 10, marginTop: 10, marginRight: 15 },
+  HeaderBack: { flexDirection: 'row', width: width },
   TextHeader: {
     fontSize: 18,
     fontFamily: R.fonts.bold,

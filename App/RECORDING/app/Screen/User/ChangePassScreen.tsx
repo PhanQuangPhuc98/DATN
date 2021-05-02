@@ -17,8 +17,6 @@ import ScreenComponent from '../../components/ScreenComponent';
 import Reactotron from 'reactotron-react-native';
 import {showMessages} from '../../utils/AlertHelper'
 import NavigationUtil from '../../navigation/NavigationUtil';
-import auth from '@react-native-firebase/auth'
-import firebase from '@react-native-firebase/app';
 import R from '../../assets/R';
 import { Input } from 'react-native-elements';
 const {height, width} = Dimensions.get('window');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Text, View, Button, SafeAreaView, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-import auth from '@react-native-firebase/auth';
+// import auth from '@react-native-firebase/auth';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import Reactotron from 'reactotron-react-native';
 import {
@@ -12,6 +12,7 @@ import { DataUser } from '../../constants/Mockup'
 import { Avatar } from 'react-native-elements'
 import R from '../../assets/R'
 import { colors } from '../../constants/Theme'
+import firebase from 'firebase'
 import { ASYNC_STORAGE } from '../../constants/Constant';
 import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -53,7 +54,7 @@ const personal = () => {
   );
 };
 const Logout = async () => {
-  const res = await auth().signOut();
+  const res = await firebase.auth().signOut();
   try {
     const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
     if (token) {

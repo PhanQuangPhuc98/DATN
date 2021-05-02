@@ -13,7 +13,7 @@ import {showMessages} from '../../utils/AlertHelper'
 import Reactotron from 'reactotron-react-native';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import AsyncStorage from '@react-native-community/async-storage';
-import auth from '@react-native-firebase/auth';
+import Firebase from 'firebase'
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
 const { height, width } = Dimensions.get("window");
@@ -78,20 +78,30 @@ const RegisterScreen = () => {
     //        })
     //    }
         const [payload,setPayload]=useState({
+          Name:'',
           Username:'admin',
           Password:'123'
         })
+        console.log(payload.Name);
+        
         const [Password, setPassword] = useState(true);
         const [token, setToken] = useState(null);
         const [isLoading, setLoading] = useState(true);
         const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
         const CreatAcout = async () => {
               isLoading;
-              const res = await auth().createUserWithEmailAndPassword(
+              const res = await Firebase.auth().createUserWithEmailAndPassword(
                 payload.Username,
                 payload.Password,
               );
               try {
+                var userf = Firebase.auth().currentUser;
+                userf.updateProfile({ displayName: payload.Name})
+                .then(function() {
+                  alert("User " + payload.Name + " was created successfully.");
+                }, function(error) {
+                  console.log("Error update displayName.");
+                })
                 setLoading(false),
                   setToken(res),
                   await AsyncStorage.setItem(
@@ -138,6 +148,7 @@ const RegisterScreen = () => {
           {/* {RenderInput(R.string.name)}
                 {RenderInput(R.string.phone)}
                 {RenderCity(onSelectedItemsChange,Item.selectedItems, R.string.city)} */}
+          {RenderInput(styles.TextInputStyle,R.string.name,name=>setPayload({...payload,Name:name}),false)}
           {RenderInput(styles.TextInputStyle,R.string.email, user => setPayload({...payload,Username:user}), false)}
           {
           <View style={{flexDirection:'row', paddingVertical:25}}>
