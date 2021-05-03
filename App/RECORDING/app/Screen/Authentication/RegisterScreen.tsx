@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity,Dimensions } from 'react-native'
-import { Header } from "react-native-elements";
+import { Header,CheckBox  } from "react-native-elements";
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
 import {DataCity} from '../../constants/Mockup';
@@ -11,6 +11,7 @@ import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import {hasWhiteSpace,validateEmail} from '../../utils/FuncHelper';
 import {showMessages} from '../../utils/AlertHelper'
 import Reactotron from 'reactotron-react-native';
+import Fire from '../../firebase/firebaseSvc'
 import NavigationUtil from '../../navigation/NavigationUtil';
 import AsyncStorage from '@react-native-community/async-storage';
 import Firebase from 'firebase'
@@ -80,14 +81,16 @@ const RegisterScreen = () => {
         const [payload,setPayload]=useState({
           Name:'',
           Username:'admin',
-          Password:'123'
+          Password:'123', 
+          id:'0'
         })
         console.log(payload.Name);
-        
+        const [checked,setChecked]= useState(false);
         const [Password, setPassword] = useState(true);
         const [token, setToken] = useState(null);
         const [isLoading, setLoading] = useState(true);
         const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
+        console.log(payload.id);
         const CreatAcout = async () => {
               isLoading;
               const res = await Firebase.auth().createUserWithEmailAndPassword(
@@ -97,6 +100,7 @@ const RegisterScreen = () => {
               try {
                 var userf = Firebase.auth().currentUser;
                 userf.updateProfile({ displayName: payload.Name})
+                Firebase.database().ref('users/'+payload.Name).set({name:payload.Name,_id:Fire.uid,Category:payload.id})
                 .then(function() {
                   alert("User " + payload.Name + " was created successfully.");
                 }, function(error) {
@@ -163,8 +167,32 @@ const RegisterScreen = () => {
              />
              </TouchableOpacity>
           </View>
-        
           }
+          <CheckBox
+          title='Phòng thu'
+          checked={checked}
+          onPress={()=>
+            {
+              setPayload({
+                ...payload,
+                id:'1',
+              }),
+              setChecked(!checked)}
+            }
+        />
+        
+        <CheckBox
+          title='Người dùng'
+          checked={checked?false:true}
+          onPress={()=>{
+            setPayload({
+              ...payload,
+              id:'0',
+            }),
+            setChecked(!checked)
+          }
+          }
+        />
           {/* {RenderInput(R.string.confirm_password, null, true)} */}
         </View>
         {Confirm(() => 

@@ -74,7 +74,8 @@ const Infor = (onSend, User, messages) => {
     />
   );
 };
-const ChatScreen = ({ navigation }) => {
+const ChatScreen = ({ route,navigation }) => {
+  const {user}=route.params;
   const [token, setToken] = useState(null);
   const [messages, setMessages] = useState([]);
   const checkToken = async () => {
@@ -114,7 +115,8 @@ const ChatScreen = ({ navigation }) => {
     ]);
   }, []);
   Reactotron.log('id', firebase.auth().currentUser.uid);
-
+  Reactotron.log("data",user);
+  
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent

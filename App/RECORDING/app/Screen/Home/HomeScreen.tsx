@@ -247,6 +247,7 @@ const HomeScreen = ({navigation}) => {
               } else {
                 NavigationUtil.navigate(SCREEN_ROUTER.APP, {
                   screen: SCREEN_ROUTER_APP.CHAT,
+                  params:{user:"hello"}
                 });
               }
             }}
