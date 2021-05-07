@@ -4,6 +4,11 @@ import ScreenComponent from '../../components/ScreenComponent'
 import R from '../../assets/R'
 import { colors } from '../../constants/Theme';
 import NavigationUtil from '../../navigation/NavigationUtil';
+import {
+  SCREEN_ROUTER_AUTH,
+  SCREEN_ROUTER,
+  SCREEN_ROUTER_APP,
+} from '../../utils/Constant';
 import Reactotron from 'reactotron-react-native';
 import FastImage from 'react-native-fast-image';
 import Fire from '../../firebase/firebaseSvc'
@@ -21,41 +26,55 @@ const Back = (onPress) => {
     );
 };
 const renderList = ({ index, item }) => {
-    return (
-        <TouchableOpacity style={{ flex: 1, backgroundColor: "green" }}>
-            <View>
-                <Text>
-                    {item.name}
-                </Text>
-            </View>
+    if (item._id != Fire.uid&&item.Category==1){  
+      return (
+        <TouchableOpacity 
+        style={{flex: 1, backgroundColor: 'green'}}
+        onPress={()=>{NavigationUtil.navigate(SCREEN_ROUTER_APP.CHAT, {data: item});}}>
+          <View>
+            <Text>{item.name}</Text>
+          </View>
         </TouchableOpacity>
-    )
+      );
+    }
 }
 const ListChatScreen = () => {
     const [allUsers, setAllUsers] = useState([]);
-      const [userDetail, setUserDetail] = useState({
-    id: "",
-    name: "",
-    profileImg: "",
-  });
+    const uuid = "";
+    const [userDetail, setUserDetail] = useState({
+        _id: '',
+        name: '',
+        Category: '',
+    });
     useEffect(() => {
         const onValueChange = firebase.database()
             .ref(`/users`)
             .on('value', (snapshot) => {
                 let users = [];
                 let currentUser = {
-                    id: "",
+                    _id: "",
                     name: "",
-                    Category:""
+                    Category: ""
                 };
-                // snapshot.forEach((child)=>{
-                //     if(uuid==)
-                // })
+                snapshot.forEach((child) => {
+                    if (uuid === child.val()._id) {
+                        currentUser._id = uuid;
+                        currentUser.name = child.val().name;
+                        currentUser.Category = child.val().Category;
+                    }
+                    else {
+                        users.push({
+                            _id: child.val()._id,
+                            name: child.val().name,
+                            Category: child.val().Category,
+                        });
+                    }
+                });
+                setUserDetail(currentUser);
+                setAllUsers(users);
             });
-
     }, [])
-    // alert(JSON.stringify(payload))
-    // payload.map(item=>{Reactotron.log(item.name)})
+    Reactotron.log('data', allUsers);
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -64,18 +83,18 @@ const ListChatScreen = () => {
                 leftComponent={Back(() => {
                     NavigationUtil.goBack();
                 })}
-            // children={
-            //     <FlatList
-            //       data={payload}
-            //       keyExtractor={(index, item) => {
-            //         index._id;
-            //       }}
-            //       renderItem={renderList}
-            //     />
-            // }
+                children={
+                    <FlatList
+                        data={allUsers}
+                        keyExtractor={(index, item) => {
+                            index._id;
+                        }}
+                        renderItem={renderList}
+                    />
+                }
             />
         </SafeAreaView>
-    )
+    );
 }
 const styles = StyleSheet.create({
     Container: { flex: 1 },

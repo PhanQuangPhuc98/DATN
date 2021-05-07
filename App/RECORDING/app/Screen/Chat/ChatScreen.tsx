@@ -74,8 +74,8 @@ const Infor = (onSend, User, messages) => {
     />
   );
 };
-const ChatScreen = ({ route,navigation }) => {
-  const {user}=route.params;
+const ChatScreen = ({route, navigation}, props) => {
+  const {data} = route.params;
   const [token, setToken] = useState(null);
   const [messages, setMessages] = useState([]);
   const checkToken = async () => {
@@ -96,10 +96,10 @@ const ChatScreen = ({ route,navigation }) => {
   useEffect(() => {
     Fire.on((messages = []) => {
       setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, messages)
-      )
-    })
-  }, [])
+        GiftedChat.append(previousMessages, messages),
+      );
+    });
+  }, []);
   useEffect(() => {
     setMessages([
       {
@@ -115,8 +115,8 @@ const ChatScreen = ({ route,navigation }) => {
     ]);
   }, []);
   Reactotron.log('id', firebase.auth().currentUser.uid);
-  Reactotron.log("data",user);
-  
+  Reactotron.log('data', data);
+
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -125,17 +125,15 @@ const ChatScreen = ({ route,navigation }) => {
         leftComponent={Back(() => {
           NavigationUtil.goBack();
         })}
-        leftContainerStyle={{ width: 200 }}
-        children={
-          Infor(
-            Fire.send,
-            {
-              _id: Fire.uid,
-              name: Fire.name
-            },
-            messages,
-          )
-        }
+        leftContainerStyle={{width: 200}}
+        children={Infor(
+          Fire.send,
+          {
+            _id: Fire.uid,
+            name: Fire.name,
+          },
+          messages,
+        )}
       />
     </SafeAreaView>
   );
