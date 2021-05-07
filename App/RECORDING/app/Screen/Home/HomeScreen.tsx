@@ -246,7 +246,7 @@ const HomeScreen = ({navigation}) => {
                 return;
               } else {
                 NavigationUtil.navigate(SCREEN_ROUTER.APP, {
-                  screen: SCREEN_ROUTER_APP.CHAT,
+                  screen: SCREEN_ROUTER_APP.LISTCHAT,
                   params:{user:"hello"}
                 });
               }

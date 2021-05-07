@@ -100,7 +100,7 @@ const RegisterScreen = () => {
               try {
                 var userf = Firebase.auth().currentUser;
                 userf.updateProfile({ displayName: payload.Name})
-                Firebase.database().ref('users/'+payload.Name).set({name:payload.Name,_id:Fire.uid,Category:payload.id})
+                Firebase.database().ref('users/'+Fire.uid).set({name:payload.Name,_id:Fire.uid,Category:payload.id})
                 .then(function() {
                   alert("User " + payload.Name + " was created successfully.");
                 }, function(error) {

@@ -8,6 +8,7 @@ import SearchScreen from '../../Screen/Home/SearchScreen'
 import ChatScreen from '../../Screen/Chat/ChatScreen';
 import ChangePassScreen from '../../Screen/User/ChangePassScreen';
 import InforUserScreen from '../../Screen/User/InforUserScreen';
+import ListCHatScreen from '../../Screen/Chat/ListCHatScreen'
 const {
   HOME,
   PRODUCT,
@@ -18,6 +19,7 @@ const {
   CHAT,
   CHANGEPASS,
   INFORUSER,
+  LISTCHAT
 } = SCREEN_ROUTER_APP;
 export default {
   [HOME]: HomeScreen,
@@ -29,4 +31,5 @@ export default {
   [CHAT]: ChatScreen,
   [CHANGEPASS]: ChangePassScreen,
   [INFORUSER]: InforUserScreen,
+  [LISTCHAT]:ListCHatScreen
 };

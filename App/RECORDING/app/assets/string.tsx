@@ -1,7 +1,8 @@
 const string = {
   home: 'Trang chủ',
   product: 'Sản phẩm',
-  Chat: 'Chát với quản trị',
+  Chat: 'Chát với nhân viên phòng thu ',
+  ListChat:'Danh sách phòng thu',
   putcalender: 'Đặt lịch',
   notification: 'Thông báo',
   user: 'Tài khoản',
