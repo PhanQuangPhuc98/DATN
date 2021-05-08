@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Button, SafeAreaView, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
-// import auth from '@react-native-firebase/auth';
+import { Text, View, Button, SafeAreaView, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import Reactotron from 'reactotron-react-native';
 import {
@@ -18,6 +17,7 @@ import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
+import ImagePicker from 'react-native-image-crop-picker'
 import ModalDrop from '../../components/ModalDrop'
 const { height, width } = Dimensions.get('window');
 const left = () => {
@@ -100,6 +100,33 @@ const UserScreen = () => {
   const toggleModal=()=>{
     setModalVisible(!isModalVisible);
   }
+  const [image, setImage] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [transferred, setTransferred] = useState(0);
+  const [post, setPost] = useState(null);
+  const takePhotoFromCamera = () => {
+    ImagePicker.openCamera({
+      width: 1200,
+      height: 780,
+      cropping: true,
+    }).then((image) => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
+    });
+  };
+
+  const choosePhotoFromLibrary = () => {
+    ImagePicker.openPicker({
+      width: 1200,
+      height: 780,
+      cropping: true,
+    }).then((image) => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
+    });
+  };
   return (
     <SafeAreaView style={{ backgroundColor: colors.primary, flex: 1 }}>
       <ScreenComponent

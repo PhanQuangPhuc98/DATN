@@ -132,6 +132,7 @@ android {
         applicationId "com.recording"
         minSdkVersion rootProject.ext.minSdkVersion
         multiDexEnabled true
+        vectorDrawables.useSupportLibrary = true
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"

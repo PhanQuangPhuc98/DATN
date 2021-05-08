@@ -129,8 +129,8 @@ const ChatScreen = ({route, navigation}, props) => {
         children={Infor(
           Fire.send,
           {
-            _id: Fire.uid,
-            name: Fire.name,
+            _id: data._id,
+            name: data.name,
           },
           messages,
         )}

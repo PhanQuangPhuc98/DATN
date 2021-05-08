@@ -26,7 +26,7 @@ const Back = (onPress) => {
     );
 };
 const renderList = ({ index, item }) => {
-    if (item._id != Fire.uid&&item.Category==1){  
+    if (item._id != Fire.uid){  
       return (
         <TouchableOpacity 
         style={{flex: 1, backgroundColor: 'green'}}
