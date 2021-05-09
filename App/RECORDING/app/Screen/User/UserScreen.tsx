@@ -17,8 +17,8 @@ import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
-import ImagePicker from 'react-native-image-crop-picker'
 import ModalDrop from '../../components/ModalDrop'
+import { log } from 'react-native-reanimated';
 const { height, width } = Dimensions.get('window');
 const left = () => {
   return (
@@ -27,7 +27,7 @@ const left = () => {
     </View>
   );
 };
-const personal = () => {
+const personal = (onPress) => {
   return (
     <View style={styles.HeaderPerson}>
       <Avatar
@@ -35,9 +35,7 @@ const personal = () => {
         avatarStyle={styles.AvatarStyle}
         source={images.img_Avatar}>
         <Avatar.Accessory
-          onPress={() => {
-            alert('hello');
-          }}
+          onPress={onPress}
           size={15}
         />
       </Avatar>
@@ -100,33 +98,6 @@ const UserScreen = () => {
   const toggleModal=()=>{
     setModalVisible(!isModalVisible);
   }
-  const [image, setImage] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [transferred, setTransferred] = useState(0);
-  const [post, setPost] = useState(null);
-  const takePhotoFromCamera = () => {
-    ImagePicker.openCamera({
-      width: 1200,
-      height: 780,
-      cropping: true,
-    }).then((image) => {
-      console.log(image);
-      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-      setImage(imageUri);
-    });
-  };
-
-  const choosePhotoFromLibrary = () => {
-    ImagePicker.openPicker({
-      width: 1200,
-      height: 780,
-      cropping: true,
-    }).then((image) => {
-      console.log(image);
-      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
-      setImage(imageUri);
-    });
-  };
   return (
     <SafeAreaView style={{ backgroundColor: colors.primary, flex: 1 }}>
       <ScreenComponent
@@ -135,7 +106,7 @@ const UserScreen = () => {
         statusBarProps={styles.ContainerHeader}
         children={
           <View>
-            {personal()}
+            {personal(()=>NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.ADPOST}))}
             <View style={{ backgroundColor: colors.white }}>
               {ChildScreen(
                 images.ic_InforUser,

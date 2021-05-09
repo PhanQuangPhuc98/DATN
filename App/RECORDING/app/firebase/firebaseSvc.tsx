@@ -1,11 +1,11 @@
-import Firebase from 'firebase'
-import  'firebase/app'
-import  'firebase/auth'
-import  'firebase/database'
+import * as Firebase from "firebase"
+// import  'firebase/app'
+// import  'firebase/auth'
+// import  'firebase/database'
 class FirebaseSvc {
   constructor() {
-    if (!Firebase.apps.length) {
-      Firebase.initializeApp({
+    if (!Firebase.default.apps.length) {
+      Firebase.default.initializeApp({
         apiKey: "AIzaSyDNdbvZCWA9socHS0nt8ulJ3bfoOiJXRVE",
         authDomain: "recording-c2188.firebaseapp.com",
         databaseURL: "https://recording-c2188-default-rtdb.firebaseio.com",
@@ -18,19 +18,19 @@ class FirebaseSvc {
     }
   }
   get uid(){
-    return (Firebase.auth().currentUser || {}).uid;
+    return (Firebase.default.auth().currentUser || {}).uid;
   }
   get name(){
-    return(Firebase.auth().currentUser||{}).displayName;
+    return(Firebase.default.auth().currentUser||{}).displayName;
   }
   get ref(){
-    const currentUser =Firebase.auth().currentUser.uid;
+    const currentUser =Firebase.default.auth().currentUser.uid;
     if(currentUser!=null){
-      return Firebase.database().ref('messages')
+      return Firebase.default.database().ref('messages')
     }
   }
   get email(){
-    return(Firebase.auth().currentUser||{}).email;
+    return(Firebase.default.auth().currentUser||{}).email;
   }
   parse = snapshot => {
     const { timestamp: numberStamp, text, user } = snapshot.val();
@@ -45,7 +45,7 @@ class FirebaseSvc {
     .on('child_added', snapshot => callback(this.parse(snapshot)));
   }
   get timestamp(){
-    return Firebase.database.ServerValue.TIMESTAMP;
+    return Firebase.default.database.ServerValue.TIMESTAMP;
   }
 
   send = (messages=[]) => {

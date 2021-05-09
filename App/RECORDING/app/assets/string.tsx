@@ -37,5 +37,6 @@ const string = {
   old_password: 'Mật khẩu cũ',
   new_password: 'Mật khẩu mới',
   confirm_new_password: 'Xác nhận mật khẩu mới',
+  update_avatar:"Cập nhật ảnh đại diện"
 };
 export default string;

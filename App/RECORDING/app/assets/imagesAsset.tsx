@@ -43,5 +43,6 @@ const images = {
   ic_BackRight: require('./images/ic_BackRight.png'),
   ic_invisible: require('./images/ic_invisible.png'),
   ic_visibility: require('./images/ic_visibility.png'),
+  ic_Photo:require('./images/ic_Photo.png')
 };
 export default images;

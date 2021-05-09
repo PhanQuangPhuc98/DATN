@@ -24,7 +24,8 @@ const {
   CHAT,
   CHANGEPASS,
   INFORUSER,
-  LISTCHAT
+  LISTCHAT,
+  ADPOST
 } = SCREEN_ROUTER_APP;
 const { LOGIN,REGISTER,FORGOT_PASS } = SCREEN_ROUTER_AUTH
 const Stack = createStackNavigator();
@@ -251,6 +252,10 @@ const App=()=>{
       <AppStack.Screen
         name={SCREEN_ROUTER_APP.LISTCHAT}
         component={StackApp[LISTCHAT]}
+      />
+      <AppStack.Screen
+        name={SCREEN_ROUTER_APP.ADPOST}
+        component={StackApp[ADPOST]}
       />
     </AppStack.Navigator>
   );
