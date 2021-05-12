@@ -11,7 +11,8 @@ import { DataUser } from '../../constants/Mockup'
 import { Avatar } from 'react-native-elements'
 import R from '../../assets/R'
 import { colors } from '../../constants/Theme'
-import firebase from 'firebase'
+import Fire from '../../firebase/firebaseSvc';
+import {firebase,database} from '../../firebase/firebaseSvc';
 import { ASYNC_STORAGE } from '../../constants/Constant';
 import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -27,13 +28,13 @@ const left = () => {
     </View>
   );
 };
-const personal = (onPress) => {
+const personal = (Users,onPress) => {
   return (
     <View style={styles.HeaderPerson}>
       <Avatar
         size={56}
         avatarStyle={styles.AvatarStyle}
-        source={images.img_Avatar}>
+        source={Users?{uri:Users}:images.ic_User}>
         <Avatar.Accessory
           onPress={onPress}
           size={15}
@@ -92,12 +93,33 @@ const ChildScreen = (source, lable, url,onPress) => {
 
   );
 };
-
 const UserScreen = () => {
   const [isModalVisible, setModalVisible]=useState(false);
+  const [Users, setUsers] = useState({
+    _id: "",
+    name: "",
+    Category: "",
+    Image:"",
+    email:""
+  });
   const toggleModal=()=>{
     setModalVisible(!isModalVisible);
   }
+  useEffect(() => {
+    const onValueChange = database()
+        .ref('/users/'+Fire.uid)
+        .on('value', (snapshot) => {
+            setUsers({
+              ...Users,
+              _id:snapshot.val()._id,
+              name:snapshot.val().name,
+              Category:snapshot.val().Category,
+              Image:snapshot.val().Image,
+              email:snapshot.val().email
+            });
+        });
+}, [])
+Reactotron.log("data",Users)
   return (
     <SafeAreaView style={{ backgroundColor: colors.primary, flex: 1 }}>
       <ScreenComponent
@@ -106,7 +128,7 @@ const UserScreen = () => {
         statusBarProps={styles.ContainerHeader}
         children={
           <View>
-            {personal(()=>NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.ADPOST}))}
+            {personal(Users.Image,()=>NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.ADPOST}))}
             <View style={{ backgroundColor: colors.white }}>
               {ChildScreen(
                 images.ic_InforUser,

@@ -11,7 +11,7 @@ import {
   Platform,
 } from 'react-native';
 import R from '../../assets/R';
-import firebase from 'firebase'
+import {firebase} from '../../firebase/firebaseSvc'
 import Fire from '../../firebase/firebaseSvc'
 import image from '../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
@@ -129,8 +129,8 @@ const ChatScreen = ({route, navigation}, props) => {
         children={Infor(
           Fire.send,
           {
-            _id: data._id,
-            name: data.name,
+            _id: Fire.uid,
+            name: Fire.name,
           },
           messages,
         )}

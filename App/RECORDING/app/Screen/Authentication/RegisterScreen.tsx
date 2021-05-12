@@ -14,7 +14,7 @@ import Reactotron from 'reactotron-react-native';
 import Fire from '../../firebase/firebaseSvc'
 import NavigationUtil from '../../navigation/NavigationUtil';
 import AsyncStorage from '@react-native-community/async-storage';
-import Firebase from 'firebase'
+import {Auth,database} from '../../firebase/firebaseSvc'
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
 const { height, width } = Dimensions.get("window");
@@ -93,14 +93,14 @@ const RegisterScreen = () => {
         console.log(payload.id);
         const CreatAcout = async () => {
               isLoading;
-              const res = await Firebase.auth().createUserWithEmailAndPassword(
+              const res = await Auth().createUserWithEmailAndPassword(
                 payload.Username,
                 payload.Password,
               );
               try {
-                var userf = Firebase.auth().currentUser;
+                var userf = Auth().currentUser;
                 userf.updateProfile({ displayName: payload.Name})
-                Firebase.database().ref('users/'+Fire.uid).set({name:payload.Name,_id:Fire.uid,Category:payload.id})
+                database().ref(`/users/${Fire.uid}`).set({name:payload.Name,_id:Fire.uid,Category:payload.id,email:payload.Username,Image:""})
                 .then(function() {
                   alert("User " + payload.Name + " was created successfully.");
                 }, function(error) {

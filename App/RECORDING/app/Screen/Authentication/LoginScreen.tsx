@@ -13,7 +13,7 @@ import { hasWhiteSpace, validateEmail } from '../../utils/FuncHelper';
 import { showMessages } from '../../utils/AlertHelper'
 import AsyncStorage from '@react-native-community/async-storage';
 // import auth from '@react-native-firebase/auth'
-import Firebase from 'firebase'
+import {firebase,Auth} from '../../firebase/firebaseSvc'
 const { height, width } = Dimensions.get("window");
 const Infor = (style, placeholder, onChangeText, value, secureTextEntry) => {
   return (
@@ -100,7 +100,7 @@ const LoginScreen = ({ navigation }) => {
   }, [navigation]);
   const signInWithEmail = async () => {
     isLoading
-    const res = await Firebase.auth().signInWithEmailAndPassword(payload.Username, payload.Pass);
+    const res = await Auth().signInWithEmailAndPassword(payload.Username, payload.Pass);
     try {
       setLoading(false),
         setToken(res),

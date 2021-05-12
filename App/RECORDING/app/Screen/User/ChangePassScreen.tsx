@@ -10,7 +10,7 @@ import {
   Button
 } from 'react-native';
 import images from '../../assets/imagesAsset';
-import firebase from 'firebase';
+import {firebase} from '../../firebase/firebaseSvc';
 import FastImage from 'react-native-fast-image';
 import {colors} from '../../constants/Theme';
 import {hasWhiteSpace} from '../../utils/FuncHelper'

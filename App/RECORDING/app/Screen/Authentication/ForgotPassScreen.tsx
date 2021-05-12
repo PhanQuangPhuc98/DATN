@@ -6,8 +6,7 @@ import R from '../../assets/R';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import AsyncStorage from '@react-native-community/async-storage';
-import Firebase from 'firebase'
-import auth from '@react-native-firebase/auth'
+import {firebase,Auth} from '../../firebase/firebaseSvc'
 import Reactotron from 'reactotron-react-native';
 import {hasWhiteSpace,validateEmail} from '../../utils/FuncHelper';
 import {showMessages} from '../../utils/AlertHelper'
@@ -57,7 +56,7 @@ const ForgotPassScreen = () => {
      const [isLoading, setLoading] = useState(true);
      const ForgotPass = async () => {
        isLoading;
-       const res = await Firebase.auth().sendPasswordResetEmail(email);
+       const res = await Auth().sendPasswordResetEmail(email);
        try {
          setLoading(false),
            setToken(res),

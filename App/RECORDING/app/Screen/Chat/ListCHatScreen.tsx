@@ -12,7 +12,7 @@ import {
 import Reactotron from 'reactotron-react-native';
 import FastImage from 'react-native-fast-image';
 import Fire from '../../firebase/firebaseSvc'
-import firebase from 'firebase'
+import {firebase,database} from '../../firebase/firebaseSvc'
 const { height, width } = Dimensions.get('window');
 const Back = (onPress) => {
     return (
@@ -27,12 +27,18 @@ const Back = (onPress) => {
 };
 const renderList = ({ index, item }) => {
     if (item._id != Fire.uid){  
+        Reactotron.log("image",item.Image)
       return (
         <TouchableOpacity 
-        style={{flex: 1, backgroundColor: 'green'}}
+        style={{flex: 1}}
         onPress={()=>{NavigationUtil.navigate(SCREEN_ROUTER_APP.CHAT, {data: item});}}>
           <View>
             <Text>{item.name}</Text>
+            <FastImage
+            style={{height:150,width:150}}
+            source={item?{uri:item.Image}:R.images.ic_User}
+            resizeMode={FastImage.resizeMode.contain}
+            ></FastImage>
           </View>
         </TouchableOpacity>
       );
@@ -47,26 +53,29 @@ const ListChatScreen = () => {
         Category: '',
     });
     useEffect(() => {
-        const onValueChange = firebase.database()
+        const onValueChange = database()
             .ref(`/users`)
             .on('value', (snapshot) => {
                 let users = [];
                 let currentUser = {
                     _id: "",
                     name: "",
-                    Category: ""
+                    Category: "",
+                    Image:""
                 };
                 snapshot.forEach((child) => {
                     if (uuid === child.val()._id) {
                         currentUser._id = uuid;
                         currentUser.name = child.val().name;
                         currentUser.Category = child.val().Category;
+                        currentUser.Image = child.val().Image
                     }
                     else {
                         users.push({
                             _id: child.val()._id,
                             name: child.val().name,
                             Category: child.val().Category,
+                            Image:child.val().Image
                         });
                     }
                 });
