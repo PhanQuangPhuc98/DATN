@@ -28,7 +28,7 @@ const left = () => {
     </View>
   );
 };
-const personal = (Users,onPress) => {
+const personal = (Users,onPress,name, phone) => {
   return (
     <View style={styles.HeaderPerson}>
       <Avatar
@@ -42,10 +42,10 @@ const personal = (Users,onPress) => {
       </Avatar>
       <View style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
         <Text style={styles.TextName}>
-          {DataUser.name}
+          {name}
         </Text>
         <Text style={[styles.TextName, { fontSize: 14, color: colors.focus }]}>
-          {DataUser.phone}
+          {phone}
         </Text>
 
       </View>
@@ -100,7 +100,8 @@ const UserScreen = () => {
     name: "",
     Category: "",
     Image:"",
-    email:""
+    email:"",
+    phone:""
   });
   const toggleModal=()=>{
     setModalVisible(!isModalVisible);
@@ -115,7 +116,8 @@ const UserScreen = () => {
               name:snapshot.val().name,
               Category:snapshot.val().Category,
               Image:snapshot.val().Image,
-              email:snapshot.val().email
+              email:snapshot.val().email,
+              phone:snapshot.val().Phone
             });
         });
 }, [])
@@ -128,7 +130,10 @@ Reactotron.log("data",Users)
         statusBarProps={styles.ContainerHeader}
         children={
           <View>
-            {personal(Users.Image,()=>NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.ADPOST}))}
+            {personal(
+              Users.Image,
+              ()=>NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.ADPOST}),
+              Users.name,Users.phone)}
             <View style={{ backgroundColor: colors.white }}>
               {ChildScreen(
                 images.ic_InforUser,

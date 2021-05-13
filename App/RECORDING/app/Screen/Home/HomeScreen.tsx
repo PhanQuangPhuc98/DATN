@@ -229,7 +229,8 @@ const HomeScreen = ({navigation}) => {
           {Information('KHUYẾN MẠI', 'Xem thêm >>')}
         </View>
         {ListPromotion()}
-        <View style={styles.Animated}>
+        <View 
+        style={styles.Animated}>
           <ButtonAnimation
             ButtonMess={() => {
               if (!token) {
@@ -283,6 +284,6 @@ const styles = StyleSheet.create({
   imgPromotion: { height: 88, width: 88, borderRadius: 5 },
   imgDate: { height: 11.74, width: 11.87, marginHorizontal: 5, marginTop: 5 },
   TextPromotion: { fontSize: 15, fontFamily: R.fonts.bold },
-  Animated: { top: 40, marginLeft: 360, position: "absolute" }
+  Animated: { flex:1,top: 40, position: "absolute", right:30 }
 })
 export default HomeScreen;

@@ -82,6 +82,7 @@ const RegisterScreen = () => {
           Name:'',
           Username:'admin',
           Password:'123', 
+          Phone:'',
           id:'0'
         })
         console.log(payload.Name);
@@ -100,7 +101,7 @@ const RegisterScreen = () => {
               try {
                 var userf = Auth().currentUser;
                 userf.updateProfile({ displayName: payload.Name})
-                database().ref(`/users/${Fire.uid}`).set({name:payload.Name,_id:Fire.uid,Category:payload.id,email:payload.Username,Image:""})
+                database().ref(`/users/${Fire.uid}`).set({name:payload.Name,_id:Fire.uid,Category:payload.id,email:payload.Username,Image:"",Phone:payload.Phone})
                 .then(function() {
                   alert("User " + payload.Name + " was created successfully.");
                 }, function(error) {
@@ -154,6 +155,7 @@ const RegisterScreen = () => {
                 {RenderCity(onSelectedItemsChange,Item.selectedItems, R.string.city)} */}
           {RenderInput(styles.TextInputStyle,R.string.name,name=>setPayload({...payload,Name:name}),false)}
           {RenderInput(styles.TextInputStyle,R.string.email, user => setPayload({...payload,Username:user}), false)}
+          {RenderInput(styles.TextInputStyle,R.string.phone,phone=>setPayload({...payload,Phone:phone}),false)}
           {
           <View style={{flexDirection:'row', paddingVertical:25}}>
             {RenderInput([styles.TextInputStyle,{ width:width-90}],R.string.pass, pass => setPayload({...payload,Password:pass}), Password)}
@@ -219,7 +221,7 @@ const styles = StyleSheet.create({
     ContainerHeader: { backgroundColor: colors.Sienna1 },
     ContainerConfirm: {
         height: 46, backgroundColor: colors.Sienna1, borderRadius: 30, width: 330,
-        alignItems: "center", justifyContent: "center", marginVertical: 120, marginHorizontal: 20
+        alignItems: "center", justifyContent: "center",marginTop:10, marginHorizontal: 20
     },
     TextConfirm: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.white },
     LeftHeader: { flexDirection: "row", width: 200, height: 40 },

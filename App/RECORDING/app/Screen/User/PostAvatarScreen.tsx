@@ -124,13 +124,16 @@ const PostAvatarScreen = () => {
           {renderAvatar(image, choosePhotoFromLibrary)}
           <View style={{ flexDirection: "row" }}>
             {renderCamera(takePhotoFromCamera)}
-            {Confirm(()=>{
+            {
+            uploading?<ActivityIndicator size="small" color="#0000ff" />:
+            Confirm(()=>{
               uploadImage(),
-              uploading==false?<ActivityIndicator size="small" color="#0000ff" />:null,
               setTimeout(() => {
                 NavigationUtil.goBack()
               }, 2000);
-            })}
+            })
+            
+            }
            
           </View>
         </SafeAreaView>
