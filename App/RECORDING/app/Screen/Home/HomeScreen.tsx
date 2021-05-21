@@ -215,6 +215,8 @@ const HomeScreen = ({navigation}) => {
             height: width / 4,
             backgroundColor: colors.Sienna1,
             alignItems: 'center',
+            justifyContent:'center',
+            paddingHorizontal:10
           }}>
           {Search(() => {
             NavigationUtil.navigate(SCREEN_ROUTER.APP, {
@@ -229,7 +231,7 @@ const HomeScreen = ({navigation}) => {
           {Information('KHUYẾN MẠI', 'Xem thêm >>')}
         </View>
         {ListPromotion()}
-        <View 
+        {/* <View 
         style={styles.Animated}>
           <ButtonAnimation
             ButtonMess={() => {
@@ -254,7 +256,7 @@ const HomeScreen = ({navigation}) => {
             }}
             //ButtonPhone={toggleModal}
           />
-        </View>
+        </View> */}
         <ModalDrop
           toggleModal={toggleModal}
           isModalVisible={isModalVisible}
@@ -269,7 +271,7 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   Container: { flex: 1, backgroundColor: colors.primary },
   HeaderStyle: { backgroundColor: colors.Sienna1 },
-  SearchStyle: { width: 303, height: 44, backgroundColor: colors.white, flexDirection: "row", borderRadius: 5, marginTop: 40, marginRight: 40 },
+  SearchStyle: { width: width-50, height: 44, backgroundColor: colors.white, flexDirection: "row", borderRadius: 5, marginTop: 40 },
   TextSearch: { fontSize: 20, fontFamily: R.fonts.regular },
   HeaderSearch: { height: "100%", width: 30, alignItems: "center", justifyContent: "center" },
   ImageSearch: { height: 16, width: 16 },

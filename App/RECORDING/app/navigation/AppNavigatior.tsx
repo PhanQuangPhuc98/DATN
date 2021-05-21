@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { Text, View, Image, Button,StyleSheet,Platform,Dimensions } from 'react-native';
+import { Text, View, Image, Button, StyleSheet, Platform, Dimensions, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {colors} from '../constants/Theme'
+import { colors } from '../constants/Theme'
 import images from '../assets/imagesAsset';
 import NavigationUtil from './NavigationUtil';
-import { createBottomTabNavigator,BottomTabBar } from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator, BottomTabBar } from '@react-navigation/bottom-tabs';
 import StackBottom from './stack/StackBottom'
 import StackAuth from './stack/StackAuth';
+import AsyncStorage from '@react-native-community/async-storage';
+import { showConfirm } from '../utils/AlertHelper'
+import { ASYNC_STORAGE } from '../constants/Constant'
+import Reactotron from 'reactotron-react-native';
 import StackApp from './stack/StackApp';
 import SplashScreen from '../Screen/Authentication/SplashScreen';
-import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP,SCREEN_ROUTER} from '../utils/Constant';
+import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../utils/Constant';
 import R from '../assets/R'
 const dimension = Dimensions.get('window');
 const { width, height } = dimension;
@@ -27,190 +31,294 @@ const {
   LISTCHAT,
   ADPOST
 } = SCREEN_ROUTER_APP;
-const { LOGIN,REGISTER,FORGOT_PASS } = SCREEN_ROUTER_AUTH
+const { LOGIN, REGISTER, FORGOT_PASS } = SCREEN_ROUTER_AUTH
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
 const AuthStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
-const ButtonTab =()=>{
-  return(
+const ButtonTab = () => {
+  return (
     <Tab.Navigator
-    tabBar={props => (
-      <BottomTabBar
-        {...props}
-        style={{
-          ...props.style,
-          height: Platform.OS != 'ios' ? height * 0.08 : height * 0.1
-        }}
-      />
-    )}
-    tabBarOptions={{
-        tabStyle:{paddingHorizontal:10, height:50}
-    }}
+      tabBar={props => (
+        <BottomTabBar
+          {...props}
+          style={{
+            ...props.style,
+            height: Platform.OS != 'ios' ? height * 0.08 : height * 0.1
+          }}
+        />
+      )}
+      tabBarOptions={{
+        tabStyle: { paddingHorizontal: 10, height: 50 }
+      }}
     >
-       <Tab.Screen
-        name={SCREEN_ROUTER_APP.HOME} 
+      <Tab.Screen
+        name={SCREEN_ROUTER_APP.HOME}
         component={StackBottom[HOME]}
         options={{
-          tabBarIcon:({focused,color, size})=>{
+          tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <View>
-                <Image 
-                source={images.ic_Home}
-                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                <Image
+                  source={images.ic_Home}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
                 >
                 </Image>
               </View>
             )
           },
-          tabBarLabel:({focused, color})=>{
+          tabBarLabel: ({ focused, color }) => {
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <Text
-              children={R.string.home}
-              style={[styles.LableTabButon,{color:tintColor}]}
+                children={R.string.home}
+                style={[styles.LableTabButon, { color: tintColor }]}
               />
             )
           }
-          
+
         }}
 
-       />
-       <Tab.Screen
-        name={SCREEN_ROUTER_APP.PRODUCT} 
+      />
+      <Tab.Screen
+        name={SCREEN_ROUTER_APP.PRODUCT}
         component={StackBottom[PRODUCT]}
         options={{
-          tabBarIcon:({focused,color, size})=>{
+          tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <View>
-                <Image 
-                source={images.ic_Product}
-                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                <Image
+                  source={images.ic_Product}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
                 >
                 </Image>
               </View>
             )
           },
-          tabBarLabel:({focused, color})=>{
+          tabBarLabel: ({ focused, color }) => {
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <Text
-              children={R.string.product}
-              style={[styles.LableTabButon,{color:tintColor}]}
+                children={R.string.product}
+                style={[styles.LableTabButon, { color: tintColor }]}
+              />
+            )
+          },
+          tabBarButton: buttonProps => {
+            return (
+              <TouchableOpacity
+                {...buttonProps}
+                onPress={async e => {
+                  const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+                  if (!token) {
+                    showConfirm(
+                      R.string.notification,
+                      'Vui lòng đăng nhập để thực hiện chức năng này',
+                      () =>
+                        NavigationUtil.navigate(SCREEN_ROUTER.AUTH, {
+                          screen: SCREEN_ROUTER_AUTH.LOGIN,
+                        }),
+                      null,
+                      'Đăng nhập',
+                    );
+                    return;
+                   
+                  }
+                  buttonProps.onPress(e);
+                }
+                }
               />
             )
           }
         }}
-       />
-       <Tab.Screen
-        name={SCREEN_ROUTER_APP.PUTCALENDAR} 
+      />
+      <Tab.Screen
+        name={SCREEN_ROUTER_APP.PUTCALENDAR}
         component={StackBottom[PUTCALENDAR]}
         options={{
-          tabBarIcon:({focused,color, size})=>{
+          tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <View>
-                <Image 
-                source={images.ic_PutCalender}
-                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                <Image
+                  source={images.ic_PutCalender}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
                 >
                 </Image>
               </View>
             )
           },
-          tabBarLabel:({focused, color})=>{
+          tabBarLabel: ({ focused, color }) => {
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <Text
-              children={R.string.putcalender}
-              style={[styles.LableTabButon,{color:tintColor}]}
+                children={R.string.putcalender}
+                style={[styles.LableTabButon, { color: tintColor }]}
+              />
+            )
+          },
+          tabBarButton: buttonProps => {
+            return (
+              <TouchableOpacity
+                {...buttonProps}
+                onPress={async e => {
+                  const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+                  if (!token) {
+                    showConfirm(
+                      R.string.notification,
+                      'Vui lòng đăng nhập để thực hiện chức năng này',
+                      () =>
+                        NavigationUtil.navigate(SCREEN_ROUTER.AUTH, {
+                          screen: SCREEN_ROUTER_AUTH.LOGIN,
+                        }),
+                      null,
+                      'Đăng nhập',
+                    );
+                    return;
+                   
+                  }
+                  buttonProps.onPress(e);
+                }
+                }
               />
             )
           }
         }}
-       />
-       <Tab.Screen
-        name={SCREEN_ROUTER_APP.NOTIFY} 
+      />
+      <Tab.Screen
+        name={SCREEN_ROUTER_APP.NOTIFY}
         component={StackBottom[NOTIFY]}
         options={{
-          tabBarIcon:({focused,color, size})=>{
+          tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <View>
-                <Image 
-                source={images.ic_Notification}
-                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                <Image
+                  source={images.ic_Notification}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
                 >
                 </Image>
               </View>
             )
           },
-          tabBarLabel:({focused, color})=>{
+          tabBarLabel: ({ focused, color }) => {
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <Text
-              children={R.string.notification}
-              style={[styles.LableTabButon,{color:tintColor}]}
+                children={R.string.notification}
+                style={[styles.LableTabButon, { color: tintColor }]}
+              />
+            )
+          },
+          tabBarButton: buttonProps => {
+            return (
+              <TouchableOpacity
+                {...buttonProps}
+                onPress={async e => {
+                  const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+                  if (!token) {
+                    showConfirm(
+                      R.string.notification,
+                      'Vui lòng đăng nhập để thực hiện chức năng này',
+                      () =>
+                        NavigationUtil.navigate(SCREEN_ROUTER.AUTH, {
+                          screen: SCREEN_ROUTER_AUTH.LOGIN,
+                        }),
+                      null,
+                      'Đăng nhập',
+                    );
+                    return;
+                   
+                  }
+                  buttonProps.onPress(e);
+                }
+                }
               />
             )
           }
         }}
-       />
-       <Tab.Screen
-        name={SCREEN_ROUTER_APP.USER} 
+      />
+      <Tab.Screen
+        name={SCREEN_ROUTER_APP.USER}
         component={StackBottom[USER]}
         options={{
-          tabBarIcon:({focused,color, size})=>{
+          tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <View>
-                <Image 
-                source={images.ic_User}
-                style={{width:sizeIcon,height:sizeIcon,tintColor:tintColor,resizeMode:"contain"}}
+                <Image
+                  source={images.ic_User}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
                 >
                 </Image>
               </View>
             )
           },
-          tabBarLabel:({focused, color})=>{
+          tabBarLabel: ({ focused, color }) => {
             const tintColor = focused ? colors.Sienna1 : colors.focus;
-            return(
+            return (
               <Text
-              children={R.string.user}
-              style={[styles.LableTabButon,{color:tintColor}]}
+                children={R.string.user}
+                style={[styles.LableTabButon, { color: tintColor }]}
+              />
+            )
+          },
+          tabBarButton: buttonProps => {
+            return (
+              <TouchableOpacity
+                {...buttonProps}
+                onPress={async e => {
+                  const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+                  if (!token) {
+                    showConfirm(
+                      R.string.notification,
+                      'Vui lòng đăng nhập để thực hiện chức năng này',
+                      () =>
+                        NavigationUtil.navigate(SCREEN_ROUTER.AUTH, {
+                          screen: SCREEN_ROUTER_AUTH.LOGIN,
+                        }),
+                      null,
+                      'Đăng nhập',
+                    );
+                    return;
+                   
+                  }
+                  buttonProps.onPress(e);
+                }
+                }
               />
             )
           }
         }}
-       />
+      />
     </Tab.Navigator>
   )
 }
 const AuthStackScreen = () => {
-    return (
-      <AuthStack.Navigator
-        headerMode='none'>
-        <AuthStack.Screen  
-         name={SCREEN_ROUTER_AUTH.LOGIN} component={StackAuth[LOGIN]}
-          />
-        <AuthStack.Screen  
-         name={SCREEN_ROUTER_AUTH.REGISTER} component={StackAuth[REGISTER]}
-          />
-        <AuthStack.Screen  
-         name={SCREEN_ROUTER_AUTH.FORGOT_PASS} component={StackAuth[FORGOT_PASS]}
-          />
+  return (
+    <AuthStack.Navigator
+      headerMode='none'>
+      <AuthStack.Screen
+        name={SCREEN_ROUTER_AUTH.LOGIN} component={StackAuth[LOGIN]}
+      />
+      <AuthStack.Screen
+        name={SCREEN_ROUTER_AUTH.REGISTER} component={StackAuth[REGISTER]}
+      />
+      <AuthStack.Screen
+        name={SCREEN_ROUTER_AUTH.FORGOT_PASS} component={StackAuth[FORGOT_PASS]}
+      />
 
-      </AuthStack.Navigator>
-    );
-  };
-const App=()=>{
+    </AuthStack.Navigator>
+  );
+};
+const App = () => {
   return (
     <AppStack.Navigator headerMode="none">
       <AppStack.Screen
@@ -273,7 +381,7 @@ const MainTab = () => {
         />
         <Stack.Screen
           name={SCREEN_ROUTER.AUTH} component={AuthStackScreen}
-        /> 
+        />
         <Stack.Screen
           name={SCREEN_ROUTER.APP} component={App}
         />
@@ -282,6 +390,6 @@ const MainTab = () => {
   );
 }
 const styles = StyleSheet.create({
-  LableTabButon:{fontSize:11, fontFamily:R.fonts.bold}
+  LableTabButon: { fontSize: 11, fontFamily: R.fonts.bold }
 })
 export default MainTab;

@@ -41,7 +41,6 @@ const RenderInput = (style,label, UserInput, cover) => {
     )
 }
 const RenderCity = (onSelectedItemsChange,selectedItems,label) => {
-
     return (
         <View>
             <Text style={styles.TextLable}>{label}</Text>
@@ -49,7 +48,7 @@ const RenderCity = (onSelectedItemsChange,selectedItems,label) => {
                 items={DataCity}
                 IconRenderer={Icon}
                 single={true}
-                uniqueKey="city_id"
+                uniqueKey="name"
                 // subKey="DataCity"
                 confirmText={R.string.confirm}
                 selectText={R.string.select_province}
@@ -65,27 +64,23 @@ const RenderCity = (onSelectedItemsChange,selectedItems,label) => {
         </View>
     )
 }
-
 const RegisterScreen = () => {
-    //     console.log(DataCity);
-        
-    //     const [Item, SetItem]= useState({
-    //       selectedItems: [],
-    //    })
-    //    const onSelectedItemsChange =(selectedItems)=>{
-    //        SetItem({
-    //            ...Item.selectedItems,
-    //            selectedItems:selectedItems
-    //        })
-    //    }
         const [payload,setPayload]=useState({
           Name:'',
           Username:'admin',
           Password:'123', 
           Phone:'',
-          id:'0'
+          id:'0',
+          Address:'',
+          City:''
         })
-        console.log(payload.Name);
+       const onSelectedItemsChange =(selectedItems)=>{
+           setPayload({
+               ...payload,
+               City:selectedItems
+           })
+       }
+        console.log(payload.City,"city");
         const [checked,setChecked]= useState(false);
         const [Password, setPassword] = useState(true);
         const [token, setToken] = useState(null);
@@ -101,7 +96,7 @@ const RegisterScreen = () => {
               try {
                 var userf = Auth().currentUser;
                 userf.updateProfile({ displayName: payload.Name})
-                database().ref(`/users/${Fire.uid}`).set({name:payload.Name,_id:Fire.uid,Category:payload.id,email:payload.Username,Image:"",Phone:payload.Phone})
+                database().ref(`/users/${Fire.uid}`).set({name:payload.Name,_id:Fire.uid,Category:payload.id,email:payload.Username,Image:"",Phone:payload.Phone,Address:payload.Address,City:payload.City[0]})
                 .then(function() {
                   alert("User " + payload.Name + " was created successfully.");
                 }, function(error) {
@@ -156,6 +151,7 @@ const RegisterScreen = () => {
           {RenderInput(styles.TextInputStyle,R.string.name,name=>setPayload({...payload,Name:name}),false)}
           {RenderInput(styles.TextInputStyle,R.string.email, user => setPayload({...payload,Username:user}), false)}
           {RenderInput(styles.TextInputStyle,R.string.phone,phone=>setPayload({...payload,Phone:phone}),false)}
+          {RenderCity(onSelectedItemsChange,payload.City, R.string.city)} 
           {
           <View style={{flexDirection:'row', paddingVertical:25}}>
             {RenderInput([styles.TextInputStyle,{ width:width-90}],R.string.pass, pass => setPayload({...payload,Password:pass}), Password)}
