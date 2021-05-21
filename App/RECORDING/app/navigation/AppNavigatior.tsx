@@ -29,7 +29,8 @@ const {
   CHANGEPASS,
   INFORUSER,
   LISTCHAT,
-  ADPOST
+  ADPOST,
+  UPDATEUSER
 } = SCREEN_ROUTER_APP;
 const { LOGIN, REGISTER, FORGOT_PASS } = SCREEN_ROUTER_AUTH
 const Stack = createStackNavigator();
@@ -364,6 +365,10 @@ const App = () => {
       <AppStack.Screen
         name={SCREEN_ROUTER_APP.ADPOST}
         component={StackApp[ADPOST]}
+      />
+      <AppStack.Screen
+        name={SCREEN_ROUTER_APP.UPDATEUSER}
+        component={StackApp[UPDATEUSER]}
       />
     </AppStack.Navigator>
   );

@@ -17,6 +17,10 @@ const string = {
   name: 'Họ tên',
   phone: 'Số điện thoại',
   city: 'Tỉnh/thành phố',
+  District:'Quận/Huyện',
+  Address:'Địa chỉ chi tiết',
+  Sex:'Gới tính',
+  Birth_Day:'Ngày sinh',
   confirm_password: 'Xác nhận mật khẩu',
   confirm: 'Xác nhận',
   select_province: 'Chọn tỉnh thành',
@@ -37,6 +41,10 @@ const string = {
   old_password: 'Mật khẩu cũ',
   new_password: 'Mật khẩu mới',
   confirm_new_password: 'Xác nhận mật khẩu mới',
-  update_avatar:"Cập nhật ảnh đại diện"
+  update_avatar:"Cập nhật ảnh đại diện", 
+  update_user:"Cập nhật thông tin",
+  Adrees:"Địa chỉ chi tiết",
+  Boy:"Nam",
+  Girl:"Nữ"
 };
 export default string;

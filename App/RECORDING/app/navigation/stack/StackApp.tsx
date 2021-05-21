@@ -10,6 +10,7 @@ import ChangePassScreen from '../../Screen/User/ChangePassScreen';
 import InforUserScreen from '../../Screen/User/InforUserScreen';
 import ListCHatScreen from '../../Screen/Chat/ListCHatScreen';
 import PostAvatarScreen from '../../Screen/User/PostAvatarScreen'
+import UpdateUserScreen from '../../Screen/User//UpdateUserScreen'
 const {
   HOME,
   PRODUCT,
@@ -21,7 +22,8 @@ const {
   CHANGEPASS,
   INFORUSER,
   LISTCHAT,
-  ADPOST
+  ADPOST,
+  UPDATEUSER
 } = SCREEN_ROUTER_APP;
 export default {
   [HOME]: HomeScreen,
@@ -34,5 +36,6 @@ export default {
   [CHANGEPASS]: ChangePassScreen,
   [INFORUSER]: InforUserScreen,
   [LISTCHAT]:ListCHatScreen,
-  [ADPOST]:PostAvatarScreen
+  [ADPOST]:PostAvatarScreen,
+  [UPDATEUSER]:UpdateUserScreen
 };

@@ -87,7 +87,7 @@ const ScreenComponent = (props: PropsComponent) => {
     <View
       style={[
         styles.Container,
-        {backgroundColor: backgroundColor || colors.backgroundColor},
+        {backgroundColor: backgroundColor || colors.white},
       ]}>
       <Header
         containerStyle={containerStyle}
