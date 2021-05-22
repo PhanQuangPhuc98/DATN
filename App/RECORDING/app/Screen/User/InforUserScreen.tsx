@@ -99,7 +99,7 @@ const InforUserScreen = () => {
           NavigationUtil.goBack();
         })}
         rightComponent={ChangeUser(()=>{
-          NavigationUtil.navigate(SCREEN_ROUTER_APP.UPDATEUSER)
+          NavigationUtil.navigate(SCREEN_ROUTER_APP.UPDATEUSER,{data:Users})
         })}
         containerStyle={styles.ContainerHeader}
         statusBarProps={styles.ContainerHeader}
@@ -109,7 +109,7 @@ const InforUserScreen = () => {
             {renderInfor(R.string.phone, Users.Phone)}
             {renderInfor(R.string.email, Users.Email)}
             {renderInfor(R.string.Birth_Day, Users.Birth_Day)}
-            {renderInfor(R.string.Sex, Users.Sex)}
+            {renderInfor(R.string.Sex, Users.Sex=="1"?"Nam":"Nữ")}
             {renderInfor(R.string.city, Users.City)}
             {renderInfor(R.string.District, Users.District)}
             {renderInfor(R.string.Address, Users.Address)}

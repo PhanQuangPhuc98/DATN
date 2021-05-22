@@ -87,7 +87,7 @@ const ChangePassScreen = () => {
     reauthenticate(currentPassword).then(() => {
       var user = firebase.auth().currentUser;
       user.updatePassword(newPassword).then(() => {
-        showMessages(R.string.notification, 'Cập nhật thành công!');
+        showMessages(R.string.notification, R.string.ChangePass_Sucess);
         Reactotron.log("Password updated!");
         NavigationUtil.goBack();
       }).catch((error) => { Reactotron.log(error); });

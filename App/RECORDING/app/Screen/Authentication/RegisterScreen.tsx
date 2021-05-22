@@ -29,7 +29,7 @@ const Confirm = (onPress) => {
 };
 const RenderInput = (style, label, UserInput, cover) => {
   return (
-    <View>
+    <View style={{paddingTop:15}}>
       <Text style={styles.TextLable}>{label}</Text>
       <TextInput
         style={style}
@@ -42,7 +42,7 @@ const RenderInput = (style, label, UserInput, cover) => {
 }
 const RenderCity = (onSelectedItemsChange, selectedItems, label) => {
   return (
-    <View>
+    <View style={[styles.TextInputStyle,{paddingTop:15}]}>
       <Text style={styles.TextLable}>{label}</Text>
       <SectionedMultiSelect
         items={DataCity}
@@ -103,7 +103,7 @@ const RegisterScreen = () => {
         .ref(`/users/${Fire.uid}`)
         .set({ name: payload.Name, _id: Fire.uid, Category: payload.id, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
 
-      showMessages(R.string.notification, 'Đăng ký thành công!');
+     
       setLoading(false),
 
         setToken(res),
@@ -118,7 +118,7 @@ const RegisterScreen = () => {
           })
           : alert(R.string.pleaseRegister);
       }, 500);
-      Reactotron.log('res', res), alert('data');
+      showMessages(R.string.notification, 'Đăng ký thành công!');
     } catch (error) {
       setLoading(true), Reactotron.log('error', error);
     }
@@ -145,17 +145,17 @@ const RegisterScreen = () => {
         }
         statusBarProps={styles.ContainerHeader}
       />
-      <View style={{ paddingVertical: 15 }}>
+      <View>
         {RenderInput(styles.TextInputStyle, R.string.name, name => setPayload({ ...payload, Name: name }), false)}
         {RenderInput(styles.TextInputStyle, R.string.email, user => setPayload({ ...payload, Username: user }), false)}
         {RenderInput(styles.TextInputStyle, R.string.phone, phone => setPayload({ ...payload, Phone: phone }), false)}
         {RenderCity(onSelectedItemsChange, payload.City, R.string.city)}
         {
-          <View style={{ flexDirection: 'row', paddingVertical: 25 }}>
+          <View style={{ flexDirection: 'row' }}>
             {RenderInput([styles.TextInputStyle, { width: width - 90 }], R.string.pass, pass => setPayload({ ...payload, Password: pass }), Password)}
             <TouchableOpacity
               onPress={() => { setPassword(!Password) }}
-              style={{ borderBottomWidth: 0.5, paddingTop: 15 }}>
+              style={{ borderBottomWidth: 0.5, paddingTop: 45 }}>
               <FastImage
                 source={icon}
                 style={styles.imgText}
@@ -222,7 +222,7 @@ const styles = StyleSheet.create({
   ContainerHeader: { backgroundColor: colors.Sienna1 },
   ContainerConfirm: {
     height: 46, backgroundColor: colors.Sienna1, borderRadius: 30, width: 330,
-    alignItems: "center", justifyContent: "center", marginTop: 10, marginHorizontal: 20
+    alignItems: "center", justifyContent: "center", marginTop: 20, marginHorizontal: 20
   },
   TextConfirm: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.white },
   LeftHeader: { flexDirection: "row", width: 200, height: 40 },

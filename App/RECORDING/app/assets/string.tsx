@@ -45,6 +45,8 @@ const string = {
   update_user:"Cập nhật thông tin",
   Adrees:"Địa chỉ chi tiết",
   Boy:"Nam",
-  Girl:"Nữ"
+  Girl:"Nữ",
+  Update_Sucess:"Cập nhật thành công!",
+  ChangePass_Sucess:"Đổi mật khẩu thành công"
 };
 export default string;
