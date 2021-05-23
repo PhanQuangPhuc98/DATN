@@ -24,12 +24,13 @@ const string = {
   confirm_password: 'Xác nhận mật khẩu',
   confirm: 'Xác nhận',
   select_province: 'Chọn tỉnh thành',
+  select_distric:'Chọn quận huyện',
   header_forgot: 'Vui lòng nhập email của bạn để lấy lại mật khẩu',
   email: 'Email',
   cancle: 'Hủy',
   pleaseLogin: 'Vui lòng nhập tài khoản và mật khẩu để đăng nhập',
   pleaseRegister: 'Vui lòng nhập tài khoản và mật khẩu để đăng ký',
-  pleaseForgotPass: 'Vui lòng nhập email để lấy lại mật khẩu',
+  pleaseForgotPass: 'Vui lòng đăng nhập email để lấy lại mật khẩu',
   messenger: 'Nhập tin nhắn',
   information: 'Thông tin cá nhân',
   order: 'Đơn hàng',
@@ -47,6 +48,7 @@ const string = {
   Boy:"Nam",
   Girl:"Nữ",
   Update_Sucess:"Cập nhật thành công!",
-  ChangePass_Sucess:"Đổi mật khẩu thành công"
+  ChangePass_Sucess:"Đổi mật khẩu thành công",
+  Not_Update:'Chưa cập nhật '
 };
 export default string;

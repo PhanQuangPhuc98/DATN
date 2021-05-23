@@ -10,8 +10,11 @@ import {
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
 import Fire from '../../firebase/firebaseSvc';
+import { ASYNC_STORAGE } from '../../constants/Constant';
+import Reactotron from 'reactotron-react-native';
 import { colors } from '../../constants/Theme';
 import { firebase, database } from '../../firebase/firebaseSvc';
+import AsyncStorage from '@react-native-community/async-storage';
 import ScreenComponent from '../../components/ScreenComponent';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import R from '../../assets/R';
@@ -59,39 +62,19 @@ const ChangeUser =(onPress)=>{
     </TouchableOpacity>
   )
 }
-const InforUserScreen = () => {
-  const [Users, setUsers] = useState({
-    _id: '',
-    Name: '',
-    Email: '',
-    Password: '',
-    Phone: '',
-    Sex: '',
-    Birth_Day: '',
-    Category: '0',
-    City: '',
-    District: '',
-    Address: ''
-  });
-  useEffect(() => {
-    const onValueChange = database()
-      .ref('/users/' + Fire.uid)
-      .on('value', (snapshot) => {
-        setUsers({
-          ...Users,
-          _id: snapshot.val()._id,
-          Name: snapshot.val().name,
-          Category: snapshot.val().Category,
-          Email: snapshot.val().email,
-          Phone: snapshot.val().Phone,
-          Sex: snapshot.val().Sex,
-          Birth_Day: snapshot.val().Birth_Day,
-          City: snapshot.val().City,
-          District: snapshot.val().District,
-          Address: snapshot.val().Address,
-        });
-      });
-  }, [])
+const InforUserScreen = ({route, navigation }) => {
+  const {user} =route.params;
+  const [token, setToken] = useState(null);
+  const checkToken = async () => {
+    const res = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+    Reactotron.log('res', res);
+    if (res) {
+      setToken(res);
+    } else if (!res) {
+      setToken(null);
+    }
+  };
+  Reactotron.log('data',user)
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -99,20 +82,20 @@ const InforUserScreen = () => {
           NavigationUtil.goBack();
         })}
         rightComponent={ChangeUser(()=>{
-          NavigationUtil.navigate(SCREEN_ROUTER_APP.UPDATEUSER,{data:Users})
+          NavigationUtil.navigate(SCREEN_ROUTER_APP.UPDATEUSER,{data:user})
         })}
         containerStyle={styles.ContainerHeader}
         statusBarProps={styles.ContainerHeader}
         children={
           <SafeAreaView>
-            {renderInfor(R.string.name, Users.Name)}
-            {renderInfor(R.string.phone, Users.Phone)}
-            {renderInfor(R.string.email, Users.Email)}
-            {renderInfor(R.string.Birth_Day, Users.Birth_Day)}
-            {renderInfor(R.string.Sex, Users.Sex=="1"?"Nam":"Nữ")}
-            {renderInfor(R.string.city, Users.City)}
-            {renderInfor(R.string.District, Users.District)}
-            {renderInfor(R.string.Address, Users.Address)}
+            {renderInfor(R.string.name, user.Name)}
+            {renderInfor(R.string.phone, user.Phone)}
+            {renderInfor(R.string.email, user.Email)}
+            {renderInfor(R.string.Birth_Day, user.Birth_Day? user.Birth_Day:R.string.Not_Update)}
+            {renderInfor(R.string.Sex, user.Sex=="1"?"Nam":user.Sex=="0"?"Nữ":R.string.Not_Update)}
+            {renderInfor(R.string.city, user.City)}
+            {renderInfor(R.string.District, user.District?user.District:R.string.Not_Update)}
+            {renderInfor(R.string.Address, user.Address?user.Address:R.string.Not_Update)}
           </SafeAreaView>
         }
       />

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, SafeAreaView, StyleSheet, TextInput, Platform, View, Button, TouchableOpacity, Dimensions } from 'react-native'
+import { Text, SafeAreaView, StyleSheet, TextInput, Platform, View, Button,ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native'
 import { Header } from "react-native-elements";
 import NavigationUtil from '../../navigation/NavigationUtil'
 import { colors } from '../../constants/Theme';
@@ -79,7 +79,7 @@ const Logo = (onPressFacebook, onPressGoogle) => {
   )
 }
 const LoginScreen = ({ navigation }) => {
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const [Password, setPassword] = useState(true);
   const [confirm, setConfirm] = useState(null);
   const [token, setToken] = useState(null);
@@ -99,9 +99,10 @@ const LoginScreen = ({ navigation }) => {
     return unsubscribe;
   }, [navigation]);
   const signInWithEmail = async () => {
-    isLoading
-    const res = await Auth().signInWithEmailAndPassword(payload.Username, payload.Pass);
+    setLoading(true)
+   
     try {
+      const res = await Auth().signInWithEmailAndPassword(payload.Username, payload.Pass);
       setLoading(false),
         setToken(res),
         await AsyncStorage.setItem(
@@ -119,15 +120,13 @@ const LoginScreen = ({ navigation }) => {
       Reactotron.log('res', res.user.uid)
 
     } catch (error) {
-      setLoading(true),
+      setLoading(false),
         Reactotron.log('error', error)
     };
 
 
   }
   Reactotron.log('payload', payload);
-  //console.log('pass', payload);
-
   return (
     <SafeAreaView style={styles.Container}>
       <Header
@@ -186,7 +185,8 @@ const LoginScreen = ({ navigation }) => {
           }
           {ForgotPass()}
         </View>
-        {Confirm(() => {
+        {isLoading?<ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
+        Confirm(() => {
           if (!validateEmail(payload.Username)) {
             showMessages(R.string.notification, 'Email không đúng');
             return;

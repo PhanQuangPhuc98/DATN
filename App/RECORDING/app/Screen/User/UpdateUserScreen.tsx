@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, Dimensions, TextInput, Platform } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity,ActivityIndicator, Dimensions, TextInput, Platform } from 'react-native'
 import FastImage from 'react-native-fast-image';
 import images from '../../assets/imagesAsset';
 import R from '../../assets/R';
@@ -7,16 +7,13 @@ import { colors } from '../../constants/Theme';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import { DataCity } from '../../constants/Mockup'
 import DatePicker from 'react-native-datepicker';
-import { Header, CheckBox } from "react-native-elements";
-import { SCREEN_ROUTER_APP } from '../../utils/Constant';
+import { CheckBox } from "react-native-elements";
+import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
 import {showMessages} from '../../utils/AlertHelper'
-import Fire, { firebase, database } from '../../firebase/firebaseSvc';
+import Fire, { database } from '../../firebase/firebaseSvc';
 import Reactotron from 'reactotron-react-native';
 import ScreenComponent from '../../components/ScreenComponent'
-import { Label } from 'native-base';
-import { set } from 'react-native-reanimated';
 const { height, width } = Dimensions.get('window');
 const Back = (onPress) => {
     return (
@@ -140,23 +137,20 @@ const Confirm = (onPress) => {
 const UpdateUserScreen = ({ route, ...props }) => {
     const { data } = route.params;
     const [city, setCity] = useState([]);
-    const [checked, setChecked] = useState(false);
+    const [isLoading, setLoading] = useState(false);
     const [dataHN,setHN]=useState([])
     const [dataHCM,setHCM]=useState([])
-    const [birthDayStr, setBirthDayStr] = useState(data.Birth_Day);
-    const [Password, setPassword] = useState(true);
     const [payload, setPayload] = useState({
-        _id: '',
-        Name: '',
-        Email: '',
-        Password: '',
-        Phone: '',
-        Sex: '',
+        _id: data?data._id:'',
+        Name: data?data.Name:'',
+        Email: data?data.Email:'',
+        Phone: data?data.Phone:'',
+        Sex: data?data.Sex:'',
         Birth_Day: data?data.Birth_Day:'',
-        Category: '0',
-        City: '',
-        District: '',
-        Address: ''
+        Category: data?data.Category:'',
+        City: data?data.City:'',
+        District: data?data.District:'',
+        Address: data?data.Address:''
     })
     const onSelectedCity = (selectedItems) => {
         setPayload({
@@ -194,44 +188,30 @@ const UpdateUserScreen = ({ route, ...props }) => {
             });
     }
     useEffect(() => {
-        const onValueChange = database()
-            .ref('/users/' + Fire.uid)
-            .on('value', (snapshot) => {
-                setPayload({
-                    ...payload,
-                    _id: snapshot.val()._id,
-                    Name: snapshot.val().name,
-                    Category: snapshot.val().Category,
-                    Email: snapshot.val().email,
-                    Phone: snapshot.val().Phone,
-                    Sex: snapshot.val().Sex,
-                    Birth_Day: snapshot.val().Birth_Day,
-                    City: snapshot.val().City,
-                    District: snapshot.val().District,
-                    Address: snapshot.val().Address,
-                });
-            });
         CallCity()
         CallDistrict()
     }, [])
-    // Reactotron.log(dataHCM, "datacity");
+    Reactotron.log(payload.District, "District");
     const updateUser =async ()=>{
-       const update = await database()
-        .ref(`/users/${Fire.uid}`)
-        .update({
-            Name: payload.Name,
-            Email: payload.Email,
-            Phone: payload.Phone,
-            Sex: payload.Sex,
-            Birth_Day: payload.Birth_Day,
-            City: payload.City,
-            District: payload.District,
-            Address: payload.Address
-        })
+        setLoading(true)
         try {
+            const update = await database()
+            .ref(`/users/${Fire.uid}`)
+            .update({
+                Name: payload.Name,
+                Email: payload.Email,
+                Phone: payload.Phone,
+                Sex: payload.Sex,
+                Birth_Day: payload.Birth_Day,
+                City: payload.City,
+                District: payload.District,
+                Address: payload.Address
+            })
+            setLoading(false);
             showMessages(R.string.notification, R.string.Update_Sucess);
-            NavigationUtil.navigate(SCREEN_ROUTER_APP.USER)
+            NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.USER})
         } catch (error) {
+            setLoading(false);
             console.log(error);
         }
     }
@@ -256,25 +236,23 @@ const UpdateUserScreen = ({ route, ...props }) => {
                             <Text style={[styles.TextInfor, { marginTop: 15 }]}>
                                 {R.string.Sex}
                             </Text>
-                            {RenderSex(R.string.Boy, checked, () => {
+                            {RenderSex(R.string.Boy, payload.Sex=='1'?true:false, () => {
                                 setPayload({
                                     ...payload,
                                     Sex: '1',
-                                }),
-                                    setChecked(!checked)
+                                })
                             })}
-                            {RenderSex(R.string.Girl, checked ? false : true, () => {
+                            {RenderSex(R.string.Girl, payload.Sex=='0'?true:false, () => {
                                 setPayload({
                                     ...payload,
                                     Sex: '0',
-                                }),
-                                    setChecked(!checked)
+                                })
                             })}
                         </View>
-                        {RenderAdress(R.string.city, city, onSelectedCity, payload.City, data.City)}
-                        {RenderAdress(R.string.District,payload.City=="Hà Nội"?dataHN:dataHCM,onSelectedDistrict,payload.District,data.District)}
+                        {RenderAdress(R.string.city, city, onSelectedCity, payload.City, payload.City==''?R.string.select_province:payload.City)}
+                        {RenderAdress(R.string.District,payload.City=="Hà Nội"?dataHN:dataHCM,onSelectedDistrict,payload.District,payload.District==''?R.string.select_distric:payload.District)}
                         {RenderInput(R.string.Address, payload.Address,adress=>{setPayload({...payload,Address:adress})})}
-                        {Confirm(updateUser)}
+                        {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :Confirm(updateUser)}
                     </SafeAreaView>
                 }
             />
@@ -283,23 +261,6 @@ const UpdateUserScreen = ({ route, ...props }) => {
 }
 const styles = StyleSheet.create({
     Container: { flex: 1 },
-    Title: {
-        fontSize: 18,
-        fontFamily: R.fonts.bold,
-        color: colors.white,
-        width: 100,
-    },
-    AvatarStyle: { borderRadius: 40 },
-    HeaderPerson: {
-        flexDirection: 'row',
-        backgroundColor: colors.white,
-        height: height / 10,
-        paddingVertical: 10,
-        paddingHorizontal: 24,
-        marginBottom: 5,
-    },
-    TextName: { fontSize: 16, fontFamily: R.fonts.bold },
-    ImgScreen: { height: 19, width: 30 },
     ContainerScreen: {
         backgroundColor: colors.white,
         flexDirection: 'row',

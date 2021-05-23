@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, TextInput,ActivityIndicator, TouchableOpacity } from 'react-native'
 import { Header } from "react-native-elements";
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
@@ -53,11 +53,11 @@ const RenderImageLogo = ()=>{
 const ForgotPassScreen = () => {
      const [email, setEmail] = useState('');
      const [token, setToken] = useState(null);
-     const [isLoading, setLoading] = useState(true);
+     const [isLoading, setLoading] = useState(false);
      const ForgotPass = async () => {
-       isLoading;
-       const res = await Auth().sendPasswordResetEmail(email);
+      setLoading(true);
        try {
+        const res = await Auth().sendPasswordResetEmail(email);
          setLoading(false),
            setToken(res),
            await AsyncStorage.setItem(
@@ -67,12 +67,12 @@ const ForgotPassScreen = () => {
          setTimeout(() => {
            !token
              ? NavigationUtil.navigate(SCREEN_ROUTER_AUTH.LOGIN)
-             : alert(R.string.pleaseForgotPass);
+             : null;
          }, 500);
-
-         Reactotron.log('res', res), alert('data');
+         showMessages(R.string.notification,R.string.pleaseForgotPass)
+        //  Reactotron.log('res', res), alert('data');
        } catch (error) {
-         setLoading(true), Reactotron.log('error', error);
+         setLoading(false), Reactotron.log('error', error);
        }
      };
     return (
@@ -99,7 +99,8 @@ const ForgotPassScreen = () => {
           {RenderImageLogo()}
           <Text style={styles.TextForgot}>{R.string.header_forgot}</Text>
           {RenderInput(R.string.email, (email) => setEmail(email), false)}
-          {Confirm(() => 
+          {isLoading?<ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
+          Confirm(() => 
           {
             if(!validateEmail(email)){
               showMessages(R.string.notification, 'Email không đúng');

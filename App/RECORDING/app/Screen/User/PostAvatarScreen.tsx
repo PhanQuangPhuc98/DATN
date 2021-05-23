@@ -81,8 +81,8 @@ const PostAvatarScreen = () => {
   };
   const choosePhotoFromLibrary = () => {
     ImagePicker.openPicker({
-      width: 400,
-      height: 400,
+      width: width - 50,
+      height:  height / 3,
       cropping: true,
     }).then((image) => {
       const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
@@ -94,12 +94,12 @@ const PostAvatarScreen = () => {
     if (image == null) {
       return null;
     }
-    setUploading(false)
+    setUploading(true)
     const update = await firebase.storage()
       .ref('image/' + Fire.uid)
       .putFile(image)
       .then(() => {
-        setUploading(true)
+        setUploading(false)
         console.log('Image Upload Successfully');
         storage()
           .ref('image/' + Fire.uid)
@@ -125,7 +125,7 @@ const PostAvatarScreen = () => {
           <View style={{ flexDirection: "row" }}>
             {renderCamera(takePhotoFromCamera)}
             {
-            uploading?<ActivityIndicator size="small" color="#0000ff" />:
+            uploading?<ActivityIndicator size="small" color={R.color.colors.Sienna1} />:
             Confirm(()=>{
               uploadImage(),
               setTimeout(() => {

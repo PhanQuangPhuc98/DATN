@@ -1,4 +1,4 @@
-import {REG_EMAIL} from './Constant'
+import {REG_EMAIL,REG_PHONE} from './Constant'
 
 
 export function hasWhiteSpace(s) {
@@ -8,4 +8,8 @@ export function hasWhiteSpace(s) {
     if (!email) return false;
     return REG_EMAIL.test(email);
   }
-  
+
+  export function validatePhoneNumber(phone) {
+    if (!phone) return false;
+    return REG_PHONE.test(phone);
+  }

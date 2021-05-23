@@ -12,7 +12,7 @@ import { Avatar } from 'react-native-elements'
 import R from '../../assets/R'
 import { colors } from '../../constants/Theme'
 import Fire from '../../firebase/firebaseSvc';
-import {firebase,database} from '../../firebase/firebaseSvc';
+import { firebase, database, Auth } from '../../firebase/firebaseSvc';
 import { ASYNC_STORAGE } from '../../constants/Constant';
 import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -28,13 +28,13 @@ const left = () => {
     </View>
   );
 };
-const personal = (Users,onPress,name, phone) => {
+const personal = (Users, onPress, name, phone) => {
   return (
     <View style={styles.HeaderPerson}>
       <Avatar
         size={56}
         avatarStyle={styles.AvatarStyle}
-        source={Users?{uri:Users}:images.ic_User}>
+        source={Users ? { uri: Users } : images.ic_User}>
         <Avatar.Accessory
           onPress={onPress}
           size={15}
@@ -53,12 +53,11 @@ const personal = (Users,onPress,name, phone) => {
   );
 };
 const Logout = async () => {
-  const res = await firebase.auth().signOut();
+  const res = await Auth().signOut();
   try {
     const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
     if (token) {
       await AsyncStorage.setItem(ASYNC_STORAGE.TOKEN, '');
-
     }
     Reactotron.log('res', res);
     return;
@@ -69,11 +68,11 @@ const Logout = async () => {
 const Line = () => {
   return <View style={styles.ContainerLine}></View>;
 };
-const ChildScreen = (source, lable, url,onPress) => {
+const ChildScreen = (source, lable, url, onPress) => {
   return (
     <TouchableOpacity
-    onPress={onPress} 
-    style={styles.ContainerScreen}>
+      onPress={onPress}
+      style={styles.ContainerScreen}>
       <FastImage
         source={source}
         resizeMode={FastImage.resizeMode.contain}
@@ -94,34 +93,54 @@ const ChildScreen = (source, lable, url,onPress) => {
   );
 };
 const UserScreen = () => {
-  const [isModalVisible, setModalVisible]=useState(false);
+  const [isModalVisible, setModalVisible] = useState(false);
+  const [token, setToken] = useState(null);
   const [Users, setUsers] = useState({
-    _id: "",
-    name: "",
-    Category: "",
-    Image:"",
-    email:"",
-    phone:""
+    _id: '',
+    Name: '',
+    Image: '',
+    Email: '',
+    Password: '',
+    Phone: '',
+    Sex: '',
+    Birth_Day: '',
+    Category: '0',
+    City: '',
+    District: '',
+    Address: ''
   });
-  const toggleModal=()=>{
+  const toggleModal = () => {
     setModalVisible(!isModalVisible);
   }
   useEffect(() => {
-    const onValueChange = database()
-        .ref('/users/'+Fire.uid)
+    Auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log("state = definitely signed in")
+        const onValueChange = database()
+        .ref('/users/' + Fire.uid)
         .on('value', (snapshot) => {
-            setUsers({
-              ...Users,
-              _id:snapshot.val()._id,
-              name:snapshot.val().name,
-              Category:snapshot.val().Category,
-              Image:snapshot.val().Image,
-              email:snapshot.val().email,
-              phone:snapshot.val().Phone
-            });
+          setUsers({
+            ...Users,
+            _id: snapshot.val()._id,
+            Image: snapshot.val().Image,
+            Name: snapshot.val().Name,
+            Category: snapshot.val().Category,
+            Email: snapshot.val().email,
+            Phone: snapshot.val().Phone,
+            Sex: snapshot.val().Sex,
+            Birth_Day: snapshot.val().Birth_Day,
+            City: snapshot.val().City,
+            District: snapshot.val().District,
+            Address: snapshot.val().Address,
+          });
         });
-}, [])
-Reactotron.log("data",Users)
+      }
+      else {
+        console.log("state = definitely signed out")
+      }
+    })
+  }, [])
+  Reactotron.log("token", token)
   return (
     <SafeAreaView style={{ backgroundColor: colors.primary, flex: 1 }}>
       <ScreenComponent
@@ -132,16 +151,19 @@ Reactotron.log("data",Users)
           <View>
             {personal(
               Users.Image,
-              ()=>NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.ADPOST}),
-              Users.name,Users.phone)}
+              () => NavigationUtil.navigate(SCREEN_ROUTER.APP, { screen: SCREEN_ROUTER_APP.ADPOST }),
+              Users.Name, Users.Phone)}
             <View style={{ backgroundColor: colors.white }}>
               {ChildScreen(
                 images.ic_InforUser,
                 R.string.information,
                 images.ic_BackRight,
-                ()=>{NavigationUtil.navigate(SCREEN_ROUTER.APP, {
-                  screen: SCREEN_ROUTER_APP.INFORUSER,
-                });}
+                () => {
+                  NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+                    screen: SCREEN_ROUTER_APP.INFORUSER,
+                    params:{user:Users}
+                  });
+                }
               )}
               {Line()}
               {ChildScreen(
@@ -160,33 +182,33 @@ Reactotron.log("data",Users)
                 images.ic_ChangePass,
                 R.string.changepass,
                 images.ic_BackRight,
-                ()=>{NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.CHANGEPASS})}
+                () => { NavigationUtil.navigate(SCREEN_ROUTER.APP, { screen: SCREEN_ROUTER_APP.CHANGEPASS }) }
               )}
               {Line()}
               {ChildScreen(
                 images.ic_Logout,
                 R.string.logout,
                 images.ic_BackRight,
-                ()=>{toggleModal()}
+                () => { toggleModal() }
               )}
             </View>
             <ModalDrop
-        toggleModal={toggleModal}
-        isModalVisible={isModalVisible}
-        onPress={() => {
-          toggleModal();
-          Logout();
-          NavigationUtil.navigate(SCREEN_ROUTER.AUTH, { screen: SCREEN_ROUTER_AUTH.LOGIN })
-        }
-        }
-        cancle={R.string.cancle}
-        confirm={R.string.confirm}
-        content={R.string.logoutmess}
-      />
+              toggleModal={toggleModal}
+              isModalVisible={isModalVisible}
+              onPress={() => {
+                toggleModal();
+                Logout();
+                NavigationUtil.navigate(SCREEN_ROUTER.AUTH, { screen: SCREEN_ROUTER_AUTH.LOGIN })
+              }
+              }
+              cancle={R.string.cancle}
+              confirm={R.string.confirm}
+              content={R.string.logoutmess}
+            />
           </View>
         }
       />
-      
+
     </SafeAreaView>
   );
 };

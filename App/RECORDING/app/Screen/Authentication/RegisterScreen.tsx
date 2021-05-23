@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TextInput, TouchableOpacity, Dimensions } from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { Text, View, StyleSheet, SafeAreaView, ActivityIndicator, TextInput, TouchableOpacity, Dimensions } from 'react-native'
 import { Header, CheckBox } from "react-native-elements";
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
@@ -8,7 +8,7 @@ import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { ASYNC_STORAGE } from '../../constants/Constant';
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import { hasWhiteSpace, validateEmail } from '../../utils/FuncHelper';
+import { hasWhiteSpace, validateEmail, validatePhoneNumber } from '../../utils/FuncHelper';
 import { showMessages } from '../../utils/AlertHelper'
 import Reactotron from 'reactotron-react-native';
 import Fire from '../../firebase/firebaseSvc'
@@ -29,7 +29,7 @@ const Confirm = (onPress) => {
 };
 const RenderInput = (style, label, UserInput, cover) => {
   return (
-    <View style={{paddingTop:15}}>
+    <View style={{ paddingTop: 5 }}>
       <Text style={styles.TextLable}>{label}</Text>
       <TextInput
         style={style}
@@ -40,12 +40,12 @@ const RenderInput = (style, label, UserInput, cover) => {
     </View>
   )
 }
-const RenderCity = (onSelectedItemsChange, selectedItems, label) => {
+const RenderCity = (data, onSelectedItemsChange, selectedItems, label) => {
   return (
-    <View style={[styles.TextInputStyle,{paddingTop:15}]}>
+    <View style={[styles.TextInputStyle, { paddingTop: 15 }]}>
       <Text style={styles.TextLable}>{label}</Text>
       <SectionedMultiSelect
-        items={DataCity}
+        items={data}
         IconRenderer={Icon}
         single={true}
         uniqueKey="name"
@@ -67,8 +67,9 @@ const RenderCity = (onSelectedItemsChange, selectedItems, label) => {
 const RegisterScreen = () => {
   const [payload, setPayload] = useState({
     Name: '',
-    Username: 'admin',
-    Password: '123',
+    Username: '',
+    Password: '',
+    ConfimPass: '',
     Phone: '',
     Sex: '',
     Birth_Day: '',
@@ -85,27 +86,46 @@ const RegisterScreen = () => {
   }
   console.log(payload.City, "city");
   const [checked, setChecked] = useState(false);
+  const [city, setCity] = useState([]);
   const [Password, setPassword] = useState(true);
+  const [confirm_password, setconfirm_password] = useState(true);
   const [token, setToken] = useState(null);
-  const [isLoading, setLoading] = useState(true);
+  const [isLoading, setLoading] = useState(false);
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
+  const iconConfirm = confirm_password ? R.images.ic_visibility : R.images.ic_invisible;
   console.log(payload.id);
+  const CallCity = () => {
+    const city = database()
+      .ref("/City/")
+      .on('value', (snapshot) => {
+        let Data = [];
+        console.log(snapshot.val(), "city");
+        snapshot.forEach((child) => {
+          Data.push({
+            id: child.val().id,
+            name: child.val().name
+          })
+        })
+        setCity(Data)
+      });
+  }
+  useEffect(() => {
+    CallCity()
+  }, [])
   const CreatAcout = async () => {
-    isLoading;
-    const res = await Auth().createUserWithEmailAndPassword(
-      payload.Username,
-      payload.Password,
-    );
+    setLoading(true)
+
     try {
+      const res = await Auth().createUserWithEmailAndPassword(
+        payload.Username,
+        payload.Password,
+      );
       var userf = Auth().currentUser;
       userf.updateProfile({ displayName: payload.Name })
       database()
         .ref(`/users/${Fire.uid}`)
-        .set({ name: payload.Name, _id: Fire.uid, Category: payload.id, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
-
-     
+        .set({ Name: payload.Name, _id: Fire.uid, Category: payload.id, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
       setLoading(false),
-
         setToken(res),
         await AsyncStorage.setItem(
           ASYNC_STORAGE.TOKEN,
@@ -120,7 +140,7 @@ const RegisterScreen = () => {
       }, 500);
       showMessages(R.string.notification, 'Đăng ký thành công!');
     } catch (error) {
-      setLoading(true), Reactotron.log('error', error);
+      setLoading(false), Reactotron.log('error', error);
     }
   };
   return (
@@ -149,25 +169,35 @@ const RegisterScreen = () => {
         {RenderInput(styles.TextInputStyle, R.string.name, name => setPayload({ ...payload, Name: name }), false)}
         {RenderInput(styles.TextInputStyle, R.string.email, user => setPayload({ ...payload, Username: user }), false)}
         {RenderInput(styles.TextInputStyle, R.string.phone, phone => setPayload({ ...payload, Phone: phone }), false)}
-        {RenderCity(onSelectedItemsChange, payload.City, R.string.city)}
-        {
-          <View style={{ flexDirection: 'row' }}>
-            {RenderInput([styles.TextInputStyle, { width: width - 90 }], R.string.pass, pass => setPayload({ ...payload, Password: pass }), Password)}
-            <TouchableOpacity
-              onPress={() => { setPassword(!Password) }}
-              style={{ borderBottomWidth: 0.5, paddingTop: 45 }}>
-              <FastImage
-                source={icon}
-                style={styles.imgText}
-                resizeMode={FastImage.resizeMode.contain}
-              />
-            </TouchableOpacity>
-          </View>
-        }
-        <View style={{flexDirection:"row", backgroundColor:'white'}}>
+        {RenderCity(city, onSelectedItemsChange, payload.City, R.string.city)}
+        <View style={{ flexDirection: 'row' }}>
+          {RenderInput([styles.TextInputStyle, { width: width - 90 }], R.string.pass, pass => setPayload({ ...payload, Password: pass }), Password)}
+          <TouchableOpacity
+            onPress={() => { setPassword(!Password) }}
+            style={{ borderBottomWidth: 0.5, paddingTop: 45 }}>
+            <FastImage
+              source={icon}
+              style={styles.imgText}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ flexDirection: 'row' }}>
+          {RenderInput([styles.TextInputStyle, { width: width - 90 }], R.string.confirm_password, confirm_password => setPayload({ ...payload, ConfimPass: confirm_password }), confirm_password)}
+          <TouchableOpacity
+            onPress={() => { setconfirm_password(!confirm_password) }}
+            style={{ borderBottomWidth: 0.5, paddingTop: 45 }}>
+            <FastImage
+              source={iconConfirm}
+              style={styles.imgText}
+              resizeMode={FastImage.resizeMode.contain}
+            />
+          </TouchableOpacity>
+        </View>
+        <View style={{ flexDirection: "row", backgroundColor: 'white', paddingVertical: 10 }}>
           <CheckBox
             title='Phòng thu'
-            containerStyle={{backgroundColor:"white"}}
+            containerStyle={{ backgroundColor: "white" }}
             uncheckedIcon='circle-o'
             checkedIcon='dot-circle-o'
             checked={checked}
@@ -183,7 +213,7 @@ const RegisterScreen = () => {
           />
           <CheckBox
             title='Người dùng'
-            containerStyle={{backgroundColor:"white"}}
+            containerStyle={{ backgroundColor: "white" }}
             uncheckedIcon='circle-o'
             checkedIcon='dot-circle-o'
             checked={checked ? false : true}
@@ -198,22 +228,38 @@ const RegisterScreen = () => {
             }
           />
         </View>
-        {/* {RenderInput(R.string.confirm_password, null, true)} */}
       </View>
-      {Confirm(() => {
-        if (!validateEmail(payload.Username)) {
-          showMessages(R.string.notification, 'Email không đúng');
-          return;
-        }
-        if (
-          payload.Password.trim().length < 6 ||
-          hasWhiteSpace(payload.Password)) {
-          showMessages(R.string.notification, 'Mật khẩu không đúng');
-          return;
-        }
-        CreatAcout()
+      {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
+        Confirm(() => {
+          if (!payload.Name.trim().length) {
+            showMessages(R.string.notification, 'Vui lòng nhập họ và tên !');
+            return;
+          }
+          if (!validateEmail(payload.Username)) {
+            showMessages(R.string.notification, 'Email không hợp lệ !');
+            return;
+          }
+          if (!validatePhoneNumber(payload.Phone)) {
+            showMessages(R.string.notification, 'Số điện thoại không hợp lệ !');
+            return;
+          }
+          if (payload.City == '') {
+            showMessages(R.string.notification, 'Vui lòng chọn Tỉnh/thành phố !');
+            return;
+          }
+          if (
+            payload.Password.trim().length < 6 ||
+            hasWhiteSpace(payload.Password)) {
+            showMessages(R.string.notification, 'Mật khẩu phải lớn hơn 6 ký tự !');
+            return;
+          }
+          if (payload.Password != payload.ConfimPass) {
+            showMessages(R.string.notification, 'Mật khẩu không hợp lệ, vui lòng thử lại !');
+            return;
+          }
+          CreatAcout()
+        })
       }
-      )}
     </SafeAreaView>
   );
 }
