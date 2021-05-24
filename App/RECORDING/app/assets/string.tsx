@@ -7,6 +7,7 @@ const string = {
   notification: 'Thông báo',
   user: 'Tài khoản',
   search: ' Tìm kiếm sản phẩm',
+  searchCalendar:'Tìm kiếm phòng thu',
   log_in: 'Đăng nhập',
   registration: 'Đăng ký',
   forgot_password: 'Quên mật khẩu',

@@ -81,7 +81,7 @@ const PostAvatarScreen = () => {
   };
   const choosePhotoFromLibrary = () => {
     ImagePicker.openPicker({
-      width: width - 50,
+      width: width - 30,
       height:  height / 3,
       cropping: true,
     }).then((image) => {

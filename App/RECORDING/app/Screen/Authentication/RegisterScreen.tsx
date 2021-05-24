@@ -143,6 +143,7 @@ const RegisterScreen = () => {
       setLoading(false), Reactotron.log('error', error);
     }
   };
+  Reactotron.log("city",city)
   return (
     <SafeAreaView style={styles.Container}>
       <Header

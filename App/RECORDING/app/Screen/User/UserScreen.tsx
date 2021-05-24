@@ -94,7 +94,6 @@ const ChildScreen = (source, lable, url, onPress) => {
 };
 const UserScreen = () => {
   const [isModalVisible, setModalVisible] = useState(false);
-  const [token, setToken] = useState(null);
   const [Users, setUsers] = useState({
     _id: '',
     Name: '',
@@ -140,7 +139,7 @@ const UserScreen = () => {
       }
     })
   }, [])
-  Reactotron.log("token", token)
+  Reactotron.log("User",Users)
   return (
     <SafeAreaView style={{ backgroundColor: colors.primary, flex: 1 }}>
       <ScreenComponent

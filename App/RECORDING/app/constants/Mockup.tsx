@@ -220,6 +220,10 @@ import images from '../assets/imagesAsset'
       name: 'Phan Quang Phúc',
       phone: '0364177852',
     };
+    const DataMoney ={
+        real:"600.000",
+        sale:"300.000"
+    }
 export {
   DataImage,
   DataImageProduct,
@@ -227,4 +231,5 @@ export {
   DataCity,
   DataSearch,
   DataUser,
+  DataMoney
 };

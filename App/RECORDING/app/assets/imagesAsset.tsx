@@ -45,6 +45,11 @@ const images = {
   ic_visibility: require('./images/ic_visibility.png'),
   ic_Photo:require('./images/ic_Photo.png'),
   ic_ChangeUser:require('./images/ic_ChangeUser.png'),
-  ic_date:require('./images/ic_date.png')
+  ic_date:require('./images/ic_date.png'),
+  ic_Chat:require('./images/ic_chat.png'),
+  ic_money:require('./images/ic_money.png'),
+  ic_introduct:require('./images/ic_introduct.png'),
+  ic_PhoneNumber:require('./images/ic_PhoneNumber.png'),
+  ic_adress:require('./images/ic_adress.png')
 };
 export default images;
