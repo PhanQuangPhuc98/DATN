@@ -54,6 +54,8 @@ interface PropsComponent {
   /**
    * Status Bar
    */
+  chilStyle?:StyleProp<ViewStyle>;
+
   statusBarProps?: StatusBarProps;
   reload?: () => void;
   onRefresh?: () => void;
@@ -82,6 +84,7 @@ const ScreenComponent = (props: PropsComponent) => {
     renderViewHeader,
     titleBackHeader,
     backgroundColor,
+    chilStyle
   } = props;
   return (
     <View
@@ -99,7 +102,7 @@ const ScreenComponent = (props: PropsComponent) => {
         rightContainerStyle={rightContainerStyle}
         statusBarProps={statusBarProps}
       />
-      <SafeAreaView style={styles.Container} children={children}></SafeAreaView>
+      <SafeAreaView style={chilStyle||styles.Container} children={children}></SafeAreaView>
     </View>
   );
 };

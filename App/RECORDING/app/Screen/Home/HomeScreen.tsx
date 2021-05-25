@@ -170,7 +170,7 @@ const ListPromotion = () => {
 }
 const HomeScreen = ({navigation}) => {
   const [token, setToken] = useState(null);
-  const [isModalVisible, setModalVisible] = useState(false);;
+  const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
   };

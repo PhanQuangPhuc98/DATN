@@ -171,7 +171,7 @@ const LoginScreen = ({ navigation }) => {
           )}
           {
             <View style={{ flexDirection: 'row', paddingVertical: 25 }}>
-              {Infor([styles.TextInputStyle, { width: width - 92 }], R.string.pass, (pass) => setPayload({ ...payload, Pass: pass, }), payload.Pass, Password,)}
+              {Infor([styles.TextInputStyle, { width: width - 100 }], R.string.pass, (pass) => setPayload({ ...payload, Pass: pass, }), payload.Pass, Password,)}
               <TouchableOpacity
                 onPress={() => { setPassword(!Password) }}
                 style={{ borderBottomWidth: 0.5, paddingTop: 15 }}>

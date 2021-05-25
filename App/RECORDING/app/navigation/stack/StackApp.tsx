@@ -11,7 +11,8 @@ import InforUserScreen from '../../Screen/User/InforUserScreen';
 import ListCHatScreen from '../../Screen/Chat/ListCHatScreen';
 import PostAvatarScreen from '../../Screen/User/PostAvatarScreen'
 import UpdateUserScreen from '../../Screen/User//UpdateUserScreen'
-import DetailPutCalendarScreen from '../../Screen/PutCalendar/DetailPutCalendarScreen'
+import DetailPutCalendarScreen from '../../Screen/PutCalendar/DetailPutCalendarScreen';
+import MapScreen from '../../Screen/PutCalendar/MapScreen'
 const {
   HOME,
   PRODUCT,
@@ -25,7 +26,8 @@ const {
   LISTCHAT,
   ADPOST,
   UPDATEUSER,
-  DETAILPUTCALENDAR
+  DETAILPUTCALENDAR,
+  MAP
 } = SCREEN_ROUTER_APP;
 export default {
   [HOME]: HomeScreen,
@@ -40,5 +42,6 @@ export default {
   [LISTCHAT]:ListCHatScreen,
   [ADPOST]:PostAvatarScreen,
   [UPDATEUSER]:UpdateUserScreen,
-  [DETAILPUTCALENDAR]:DetailPutCalendarScreen
+  [DETAILPUTCALENDAR]:DetailPutCalendarScreen,
+  [MAP]:MapScreen
 };

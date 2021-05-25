@@ -1,7 +1,7 @@
 const string = {
   home: 'Trang chủ',
   product: 'Sản phẩm',
-  Chat: 'Chát với nhân viên phòng thu ',
+  Chat: 'chat',
   ListChat:'Danh sách phòng thu',
   putcalender: 'Đặt lịch',
   notification: 'Thông báo',
@@ -50,6 +50,11 @@ const string = {
   Girl:"Nữ",
   Update_Sucess:"Cập nhật thành công!",
   ChangePass_Sucess:"Đổi mật khẩu thành công",
-  Not_Update:'Chưa cập nhật '
+  Not_Update:'Chưa cập nhật ',
+  introduct:'Giới Thiệu phòng thu',
+  callStudio:'Bạn muốn liên hệ phòng thu ',
+  exit:'Thoát',
+  Call:'Gọi',
+  PutStudio:'Bạn muốn đặt lịch thu âm '
 };
 export default string;

@@ -31,7 +31,8 @@ const {
   LISTCHAT,
   ADPOST,
   UPDATEUSER,
-  DETAILPUTCALENDAR
+  DETAILPUTCALENDAR,
+  MAP
 } = SCREEN_ROUTER_APP;
 const { LOGIN, REGISTER, FORGOT_PASS } = SCREEN_ROUTER_AUTH
 const Stack = createStackNavigator();
@@ -374,6 +375,10 @@ const App = () => {
       <AppStack.Screen
         name={SCREEN_ROUTER_APP.DETAILPUTCALENDAR}
         component={StackApp[DETAILPUTCALENDAR]}
+      />
+       <AppStack.Screen
+        name={SCREEN_ROUTER_APP.MAP}
+        component={StackApp[MAP]}
       />
     </AppStack.Navigator>
   );
