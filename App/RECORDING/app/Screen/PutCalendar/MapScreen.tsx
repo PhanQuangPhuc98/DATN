@@ -20,9 +20,12 @@ import { firebase, database, Auth } from '../../firebase/firebaseSvc';
 import AsyncStorage from '@react-native-community/async-storage';
 import ScreenComponent from '../../components/ScreenComponent';
 import NavigationUtil from '../../navigation/NavigationUtil';
+// import GetLocation from 'react-native-get-location'
+// import Geolocation from '@react-native-community/geolocation'
 import R from '../../assets/R';
 import { DataMoney } from '../../constants/Mockup'
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
+import { error } from 'react-native-gifted-chat/lib/utils';
 const { height, width } = Dimensions.get('window');
 const Back = (onPress) => {
     return (
@@ -31,13 +34,23 @@ const Back = (onPress) => {
                 style={styles.ic_Back}
                 source={images.ic_back}
                 resizeMode={FastImage.resizeMode.contain}></FastImage>
-            <Text style={styles.TextHeader}>{R.string.information}</Text>
+            <Text style={styles.TextHeader}>{R.string.map}</Text>
         </TouchableOpacity>
     );
 };
-const MapScreen = () => {
+const MapScreen = ({ route, navigation }) => {
+    const { data } = route.params;
+    // useEffect(() => {
+    //     Geolocation.getCurrentPosition(position =>{
+    //       alert(JSON.stringify(position))
+    //   },
+    //     error =>alert(error.message),
+    //     {timeout:20000, maximumAge:1000}
+    //   )
+    // }, [])
+    Reactotron.log("data", data)
     return (
-        <SafeAreaView>
+        <SafeAreaView style={styles.Container}>
             <ScreenComponent
                 leftComponent={Back(() => {
                     NavigationUtil.goBack();
@@ -45,8 +58,10 @@ const MapScreen = () => {
                 containerStyle={styles.ContainerHeader}
                 statusBarProps={styles.ContainerHeader}
                 children={
-                    <SafeAreaView>
-                        <MapComponent />
+                    <SafeAreaView style={{ flex: 1 }}>
+                        <MapComponent
+                            location={data.Name}
+                        />
                     </SafeAreaView>
                 }
             />

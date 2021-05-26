@@ -185,7 +185,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                     statusBarProps={styles.ContainerHeader}
                     children={<SafeAreaView>
                         {RenderAvatar(data)}
-                        {RenderInforStudio(data.Name, data.Address + ',' + data.District + ',' + data.City,toggleModal,()=>{NavigationUtil.navigate(SCREEN_ROUTER_APP.MAP)})}
+                        {RenderInforStudio(data.Name, data.Address + ',' + data.District + ',' + data.City,toggleModal,()=>{NavigationUtil.navigate(SCREEN_ROUTER_APP.MAP,{data:data})})}
                         {Line()}
                         {RenderIntroduct()}
                         {RenderListContent()}
