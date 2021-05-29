@@ -12,7 +12,7 @@ import {
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
 import Fire from '../../firebase/firebaseSvc';
-import { ASYNC_STORAGE } from '../../constants/Constant';
+import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
 import Reactotron from 'reactotron-react-native';
 import { colors } from '../../constants/Theme';
 import { firebase, database, Auth } from '../../firebase/firebaseSvc';
@@ -86,12 +86,29 @@ const RenderItem = (Data) => {
     )
 }
 const PutCalendarScreen = () => {
-    let users = [];
-    const [Users, setUsers] = useState({
-        fulldata: users,
-        data: users
+    let studio = [];
+    let users =[];
+    const [Studio, setStudio] = useState({
+        fulldata: studio,
+        data: studio
     });
-
+    const [User,setUser]=useState({
+        FulldataUsers: users,
+        DataUsers: users
+    })
+    const [Categoty,setCategory]=useState({
+        _id: '',
+        Image: '',
+        Name: '',
+        Category: '',
+        Email: '',
+        Phone: '',
+        Sex: '',
+        Birth_Day:'',
+        City: '',
+        District: '',
+        Address: '',
+    })
     useEffect(() => {
         Auth().onAuthStateChanged(user => {
             if (user) {
@@ -99,9 +116,22 @@ const PutCalendarScreen = () => {
                 const onValueChange = database()
                     .ref('/users/')
                     .on('value', (snapshot) => {
-
                         snapshot.forEach((child) => {
-                            if(child.val().Category=="1"){
+                            if(child.val().Category=="1"&&child.val()._id!=Fire.uid){
+                                studio.push({
+                                    _id: child.val()._id,
+                                    Image: child.val().Image,
+                                    Name: child.val().Name,
+                                    Category: child.val().Category,
+                                    Email: child.val().email,
+                                    Phone: child.val().Phone,
+                                    Sex: child.val().Sex,
+                                    Birth_Day: child.val().Birth_Day,
+                                    City: child.val().City,
+                                    District: child.val().District,
+                                    Address: child.val().Address,
+                                })
+                            }else if(child.val().Category!="1"&&child.val()._id!=Fire.uid){
                                 users.push({
                                     _id: child.val()._id,
                                     Image: child.val().Image,
@@ -114,14 +144,34 @@ const PutCalendarScreen = () => {
                                     City: child.val().City,
                                     District: child.val().District,
                                     Address: child.val().Address,
-                                });
+                                })
+                            }else if(child.val()._id==Fire.uid){
+                                setCategory({
+                                    ...Categoty,
+                                    _id: child.val()._id,
+                                    Image: child.val().Image,
+                                    Name: child.val().Name,
+                                    Category: child.val().Category,
+                                    Email: child.val().email,
+                                    Phone: child.val().Phone,
+                                    Sex: child.val().Sex,
+                                    Birth_Day: child.val().Birth_Day,
+                                    City: child.val().City,
+                                    District: child.val().District,
+                                    Address: child.val().Address,
+                                })
                             }
                         })
-                        setUsers({
-                            ...Users,
-                            fulldata:users,
-                            data:users
+                        setStudio({
+                            ...Studio,
+                            fulldata:studio,
+                            data:studio
                         });
+                        setUser({
+                            ...User,
+                            FulldataUsers:users,
+                            DataUsers:users
+                        })
                     });
             }
             else {
@@ -133,16 +183,18 @@ const PutCalendarScreen = () => {
         const formatText = search.toLowerCase();
         console.log(formatText);
         setTimeout(() => {
-            setUsers({
-                ...Users,
-                data: Users.fulldata.filter(item =>
+            setStudio({
+                ...Studio,
+                data: Studio.fulldata.filter(item =>
                     item.Name ? item.Name.toLowerCase().includes(formatText) : item
                 )
             }
             )
         }, 500);
     }
-    Reactotron.log('user', Users.data)
+    Reactotron.log('studio', Studio.data)
+    Reactotron.log('user', User.DataUsers)
+    Reactotron.log('Categoty', Categoty)
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -151,7 +203,7 @@ const PutCalendarScreen = () => {
                 backgroundColor={colors.backgroundColor}
                 statusBarProps={styles.ContainerHeader}
                 children={
-                    RenderItem(Users.data)
+                    RenderItem(Categoty.Category==DEFAULT_PARAMS.USER?Studio.data:User.DataUsers)
                 }
             />
         </SafeAreaView>

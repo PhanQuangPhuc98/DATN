@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import R from '../../assets/R';
 import {firebase} from '../../firebase/firebaseSvc'
-import Fire from '../../firebase/firebaseSvc'
+import Fire,{Auth,database} from '../../firebase/firebaseSvc'
 import image from '../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
 import { GiftedChat, Send, Actions } from 'react-native-gifted-chat';
@@ -77,6 +77,20 @@ const Infor = (onSend, User, messages) => {
 const ChatScreen = ({route, navigation}, props) => {
   const {data} = route.params;
   const [token, setToken] = useState(null);
+  const [Users, setUsers] = useState({
+    _id: '',
+    Name: '',
+    Image: '',
+    Email: '',
+    Password: '',
+    Phone: '',
+    Sex: '',
+    Birth_Day: '',
+    Category: '0',
+    City: '',
+    District: '',
+    Address: ''
+  });
   const [messages, setMessages] = useState([]);
   const checkToken = async () => {
     const res = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
@@ -90,7 +104,7 @@ const ChatScreen = ({route, navigation}, props) => {
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
       checkToken();
-    });
+    }); 
     return unsubscribe;
   }, [navigation]);
   useEffect(() => {
@@ -114,8 +128,36 @@ const ChatScreen = ({route, navigation}, props) => {
       },
     ]);
   }, []);
-  Reactotron.log('id', firebase.auth().currentUser.uid);
-  Reactotron.log('data', data);
+  useEffect(() => {
+    Auth().onAuthStateChanged(user => {
+      if (user) {
+        console.log("state = definitely signed in")
+        const onValueChange = database()
+        .ref('/users/' + Fire.uid)
+        .on('value', (snapshot) => {
+          setUsers({
+            ...Users,
+            _id: snapshot.val()._id,
+            Image: snapshot.val().Image,
+            Name: snapshot.val().Name,
+            Category: snapshot.val().Category,
+            Email: snapshot.val().email,
+            Phone: snapshot.val().Phone,
+            Sex: snapshot.val().Sex,
+            Birth_Day: snapshot.val().Birth_Day,
+            City: snapshot.val().City,
+            District: snapshot.val().District,
+            Address: snapshot.val().Address,
+          });
+        });
+      }
+      else {
+        console.log("state = definitely signed out")
+      }
+    })
+  }, [])
+  Reactotron.log('id', firebase.auth().currentUser);
+  Reactotron.log('data1', data);
 
   return (
     <SafeAreaView style={styles.Container}>
@@ -131,6 +173,7 @@ const ChatScreen = ({route, navigation}, props) => {
           {
             _id: Fire.uid,
             name: Fire.name,
+            avatar:Users.Image,
           },
           messages,
         )}

@@ -205,7 +205,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                     }}
                 />
             </View>
-            {RenderButton()}
+            {RenderButton(()=>{NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.CHAT})})}
         </SafeAreaView>
     )
 };

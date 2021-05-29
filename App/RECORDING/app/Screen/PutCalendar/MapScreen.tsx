@@ -20,8 +20,6 @@ import { firebase, database, Auth } from '../../firebase/firebaseSvc';
 import AsyncStorage from '@react-native-community/async-storage';
 import ScreenComponent from '../../components/ScreenComponent';
 import NavigationUtil from '../../navigation/NavigationUtil';
-// import GetLocation from 'react-native-get-location'
-// import Geolocation from '@react-native-community/geolocation'
 import R from '../../assets/R';
 import { DataMoney } from '../../constants/Mockup'
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
@@ -40,14 +38,6 @@ const Back = (onPress) => {
 };
 const MapScreen = ({ route, navigation }) => {
     const { data } = route.params;
-    // useEffect(() => {
-    //     Geolocation.getCurrentPosition(position =>{
-    //       alert(JSON.stringify(position))
-    //   },
-    //     error =>alert(error.message),
-    //     {timeout:20000, maximumAge:1000}
-    //   )
-    // }, [])
     Reactotron.log("data", data)
     return (
         <SafeAreaView style={styles.Container}>
@@ -60,7 +50,7 @@ const MapScreen = ({ route, navigation }) => {
                 children={
                     <SafeAreaView style={{ flex: 1 }}>
                         <MapComponent
-                            location={data.Name}
+                            name={data.Name}
                         />
                     </SafeAreaView>
                 }
