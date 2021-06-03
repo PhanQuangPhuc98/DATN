@@ -11,13 +11,13 @@ import {
   Platform,
 } from 'react-native';
 import R from '../../assets/R';
-import {firebase} from '../../firebase/firebaseSvc'
-import Fire,{Auth,database} from '../../firebase/firebaseSvc'
+import { firebase } from '../../firebase/firebaseSvc'
+import Fire, { Auth, database } from '../../firebase/firebaseSvc'
 import image from '../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
 import { GiftedChat, Send, Actions } from 'react-native-gifted-chat';
 import FastImage from 'react-native-fast-image';
-import { ASYNC_STORAGE } from '../../constants/Constant'
+import { ASYNC_STORAGE, DEFAULT_PARAMS } from '../../constants/Constant'
 import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
 import { colors } from '../../constants/Theme';
@@ -64,7 +64,9 @@ const Infor = (onSend, User, messages) => {
       timeFormat="HH:mm:ss"
       dateFormat="DD/MM/YYYY"
       placeholder={R.string.messenger}
-      primaryStyle={{ backgroundColor: 'white', marginHorizontal: 5, borderRadius: 20, marginTop: Platform.OS == 'android' ? 5 : 0}}
+      // showUserAvatar ={true}
+      // showAvatarForEveryMessage={true}
+      primaryStyle={{ backgroundColor: 'white', marginHorizontal: 5, borderRadius: 20, marginTop: Platform.OS == 'android' ? 5 : 0 }}
       renderSend={renderSend}
       alwaysShowSend={true}
       renderActions={renderActions}
@@ -74,26 +76,27 @@ const Infor = (onSend, User, messages) => {
     />
   );
 };
-const ChatScreen = ({route, navigation}, props) => {
-  const {data} = route.params;
+const ChatScreen = ({ route, navigation }, props) => {
+  const { data, params, Key } = route.params;
+  const [key, setKey] = useState(null)
+  let Messages = [];
   const [token, setToken] = useState(null);
-  const [Users, setUsers] = useState({
-    _id: '',
-    Name: '',
-    Image: '',
-    Email: '',
-    Password: '',
-    Phone: '',
-    Sex: '',
-    Birth_Day: '',
-    Category: '0',
-    City: '',
-    District: '',
-    Address: ''
-  });
   const [messages, setMessages] = useState([]);
+  const FirtMess = () => {
+    data.Category == DEFAULT_PARAMS.STUDIO ? setMessages([
+      {
+        _id: 1,
+        text: R.string.help,
+        user: {
+          _id: 2,
+          name: data.Name,
+          avatar: data.Image,
+        },
+      },
+    ]) : null
+  }
   const checkToken = async () => {
-    const res = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+    const res = await AsyncStorage.getItem(data._id);
     Reactotron.log('res', res);
     if (res) {
       setToken(res);
@@ -101,64 +104,62 @@ const ChatScreen = ({route, navigation}, props) => {
       setToken(null);
     }
   };
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      checkToken();
-    }); 
-    return unsubscribe;
-  }, [navigation]);
-  useEffect(() => {
-    Fire.on((messages = []) => {
-      setMessages((previousMessages) =>
-        GiftedChat.append(previousMessages, messages),
-      );
-    });
-  }, []);
-  useEffect(() => {
-    setMessages([
-      {
-        _id: 1,
-        text: 'Hello developer',
-        createdAt: new Date(),
-        user: {
-          _id: 2,
-          name: 'React Native',
-          avatar: 'https://placeimg.com/140/140/any',
-        },
-      },
-    ]);
-  }, []);
-  useEffect(() => {
-    Auth().onAuthStateChanged(user => {
-      if (user) {
-        console.log("state = definitely signed in")
-        const onValueChange = database()
-        .ref('/users/' + Fire.uid)
-        .on('value', (snapshot) => {
-          setUsers({
-            ...Users,
-            _id: snapshot.val()._id,
-            Image: snapshot.val().Image,
-            Name: snapshot.val().Name,
-            Category: snapshot.val().Category,
-            Email: snapshot.val().email,
-            Phone: snapshot.val().Phone,
-            Sex: snapshot.val().Sex,
-            Birth_Day: snapshot.val().Birth_Day,
-            City: snapshot.val().City,
-            District: snapshot.val().District,
-            Address: snapshot.val().Address,
-          });
-        });
-      }
-      else {
-        console.log("state = definitely signed out")
-      }
+  const checkRoomsUSer = async () => {
+    const check = await database().ref("rooms").on('value', (snal) => {
+      snal ? snal.forEach(keyroom => {
+        if (params.user.Category === "0" && keyroom.val().friend === data._id) {
+          if (keyroom.val().me === params.user._id) {
+            setKey(keyroom.val().key)
+          }
+        }
+      }) : null
     })
-  }, [])
-  Reactotron.log('id', firebase.auth().currentUser);
-  Reactotron.log('data1', data);
+  }
+  const checkRoomsStudio = async () => {
+    const check = await database().ref("rooms").on('value', (snal) => {
+      snal ? snal.forEach(keyroom => {
+        if (params.user.Category === "1" && keyroom.val().me === data._id) {
+          if (keyroom.val().friend === params.user._id) {
+            setKey(keyroom.val().key)
+          }
+        }
+      }) : null
+    })
+  }
+  const parse = snapshot => {
+    const { createdAt: numberStamp, text, user } = snapshot.val();
+    const createdAt = new Date(numberStamp);
+    const message = { createdAt, text, user };
+    return message;
+  };
+  const calllData = (key) => {
+    return database().ref(`messages/${key ? key : Key.key}/rooms/`)
+  }
+  const CallBackMess = (key) => {
+    database().ref(`messages/${key ? key : Key.key}/rooms/`)
+      .limitToLast(100)
+      .on('child_added', snapshot => {
+        const { id, createdAt: numberStamp, text, user } = snapshot.val()
+        const createdAt = new Date(numberStamp);
+        const message = { id, createdAt, text, user };
+        Messages.push(message)
+        setMessages(Messages)
+      });
+  }
+  const Send = (Messages = []) => {
+    Fire.OnSend(params.user, data, Messages[0].text, Messages[0].user, key)
 
+  }
+  useEffect(() => {
+    FirtMess()
+    params.user.Category === "0" ? checkRoomsUSer() : params.user.Category === "1" ? checkRoomsStudio() : null
+    CallBackMess(key)
+  }, [key]);
+  Reactotron.log('user', params.user);
+  Reactotron.log('friend', data);
+  console.log('key2', Key.key);
+  console.log("key1", key);
+  Reactotron.log("Mess", messages)
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -167,13 +168,14 @@ const ChatScreen = ({route, navigation}, props) => {
         leftComponent={Back(() => {
           NavigationUtil.goBack();
         })}
-        leftContainerStyle={{width: 200}}
+        leftContainerStyle={{ width: 200 }}
         children={Infor(
-          Fire.send,
+          Send,
           {
             _id: Fire.uid,
             name: Fire.name,
-            avatar:Users.Image,
+            avatar: params.user.Image,
+            createdAt: new Date().getTime()
           },
           messages,
         )}

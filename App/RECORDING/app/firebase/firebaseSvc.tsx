@@ -33,11 +33,24 @@ class FirebaseSvc {
   get email(){
     return(firebase.auth().currentUser||{}).email;
   }
+  creatZoom =(me,friend)=>{
+    const db = firebase.database();
+    const roomKey = db.ref(`rooms`).push().key;
+    const update = {};
+    /**
+     * update room
+     */
+    update[`rooms/${roomKey}/me`] = me._id;
+    update[`rooms/${roomKey}/friend`] = friend._id;
+    update[`rooms/${roomKey}/key`] = roomKey;
+    db.ref().update(update).catch(error => console.log('registerRoomError', error));
+    return roomKey;
+  }
   parse = snapshot => {
-    const { timestamp: numberStamp, text, user } = snapshot.val();
+    const { createdAt: numberStamp, text, user } = snapshot.val();
     const { key: _id } = snapshot;
-    const timestamp = new Date(numberStamp);
-    const message = {_id, timestamp, text, user};
+    const createdAt = new Date(numberStamp);
+    const message = {_id, createdAt, text, user};
     return message;
   };
   on =callback=>{
@@ -48,13 +61,26 @@ class FirebaseSvc {
   get timestamp(){
     return firebase.database.ServerValue.TIMESTAMP;
   }
-
-  send = (messages=[]) => {
-    for (let i = 0; i < messages.length; i++) {
-      const { text, user } = messages[i];
-      const message = {text, user, createdAt: this.timestamp, };
-      this.append(message);
+  OnSend =(me,friend,text,user,roomKey)=>{
+    const db = firebase.database();
+    if(roomKey ===null){
+      roomKey=this.creatZoom(me,friend)
+      console.log(roomKey);
     }
+    db.ref(`messages/${roomKey}/rooms`).push({
+      text,
+      user,
+      createdAt: this.timestamp
+  });
+  }
+  send = (messages=[]) => {
+      // for(let i =0;i<messages.length;i++){
+      //   const { text, user } = messages[i];
+      //   const message = {text, user, createdAt: this.timestamp};
+      //   this.append(message);
+      // }
+      console.log("mess",messages);
+      
   };
   append = message => this.ref.push(message);
 

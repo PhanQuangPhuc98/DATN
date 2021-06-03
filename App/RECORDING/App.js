@@ -3,10 +3,14 @@ import {
   StyleSheet,
 } from 'react-native';
 import AppNavigatior from './app/navigation/AppNavigatior';
-const App= () => {
+import { Provider } from "react-redux";
+import store from './app/redux/store'
+const App = () => {
   return (
-        <AppNavigatior>
-        </AppNavigatior>
+    <Provider store={store}>
+      <AppNavigatior>
+      </AppNavigatior>
+    </Provider>
   )
 };
 export default App;

@@ -12,7 +12,7 @@ import {
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
 import Fire from '../../firebase/firebaseSvc';
-import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
+import { ASYNC_STORAGE, DEFAULT_PARAMS } from '../../constants/Constant';
 import Reactotron from 'reactotron-react-native';
 import { colors } from '../../constants/Theme';
 import { firebase, database, Auth } from '../../firebase/firebaseSvc';
@@ -21,7 +21,7 @@ import ScreenComponent from '../../components/ScreenComponent';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import R from '../../assets/R';
 import { DataMoney } from '../../constants/Mockup'
-import { SCREEN_ROUTER_APP,SCREEN_ROUTER } from '../../utils/Constant';
+import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
 const { height, width } = Dimensions.get('window');
 const Search = (onChangeText, placeholder) => {
     return (
@@ -46,57 +46,19 @@ const Search = (onChangeText, placeholder) => {
         </View>
     )
 }
-const Item = ({ index, item }) => {
-        return (
-            <TouchableOpacity
-            onPress={()=>{NavigationUtil.navigate(SCREEN_ROUTER.APP,{
-                screen:SCREEN_ROUTER_APP.DETAILPUTCALENDAR,
-                params:{data:item}
-            })}} 
-            style={styles.ContainerItem}>
-                <FastImage
-                    source={{ uri: item.Image }}
-                    style={styles.ImgItem}
-                    resizeMode={FastImage.resizeMode.contain}
-                />
-                <View style={{paddingHorizontal:10}}>
-                    <Text style={[styles.StyleTextItem, { color: colors.black }]}>
-                        {item.Name}
-                    </Text>
-                    <Text style={{ fontSize: 14, fontFamily: R.fonts.bold, color: colors.Sienna1, textDecorationLine: 'line-through' }} children={DataMoney.real + ' VND'} />
-                    <Text style={[styles.StyleTextItem, { color: colors.Sienna1 }]}>
-                        {DataMoney.sale} VND
-                </Text>
-                </View>
-            </TouchableOpacity>
-        )
-}
-const RenderItem = (Data) => {
-    return (
-        <View>
-            <FlatList
-                data={Data}
-                keyExtractor={item => { item._id }}
-                showsVerticalScrollIndicator={true}
-                renderItem={Item}
-                horizontal={false}
-                numColumns={2}
-            />
-        </View>
-    )
-}
+
 const PutCalendarScreen = () => {
     let studio = [];
-    let users =[];
+    let users = [];
     const [Studio, setStudio] = useState({
         fulldata: studio,
         data: studio
     });
-    const [User,setUser]=useState({
+    const [User, setUser] = useState({
         FulldataUsers: users,
         DataUsers: users
     })
-    const [Categoty,setCategory]=useState({
+    const [Categoty, setCategory] = useState({
         _id: '',
         Image: '',
         Name: '',
@@ -104,7 +66,7 @@ const PutCalendarScreen = () => {
         Email: '',
         Phone: '',
         Sex: '',
-        Birth_Day:'',
+        Birth_Day: '',
         City: '',
         District: '',
         Address: '',
@@ -117,7 +79,7 @@ const PutCalendarScreen = () => {
                     .ref('/users/')
                     .on('value', (snapshot) => {
                         snapshot.forEach((child) => {
-                            if(child.val().Category=="1"&&child.val()._id!=Fire.uid){
+                            if (child.val().Category == "1" && child.val()._id != Fire.uid) {
                                 studio.push({
                                     _id: child.val()._id,
                                     Image: child.val().Image,
@@ -131,7 +93,7 @@ const PutCalendarScreen = () => {
                                     District: child.val().District,
                                     Address: child.val().Address,
                                 })
-                            }else if(child.val().Category!="1"&&child.val()._id!=Fire.uid){
+                            } else if (child.val().Category != "1" && child.val()._id != Fire.uid) {
                                 users.push({
                                     _id: child.val()._id,
                                     Image: child.val().Image,
@@ -145,7 +107,7 @@ const PutCalendarScreen = () => {
                                     District: child.val().District,
                                     Address: child.val().Address,
                                 })
-                            }else if(child.val()._id==Fire.uid){
+                            } else if (child.val()._id == Fire.uid) {
                                 setCategory({
                                     ...Categoty,
                                     _id: child.val()._id,
@@ -164,13 +126,13 @@ const PutCalendarScreen = () => {
                         })
                         setStudio({
                             ...Studio,
-                            fulldata:studio,
-                            data:studio
+                            fulldata: studio,
+                            data: studio
                         });
                         setUser({
                             ...User,
-                            FulldataUsers:users,
-                            DataUsers:users
+                            FulldataUsers: users,
+                            DataUsers: users
                         })
                     });
             }
@@ -192,6 +154,50 @@ const PutCalendarScreen = () => {
             )
         }, 500);
     }
+    const Item = ({ index, item }) => {
+        return (
+            <TouchableOpacity
+                onPress={() => {
+                    NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+                        screen: SCREEN_ROUTER_APP.DETAILPUTCALENDAR,
+                        params: { 
+                            data: item,
+                            params:{user:Categoty}
+                        }
+                    })
+                }}
+                style={styles.ContainerItem}>
+                <FastImage
+                    source={{ uri: item.Image }}
+                    style={styles.ImgItem}
+                    resizeMode={FastImage.resizeMode.contain}
+                />
+                <View style={{ paddingHorizontal: 10 }}>
+                    <Text style={[styles.StyleTextItem, { color: colors.black }]}>
+                        {item.Name}
+                    </Text>
+                    <Text style={{ fontSize: 14, fontFamily: R.fonts.bold, color: colors.Sienna1, textDecorationLine: 'line-through' }} children={DataMoney.real + ' VND'} />
+                    <Text style={[styles.StyleTextItem, { color: colors.Sienna1 }]}>
+                        {DataMoney.sale} VND
+                </Text>
+                </View>
+            </TouchableOpacity>
+        )
+    }
+    const RenderItem = (Data) => {
+        return (
+            <View>
+                <FlatList
+                    data={Data}
+                    keyExtractor={item => { item._id }}
+                    showsVerticalScrollIndicator={true}
+                    renderItem={Item}
+                    horizontal={false}
+                    numColumns={2}
+                />
+            </View>
+        )
+    }
     Reactotron.log('studio', Studio.data)
     Reactotron.log('user', User.DataUsers)
     Reactotron.log('Categoty', Categoty)
@@ -203,7 +209,7 @@ const PutCalendarScreen = () => {
                 backgroundColor={colors.backgroundColor}
                 statusBarProps={styles.ContainerHeader}
                 children={
-                    RenderItem(Categoty.Category==DEFAULT_PARAMS.USER?Studio.data:User.DataUsers)
+                    RenderItem(Categoty.Category == DEFAULT_PARAMS.USER ? Studio.data : User.DataUsers)
                 }
             />
         </SafeAreaView>

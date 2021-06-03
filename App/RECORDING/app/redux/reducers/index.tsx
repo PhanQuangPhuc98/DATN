@@ -1,11 +1,12 @@
 import {combineReducers} from "redux"
 import UserReducer from './UserReducer'
-
+import ChatReducer from './ChatReducer';
 
 import { RESET } from "../actions/types";
 
 const appReducer = combineReducers({
-    UserReducer,
+    userReducer:UserReducer,
+    chatReducer:ChatReducer
   });
 
 const initialState = appReducer({}, {})

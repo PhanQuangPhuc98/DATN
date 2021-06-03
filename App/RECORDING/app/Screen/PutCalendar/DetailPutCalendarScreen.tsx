@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
-import {callNumber} from '../../utils/CallPhone'
+import { callNumber } from '../../utils/CallPhone'
 import Fire from '../../firebase/firebaseSvc';
 import { ASYNC_STORAGE } from '../../constants/Constant';
 import Reactotron from 'reactotron-react-native';
@@ -168,12 +168,84 @@ const RenderButton = (onChat, onPut) => {
     )
 };
 const DetailPutCalendarScreen = ({ route, navigation }) => {
-    const { data } = route.params;
+    const { data,params } = route.params;
+    const [Users, setUsers] = useState({
+        _id: '',
+        Name: '',
+        Image: '',
+        Email: '',
+        Password: '',
+        Phone: '',
+        Sex: '',
+        Birth_Day: '',
+        Category: '0',
+        City: '',
+        District: '',
+        Address: ''
+    });
+    const [key, setKey] = useState(null)
     const [isModalVisible, setModalVisible] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
+    useEffect(() => {
+        Auth().onAuthStateChanged(user => {
+            if (user) {
+                console.log("state = definitely signed in")
+                const onValueChange = database()
+                    .ref('/users/' + Fire.uid)
+                    .on('value', (snapshot) => {
+                        setUsers({
+                            ...Users,
+                            _id: snapshot.val()._id,
+                            Image: snapshot.val().Image,
+                            Name: snapshot.val().Name,
+                            Category: snapshot.val().Category,
+                            Email: snapshot.val().email,
+                            Phone: snapshot.val().Phone,
+                            Sex: snapshot.val().Sex,
+                            Birth_Day: snapshot.val().Birth_Day,
+                            City: snapshot.val().City,
+                            District: snapshot.val().District,
+                            Address: snapshot.val().Address,
+                        });
+                    });
+            }
+            else {
+                console.log("state = definitely signed out")
+            }
+        })
+    }, [])
+    const checkRoomsUSer = async () => {
+        const check = await database().ref("rooms").on('value', (snal) => {
+            snal ? snal.forEach(keyroom => {
+                if (params.user.Category === "0" && keyroom.val().friend === data._id) {
+
+                    if (keyroom.val().me === params.user._id) {
+                        setKey(keyroom.val().key)
+                    }
+                }
+            }) : null
+        })
+    }
+    const checkRoomsStudio = async () => {
+        const check = await database().ref("rooms").on('value', (snal) => {
+            snal ? snal.forEach(keyroom => {
+                if (params.user.Category === "1" && keyroom.val().me === data._id) {
+                    if (keyroom.val().friend === params.user._id) {
+                        setKey(keyroom.val().key)
+                    }
+                }
+            }) : null
+        })
+    }
+    useEffect(() => {
+        params.user.Category === "0" ? checkRoomsUSer() : params.user.Category === "1" ?checkRoomsStudio():null
+    }, [])
     Reactotron.log("data", data)
+    Reactotron.log("user", Users)
+    Reactotron.log("key", key)
+    Reactotron.log("params",params.user)
     return (
         <SafeAreaView style={styles.Container}>
             {
@@ -185,7 +257,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                     statusBarProps={styles.ContainerHeader}
                     children={<SafeAreaView>
                         {RenderAvatar(data)}
-                        {RenderInforStudio(data.Name, data.Address + ',' + data.District + ',' + data.City,toggleModal,()=>{NavigationUtil.navigate(SCREEN_ROUTER_APP.MAP,{data:data})})}
+                        {RenderInforStudio(data.Name, data.Address + ',' + data.District + ',' + data.City, toggleModal, () => { NavigationUtil.navigate(SCREEN_ROUTER_APP.MAP, { data: data }) })}
                         {Line()}
                         {RenderIntroduct()}
                         {RenderListContent()}
@@ -199,13 +271,26 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                     cancle={R.string.exit}
                     confirm={R.string.Call}
                     content={R.string.callStudio}
-                    onPress={()=>{
+                    onPress={() => {
                         toggleModal(),
-                        callNumber(data.Phone)
+                            callNumber(data.Phone)
                     }}
                 />
             </View>
-            {RenderButton(()=>{NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.CHAT})})}
+            {RenderButton(() => {
+                NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+                    screen: SCREEN_ROUTER_APP.CHAT,
+                    params: {
+                        data: data,
+                        params: {
+                            user: Users
+                        },
+                        Key:{
+                            key:key
+                        }
+                    }
+                })
+            })}
         </SafeAreaView>
     )
 };

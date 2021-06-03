@@ -56,6 +56,7 @@ const string = {
   exit:'Thoát',
   Call:'Gọi',
   PutStudio:'Bạn muốn đặt lịch thu âm ',
-  map:'Địa chỉ phòng thu '
+  map:'Địa chỉ phòng thu ',
+  help:'Xin chào anh/chị em có thể giúp được gì anh chị ạ ?'
 };
 export default string;
