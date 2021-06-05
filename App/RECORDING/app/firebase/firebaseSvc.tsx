@@ -1,7 +1,9 @@
 import firebase from '@react-native-firebase/app';
 import Auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
+import { DEFAULT_PARAMS } from '../constants/Constant';
 import firestore from '@react-native-firebase/firestore';
+import R from '../assets/R';
 import storage from '@react-native-firebase/storage';
 class FirebaseSvc {
   constructor() {
@@ -33,8 +35,8 @@ class FirebaseSvc {
   get email(){
     return(firebase.auth().currentUser||{}).email;
   }
-  creatZoom =(me,friend)=>{
-    const db = firebase.database();
+  creatZoom =async (me,friend,data)=>{
+    const db = await firebase.database();
     const roomKey = db.ref(`rooms`).push().key;
     const update = {};
     /**
@@ -44,6 +46,16 @@ class FirebaseSvc {
     update[`rooms/${roomKey}/friend`] = friend._id;
     update[`rooms/${roomKey}/key`] = roomKey;
     db.ref().update(update).catch(error => console.log('registerRoomError', error));
+    db.ref(`messages/${roomKey}/rooms`).push({
+        _id: 1,
+        text: R.string.help,
+        createdAt:new Date().getTime(),
+        user: {
+          _id: 2,
+          name: data.Name,
+          avatar: data.Image,
+        },
+      })
     return roomKey;
   }
   parse = snapshot => {
@@ -61,13 +73,14 @@ class FirebaseSvc {
   get timestamp(){
     return firebase.database.ServerValue.TIMESTAMP;
   }
-  OnSend =(me,friend,text,user,roomKey)=>{
+  OnSend =(_id,text,user,roomKey)=>{
     const db = firebase.database();
-    if(roomKey ===null){
-      roomKey=this.creatZoom(me,friend)
-      console.log(roomKey);
-    }
+    // if(roomKey ===null){
+    //   roomKey=this.creatZoom(me,friend)
+    //   console.log(roomKey);
+    // }
     db.ref(`messages/${roomKey}/rooms`).push({
+      _id,
       text,
       user,
       createdAt: this.timestamp

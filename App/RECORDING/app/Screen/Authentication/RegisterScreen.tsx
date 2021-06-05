@@ -94,12 +94,32 @@ const RegisterScreen = () => {
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
   const iconConfirm = confirm_password ? R.images.ic_visibility : R.images.ic_invisible;
   console.log(payload.id);
-  const CallCity = () => {
-    const city = database()
-      .ref("/City/")
+  // const CallCity = () => {
+  //   const city = database()
+  //     .ref("/City/")
+  //     .on('value', (snapshot) => {
+  //       let Data = [];
+  //       console.log(snapshot.val(), "city");
+  //       snapshot.forEach((child) => {
+  //         Data.push({
+  //           id: child.val().id,
+  //           name: child.val().name
+  //         })
+  //       })
+  //       setCity(Data)
+  //     });
+  // }
+  useEffect(() => {
+    setTimeout(async () => {
+      const city =await database()
+      if (!city) {
+       console.log("not network");
+       alert("not network")
+      }
+      city.ref("/City/")
       .on('value', (snapshot) => {
         let Data = [];
-        console.log(snapshot.val(), "city");
+        console.log("connect network",snapshot.val());
         snapshot.forEach((child) => {
           Data.push({
             id: child.val().id,
@@ -108,10 +128,11 @@ const RegisterScreen = () => {
         })
         setCity(Data)
       });
-  }
-  useEffect(() => {
-    CallCity()
-  }, [])
+    }, 2000);
+
+    console.log(city);
+     
+  }, [city])
   const CreatAcout = async () => {
     setLoading(true)
 

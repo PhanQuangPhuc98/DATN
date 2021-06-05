@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import R from '../../assets/R';
 import { firebase } from '../../firebase/firebaseSvc'
+import {CutOneArrayObject} from '../../utils/FuncHelper';
 import Fire, { Auth, database } from '../../firebase/firebaseSvc'
 import image from '../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
@@ -76,90 +77,118 @@ const Infor = (onSend, User, messages) => {
     />
   );
 };
-const ChatScreen = ({ route, navigation }, props) => {
+const renderIsloading = () => {
+  return (
+    <SafeAreaView style={styles.containerLoading}>
+      <Text style={styles.TextLoading}>
+        {R.string.loadingMesse}
+      </Text>
+    </SafeAreaView>
+  )
+}
+const ChatScreen = ({ route, navigation, ...props }) => {
   const { data, params, Key } = route.params;
+  const [loaData,setLoadata]=useState(false)
   const [key, setKey] = useState(null)
+  const [ZoomId,setZoomId]=useState(null)
+  const [isLoading, setLoading] = useState(false);
   let Messages = [];
-  const [token, setToken] = useState(null);
   const [messages, setMessages] = useState([]);
-  const FirtMess = () => {
-    data.Category == DEFAULT_PARAMS.STUDIO ? setMessages([
-      {
-        _id: 1,
-        text: R.string.help,
-        user: {
-          _id: 2,
-          name: data.Name,
-          avatar: data.Image,
-        },
-      },
-    ]) : null
-  }
-  const checkToken = async () => {
-    const res = await AsyncStorage.getItem(data._id);
-    Reactotron.log('res', res);
-    if (res) {
-      setToken(res);
-    } else if (!res) {
-      setToken(null);
-    }
-  };
+
   const checkRoomsUSer = async () => {
+    setLoading(true)
     const check = await database().ref("rooms").on('value', (snal) => {
+      setLoading(false)
       snal ? snal.forEach(keyroom => {
         if (params.user.Category === "0" && keyroom.val().friend === data._id) {
           if (keyroom.val().me === params.user._id) {
             setKey(keyroom.val().key)
+            setZoomId(keyroom.val().key)
           }
         }
       }) : null
     })
   }
   const checkRoomsStudio = async () => {
+    setLoading(true)
     const check = await database().ref("rooms").on('value', (snal) => {
+      setLoading(false)
       snal ? snal.forEach(keyroom => {
         if (params.user.Category === "1" && keyroom.val().me === data._id) {
           if (keyroom.val().friend === params.user._id) {
             setKey(keyroom.val().key)
+            setZoomId(keyroom.val().key)
           }
         }
       }) : null
     })
   }
-  const parse = snapshot => {
-    const { createdAt: numberStamp, text, user } = snapshot.val();
-    const createdAt = new Date(numberStamp);
-    const message = { createdAt, text, user };
-    return message;
-  };
-  const calllData = (key) => {
-    return database().ref(`messages/${key ? key : Key.key}/rooms/`)
+  const FirtMess = () => {
+    if (key === null && Key.key === null) {
+    return Fire.creatZoom(params.user, data, data)
+    } 
+
   }
-  const CallBackMess = (key) => {
-    database().ref(`messages/${key ? key : Key.key}/rooms/`)
-      .limitToLast(100)
-      .on('child_added', snapshot => {
-        const { id, createdAt: numberStamp, text, user } = snapshot.val()
-        const createdAt = new Date(numberStamp);
-        const message = { id, createdAt, text, user };
-        Messages.push(message)
-        setMessages(Messages)
-      });
+ 
+
+  const getZooomID =()=>{
+    if(key===null){
+         setZoomId(Key.key)
+      }
+    else if(Key.key===null){
+       setZoomId(key)
+    }
+    else if(key){
+      setZoomId(key)
+    }
+    else if(Key.key!=null)
+    {
+      setZoomId(Key.key)
+    }
+  }
+  const CallBackMess = (ZoomId) => {
+    //setLoading(true)
+    setTimeout(async () => {
+      const db = await database().ref(`messages/${ZoomId}/rooms/`)
+      if (!db) {
+        console.log("not network");
+        alert("not network")
+      }
+      db.limitToLast(100)
+        .on('child_added', snapshot => {
+          setLoading(false)
+          const { _id, createdAt: numberStamp, text, user } = snapshot.val()
+          const createdAt = new Date(numberStamp);
+          const message = { _id, createdAt, text, user };
+
+          Messages.push(message)
+
+          Messages.sort((a, b) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          });
+          setLoading(false)
+          setMessages(Messages)
+        });
+    }, 1000);
   }
   const Send = (Messages = []) => {
-    Fire.OnSend(params.user, data, Messages[0].text, Messages[0].user, key)
-
+    const roomKey = database().ref().push().key;
+    CallBackMess(key)
+    Fire.OnSend(roomKey,Messages[0].text, Messages[0].user, key)
+    setLoadata(true)
   }
   useEffect(() => {
     FirtMess()
     params.user.Category === "0" ? checkRoomsUSer() : params.user.Category === "1" ? checkRoomsStudio() : null
-    CallBackMess(key)
+    getZooomID()
+    setTimeout(() => {
+      loaData ===false?CallBackMess(key):null
+    }, 300);
   }, [key]);
-  Reactotron.log('user', params.user);
-  Reactotron.log('friend', data);
+  data.Category == DEFAULT_PARAMS.USER ? messages.shift():messages
   console.log('key2', Key.key);
   console.log("key1", key);
-  Reactotron.log("Mess", messages)
+  console.log("Zooomid",ZoomId)
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -169,16 +198,18 @@ const ChatScreen = ({ route, navigation }, props) => {
           NavigationUtil.goBack();
         })}
         leftContainerStyle={{ width: 200 }}
-        children={Infor(
-          Send,
-          {
-            _id: Fire.uid,
-            name: Fire.name,
-            avatar: params.user.Image,
-            createdAt: new Date().getTime()
-          },
-          messages,
-        )}
+        children={
+          isLoading === true ? renderIsloading() :
+            Infor(
+              Send,
+              {
+                _id: Fire.uid,
+                name: Fire.name,
+                avatar: params.user.Image,
+                createdAt: new Date().getTime()
+              },
+              messages,
+            )}
       />
     </SafeAreaView>
   );
@@ -216,5 +247,16 @@ const styles = StyleSheet.create({
     color: colors.white,
     marginTop: 5,
   },
+  containerLoading: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  TextLoading: {
+    textAlign: "center",
+    color: R.color.colors.Sienna1,
+    fontFamily: R.fonts.bold,
+    fontSize: 18
+  }
 });
 export default ChatScreen;

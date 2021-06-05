@@ -57,6 +57,7 @@ const string = {
   Call:'Gọi',
   PutStudio:'Bạn muốn đặt lịch thu âm ',
   map:'Địa chỉ phòng thu ',
-  help:'Xin chào anh/chị em có thể giúp được gì anh chị ạ ?'
+  help:'Xin chào anh/chị em có thể giúp được gì anh chị ạ ?',
+  loadingMesse:"Đang tải tin nhắn"
 };
 export default string;

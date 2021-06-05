@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "657095121114",
+    "firebase_url": "https://recording-c2188-default-rtdb.firebaseio.com",
     "project_id": "recording-c2188",
     "storage_bucket": "recording-c2188.appspot.com"
   },
@@ -12,7 +13,18 @@
           "package_name": "com.recording"
         }
       },
+      "react-native": {
+        "database_persistence_enabled": true
+      },
       "oauth_client": [
+        {
+          "client_id": "657095121114-332t0d9ahcojjqjqccrfv2d38h2j3m0d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.recording",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
         {
           "client_id": "657095121114-s9q828np7dte5uthub3krvj09f55ltu7.apps.googleusercontent.com",
           "client_type": 3

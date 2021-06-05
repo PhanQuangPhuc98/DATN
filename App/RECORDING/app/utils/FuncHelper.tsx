@@ -13,3 +13,9 @@ export function hasWhiteSpace(s) {
     if (!phone) return false;
     return REG_PHONE.test(phone);
   }
+  export function CutOneArrayObject(array){
+    let find=array.map((index,item)=>{
+         return item._id
+    }).indexOf(1)
+    return find.splice(find,0)
+  }
