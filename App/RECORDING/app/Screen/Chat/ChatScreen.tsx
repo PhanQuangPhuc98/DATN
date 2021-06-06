@@ -12,8 +12,9 @@ import {
 } from 'react-native';
 import R from '../../assets/R';
 import { firebase } from '../../firebase/firebaseSvc'
-import {CutOneArrayObject} from '../../utils/FuncHelper';
-import Fire, { Auth, database } from '../../firebase/firebaseSvc'
+import { CutOneArrayObject } from '../../utils/FuncHelper';
+import Fire, { Auth, database,storage } from '../../firebase/firebaseSvc'
+import ImagePicker from 'react-native-image-crop-picker'
 import image from '../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
 import { GiftedChat, Send, Actions } from 'react-native-gifted-chat';
@@ -35,16 +36,7 @@ const Back = (onPress) => {
     </TouchableOpacity>
   );
 };
-const renderActions = () => {
-  return (
-    <TouchableOpacity style={styles.Action}>
-      <FastImage
-        style={styles.ImgAction}
-        source={image.ic_ios_camera}
-        resizeMode="contain"></FastImage>
-    </TouchableOpacity>
-  );
-};
+
 const renderSend = (props) => {
   return (
     <Send {...props}>
@@ -58,25 +50,8 @@ const renderSend = (props) => {
     </Send>
   );
 };
-const Infor = (onSend, User, messages) => {
-  return (
-    <GiftedChat
-      textInputStyle={styles.TextInputStyle}
-      timeFormat="HH:mm:ss"
-      dateFormat="DD/MM/YYYY"
-      placeholder={R.string.messenger}
-      // showUserAvatar ={true}
-      // showAvatarForEveryMessage={true}
-      primaryStyle={{ backgroundColor: 'white', marginHorizontal: 5, borderRadius: 20, marginTop: Platform.OS == 'android' ? 5 : 0 }}
-      renderSend={renderSend}
-      alwaysShowSend={true}
-      renderActions={renderActions}
-      messages={messages}
-      onSend={onSend}
-      user={User}
-    />
-  );
-};
+
+
 const renderIsloading = () => {
   return (
     <SafeAreaView style={styles.containerLoading}>
@@ -88,13 +63,18 @@ const renderIsloading = () => {
 }
 const ChatScreen = ({ route, navigation, ...props }) => {
   const { data, params, Key } = route.params;
-  const [loaData,setLoadata]=useState(false)
+  const [loaData, setLoadata] = useState(false)
+  const [uploading, setUploading] = useState(false);
   const [key, setKey] = useState(null)
-  const [ZoomId,setZoomId]=useState(null)
+  const [ZoomId, setZoomId] = useState(null)
+  const [image, setImage] = useState(null);
+  const [imageMessages,setImageMessages]=useState(null);
   const [isLoading, setLoading] = useState(false);
-  let Messages = [];
-  const [messages, setMessages] = useState([]);
-
+  let MessagesUser = [];
+  let MessagesStudio=[];
+  const roomKey = database().ref().push().key;
+  const [messagesUser, setMessagesUser] = useState([]);
+  const [messagesStudio, setMessagesStudio] = useState([]);
   const checkRoomsUSer = async () => {
     setLoading(true)
     const check = await database().ref("rooms").on('value', (snal) => {
@@ -103,12 +83,46 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         if (params.user.Category === "0" && keyroom.val().friend === data._id) {
           if (keyroom.val().me === params.user._id) {
             setKey(keyroom.val().key)
-            setZoomId(keyroom.val().key)
+            // setZoomId(keyroom.val().key)
           }
         }
       }) : null
     })
   }
+  const uploadImage = async () => {
+    if (image == null) {
+      return null;
+    }
+    setUploading(true)
+    const update = await firebase.storage()
+      .ref('imageMessages/' + Fire.uid)
+      .putFile(image)
+      .then(() => {
+        setUploading(false)
+        console.log('Image Upload Successfully');
+        storage()
+          .ref('imageMessages/' + Fire.uid)
+          .getDownloadURL()
+          .then((downloadURL) => {
+            setImageMessages(downloadURL)
+            Fire.OnSend(roomKey, "","", key,imageMessages)
+          })
+      })
+   
+  };
+  const takePhotoFromCamera = () => {
+    ImagePicker.openCamera({
+      width: 1200,
+      height: 780,
+      cropping: true,
+    }).then((image) => {
+      console.log(image);
+      const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
+      setImage(imageUri);
+      uploadImage()
+    });
+    
+  };
   const checkRoomsStudio = async () => {
     setLoading(true)
     const check = await database().ref("rooms").on('value', (snal) => {
@@ -117,7 +131,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         if (params.user.Category === "1" && keyroom.val().me === data._id) {
           if (keyroom.val().friend === params.user._id) {
             setKey(keyroom.val().key)
-            setZoomId(keyroom.val().key)
+            // setZoomId(keyroom.val().key)
           }
         }
       }) : null
@@ -125,31 +139,14 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   }
   const FirtMess = () => {
     if (key === null && Key.key === null) {
-    return Fire.creatZoom(params.user, data, data)
-    } 
+      return Fire.creatZoom(params.user, data, data)
+    }
 
   }
- 
-
-  const getZooomID =()=>{
-    if(key===null){
-         setZoomId(Key.key)
-      }
-    else if(Key.key===null){
-       setZoomId(key)
-    }
-    else if(key){
-      setZoomId(key)
-    }
-    else if(Key.key!=null)
-    {
-      setZoomId(Key.key)
-    }
-  }
-  const CallBackMess = (ZoomId) => {
-    //setLoading(true)
+  const CallBackMess = (key) => {
+    setLoading(true)
     setTimeout(async () => {
-      const db = await database().ref(`messages/${ZoomId}/rooms/`)
+      const db =  database().ref(`messages/${key}/rooms/`)
       if (!db) {
         console.log("not network");
         alert("not network")
@@ -157,38 +154,80 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       db.limitToLast(100)
         .on('child_added', snapshot => {
           setLoading(false)
-          const { _id, createdAt: numberStamp, text, user } = snapshot.val()
+          const { _id, createdAt: numberStamp, text, user,image } = snapshot.val()
           const createdAt = new Date(numberStamp);
-          const message = { _id, createdAt, text, user };
-
-          Messages.push(message)
-
-          Messages.sort((a, b) => {
+          const message = { _id, createdAt, text, user,image };
+          if(data.Category == DEFAULT_PARAMS.USER&&_id!=1){
+            MessagesStudio.push(message)
+            
+            MessagesStudio.sort((a, b) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           });
+          setMessagesStudio(MessagesStudio)
+          }
+         else  if(data.Category == DEFAULT_PARAMS.STUDIO){
+           MessagesUser.push(message)
+           MessagesUser.sort((a, b) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          });
+          setMessagesUser(MessagesUser)
+        }
           setLoading(false)
-          setMessages(Messages)
         });
-    }, 1000);
+    }, 200);
   }
   const Send = (Messages = []) => {
-    const roomKey = database().ref().push().key;
+    
     CallBackMess(key)
-    Fire.OnSend(roomKey,Messages[0].text, Messages[0].user, key)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key)
     setLoadata(true)
   }
   useEffect(() => {
     FirtMess()
     params.user.Category === "0" ? checkRoomsUSer() : params.user.Category === "1" ? checkRoomsStudio() : null
-    getZooomID()
+    // getZooomID()
     setTimeout(() => {
-      loaData ===false?CallBackMess(key):null
-    }, 300);
+      loaData === false ? CallBackMess(key) : null
+    }, 500);
   }, [key]);
-  data.Category == DEFAULT_PARAMS.USER ? messages.shift():messages
+  const renderActions = () => {
+    return (
+      <TouchableOpacity 
+      onPress={()=>{takePhotoFromCamera()}}
+      style={styles.Action}>
+        <FastImage
+          style={styles.ImgAction}
+          source={R.images.ic_ios_camera}
+          resizeMode="contain"></FastImage>
+      </TouchableOpacity>
+    );
+  };
+  const Infor = (onSend, User, messages) => {
+    return (
+      <GiftedChat
+        textInputStyle={styles.TextInputStyle}
+        timeFormat="HH:mm:ss"
+        dateFormat="DD/MM/YYYY"
+        placeholder={R.string.messenger}
+        // showUserAvatar ={true}
+        // showAvatarForEveryMessage={true}
+        primaryStyle={{ backgroundColor: 'white', marginHorizontal: 5, borderRadius: 20, marginTop: Platform.OS == 'android' ? 5 : 0 }}
+        renderSend={renderSend}
+        alwaysShowSend={true}
+        renderActions={renderActions}
+        messages={messages}
+        onSend={onSend}
+        user={User}
+      />
+    );
+  };
   console.log('key2', Key.key);
   console.log("key1", key);
-  console.log("Zooomid",ZoomId)
+  console.log("Zooomid", ZoomId);
+  console.log("messseuser", messagesUser);
+  console.log("messseStudio", messagesStudio);
+  console.log("image",image);
+  console.log("imageMess",imageMessages);
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -208,7 +247,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
                 avatar: params.user.Image,
                 createdAt: new Date().getTime()
               },
-              messages,
+              params.user.Category===DEFAULT_PARAMS.USER?messagesUser:messagesStudio
             )}
       />
     </SafeAreaView>

@@ -73,7 +73,7 @@ class FirebaseSvc {
   get timestamp(){
     return firebase.database.ServerValue.TIMESTAMP;
   }
-  OnSend =(_id,text,user,roomKey)=>{
+  OnSend =(_id,text,user,roomKey,image)=>{
     const db = firebase.database();
     // if(roomKey ===null){
     //   roomKey=this.creatZoom(me,friend)
@@ -83,7 +83,8 @@ class FirebaseSvc {
       _id,
       text,
       user,
-      createdAt: this.timestamp
+      createdAt: this.timestamp,
+      image
   });
   }
   send = (messages=[]) => {
