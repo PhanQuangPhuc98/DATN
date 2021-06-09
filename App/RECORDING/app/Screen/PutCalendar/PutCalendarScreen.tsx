@@ -208,6 +208,7 @@ const PutCalendarScreen = () => {
                 containerStyle={styles.ContainerHeader}
                 backgroundColor={colors.backgroundColor}
                 statusBarProps={styles.ContainerHeader}
+                chilStyle={{paddingHorizontal:10}}
                 children={
                     RenderItem(Categoty.Category == DEFAULT_PARAMS.USER ? Studio.data : User.DataUsers)
                 }
@@ -289,12 +290,13 @@ const styles = StyleSheet.create({
     ContainerItem: {
         height: 234,
         backgroundColor: colors.white,
-        width: 180,
+        width: 165,
         borderRadius: 10,
         marginVertical: 5,
-        marginHorizontal: 8
+        marginRight:10
+        // marginHorizontal: 10
     },
-    ImgItem: { height: 146, width: 180 },
+    ImgItem: { height: 146, width: 165 },
     StyleTextItem: { fontSize: 16, fontFamily: R.fonts.bold, color: colors.black },
 });
 export default PutCalendarScreen;

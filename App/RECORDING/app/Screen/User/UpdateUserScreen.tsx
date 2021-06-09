@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity,ActivityIndicator, Dimensions, TextInput, Platform } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator, Dimensions, TextInput, Platform } from 'react-native'
 import FastImage from 'react-native-fast-image';
 import images from '../../assets/imagesAsset';
 import R from '../../assets/R';
@@ -10,7 +10,7 @@ import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import DatePicker from 'react-native-datepicker';
 import { CheckBox } from "react-native-elements";
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
-import {showMessages} from '../../utils/AlertHelper'
+import { showMessages } from '../../utils/AlertHelper'
 import Fire, { database } from '../../firebase/firebaseSvc';
 import Reactotron from 'reactotron-react-native';
 import ScreenComponent from '../../components/ScreenComponent'
@@ -26,7 +26,7 @@ const Back = (onPress) => {
         </TouchableOpacity>
     );
 };
-const RenderInput = (Label, value,onChangeText) => {
+const RenderInput = (Label, value, onChangeText) => {
     return (
         <View style={{ paddingTop: 5 }}>
             <Text style={[styles.TextInfor]}>
@@ -36,7 +36,7 @@ const RenderInput = (Label, value,onChangeText) => {
                 value={value}
                 style={styles.TextInputStyle}
                 onChangeText={onChangeText}
-                >
+            >
 
             </TextInput>
         </View>
@@ -101,13 +101,26 @@ const RenderSex = (title, checked, onPress) => {
         </View>
     )
 }
+const renderIcon=()=>{
+    return(
+        <SafeAreaView>  
+            <FastImage
+            source={R.images.ic_expant}
+            style={{height:16,width:16}}
+            resizeMode={FastImage.resizeMode.contain}
+            >
+            </FastImage>
+        </SafeAreaView>
+    )
+
+}
 const RenderAdress = (label, Data, onSelectedItemsChange, selectedItems, Adress) => {
     return (
         <View>
             <Text style={styles.TextLable}>{label}</Text>
             <SectionedMultiSelect
                 items={Data}
-                IconRenderer={Icon}
+                IconRenderer={renderIcon}
                 single={true}
                 uniqueKey="name"
                 // subKey="DataCity"
@@ -138,19 +151,19 @@ const UpdateUserScreen = ({ route, ...props }) => {
     const { data } = route.params;
     const [city, setCity] = useState([]);
     const [isLoading, setLoading] = useState(false);
-    const [dataHN,setHN]=useState([])
-    const [dataHCM,setHCM]=useState([])
+    const [dataHN, setHN] = useState([])
+    const [dataHCM, setHCM] = useState([])
     const [payload, setPayload] = useState({
-        _id: data?data._id:'',
-        Name: data?data.Name:'',
-        Email: data?data.Email:'',
-        Phone: data?data.Phone:'',
-        Sex: data?data.Sex:'',
-        Birth_Day: data?data.Birth_Day:'',
-        Category: data?data.Category:'',
-        City: data?data.City:'',
-        District: data?data.District:'',
-        Address: data?data.Address:''
+        _id: data ? data._id : '',
+        Name: data ? data.Name : '',
+        Email: data ? data.Email : '',
+        Phone: data ? data.Phone : '',
+        Sex: data ? data.Sex : '',
+        Birth_Day: data ? data.Birth_Day : '',
+        Category: data ? data.Category : '',
+        City: data ? data.City : '',
+        District: data ? data.District : '',
+        Address: data ? data.Address : ''
     })
     const onSelectedCity = (selectedItems) => {
         setPayload({
@@ -158,7 +171,7 @@ const UpdateUserScreen = ({ route, ...props }) => {
             City: selectedItems[0]
         })
     }
-    const onSelectedDistrict=(selectedItems)=>{
+    const onSelectedDistrict = (selectedItems) => {
         setPayload({
             ...payload,
             District: selectedItems[0]
@@ -179,12 +192,12 @@ const UpdateUserScreen = ({ route, ...props }) => {
                 setCity(Data)
             });
     }
-    const CallDistrict =()=>{
-           const District= database()
+    const CallDistrict = () => {
+        const District = database()
             .ref("/District/")
             .on('value', (snapshot) => {
-            setHN(snapshot.val().HN)
-            setHCM(snapshot.val().HCM)
+                setHN(snapshot.val().HN)
+                setHCM(snapshot.val().HCM)
             });
     }
     useEffect(() => {
@@ -192,24 +205,24 @@ const UpdateUserScreen = ({ route, ...props }) => {
         CallDistrict()
     }, [])
     Reactotron.log(payload.District, "District");
-    const updateUser =async ()=>{
+    const updateUser = async () => {
         setLoading(true)
         try {
             const update = await database()
-            .ref(`/users/${Fire.uid}`)
-            .update({
-                Name: payload.Name,
-                Email: payload.Email,
-                Phone: payload.Phone,
-                Sex: payload.Sex,
-                Birth_Day: payload.Birth_Day,
-                City: payload.City,
-                District: payload.District,
-                Address: payload.Address
-            })
+                .ref(`/users/${Fire.uid}`)
+                .update({
+                    Name: payload.Name,
+                    Email: payload.Email,
+                    Phone: payload.Phone,
+                    Sex: payload.Sex,
+                    Birth_Day: payload.Birth_Day,
+                    City: payload.City,
+                    District: payload.District,
+                    Address: payload.Address
+                })
             setLoading(false);
             showMessages(R.string.notification, R.string.Update_Sucess);
-            NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.USER})
+            NavigationUtil.navigate(SCREEN_ROUTER.MAIN, { screen: SCREEN_ROUTER_APP.USER })
         } catch (error) {
             setLoading(false);
             console.log(error);
@@ -225,34 +238,41 @@ const UpdateUserScreen = ({ route, ...props }) => {
                 statusBarProps={styles.ContainerHeader}
                 children={
                     <SafeAreaView style={{ paddingHorizontal: 25 }}>
-                        {RenderInput(R.string.name, payload.Name,name=>{setPayload({...payload,Name:name})})}
-                        {RenderInput(R.string.phone, payload.Phone,phone=>{setPayload({...payload,Phone:phone})})}
-                        {RenderInput(R.string.email, payload.Email,enail=>{setPayload({...payload,Email:enail})})}
-                        {RenderDate(payload.Birth_Day, date => { setPayload({
-                            ...payload,
-                            Birth_Day:date
-                        }) })}
-                        <View style={{ flexDirection: "row", backgroundColor: 'white' }}>
-                            <Text style={[styles.TextInfor, { marginTop: 15 }]}>
-                                {R.string.Sex}
-                            </Text>
-                            {RenderSex(R.string.Boy, payload.Sex=='1'?true:false, () => {
+                        <ScrollView
+                        showsVerticalScrollIndicator={false}
+                        >
+                            {RenderInput(R.string.name, payload.Name, name => { setPayload({ ...payload, Name: name }) })}
+                            {RenderInput(R.string.phone, payload.Phone, phone => { setPayload({ ...payload, Phone: phone }) })}
+                            {RenderInput(R.string.email, payload.Email, enail => { setPayload({ ...payload, Email: enail }) })}
+                            {RenderDate(payload.Birth_Day, date => {
                                 setPayload({
                                     ...payload,
-                                    Sex: '1',
+                                    Birth_Day: date
                                 })
                             })}
-                            {RenderSex(R.string.Girl, payload.Sex=='0'?true:false, () => {
-                                setPayload({
-                                    ...payload,
-                                    Sex: '0',
-                                })
-                            })}
-                        </View>
-                        {RenderAdress(R.string.city, city, onSelectedCity, payload.City, payload.City==''?R.string.select_province:payload.City)}
-                        {RenderAdress(R.string.District,payload.City=="Hà Nội"?dataHN:dataHCM,onSelectedDistrict,payload.District,payload.District==''?R.string.select_distric:payload.District)}
-                        {RenderInput(R.string.Address, payload.Address,adress=>{setPayload({...payload,Address:adress})})}
-                        {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :Confirm(updateUser)}
+                            <View style={{ flexDirection: "row", backgroundColor: 'white' }}>
+                                <Text style={[styles.TextInfor, { marginTop: 15 }]}>
+                                    {R.string.Sex}
+                                </Text>
+                                {RenderSex(R.string.Boy, payload.Sex == '1' ? true : false, () => {
+                                    setPayload({
+                                        ...payload,
+                                        Sex: '1',
+                                    })
+                                })}
+                                {RenderSex(R.string.Girl, payload.Sex == '0' ? true : false, () => {
+                                    setPayload({
+                                        ...payload,
+                                        Sex: '0',
+                                    })
+                                })}
+                            </View>
+                            {RenderAdress(R.string.city, city, onSelectedCity, payload.City, payload.City == '' ? R.string.select_province : payload.City)}
+                            {RenderAdress(R.string.District, payload.City == "Hà Nội" ? dataHN : dataHCM, onSelectedDistrict, payload.District, payload.District == '' ? R.string.select_distric : payload.District)}
+                            {RenderInput(R.string.Address, payload.Address, adress => { setPayload({ ...payload, Address: adress }) })}
+                            {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> : Confirm(updateUser)}
+                        </ScrollView>
+
                     </SafeAreaView>
                 }
             />
@@ -293,11 +313,11 @@ const styles = StyleSheet.create({
         height: 46,
         backgroundColor: colors.Sienna1,
         borderRadius: 30,
-        width: 330,
+        width: width-50,
         alignItems: 'center',
         justifyContent: 'center',
         marginVertical: 30,
-        marginHorizontal: 10,
+        // marginHorizontal: 20,
     },
     TextInputStyle: { borderBottomWidth: 0.5, width: width - 50, borderColor: colors.focus, height: 40 },
     ic_Date: {

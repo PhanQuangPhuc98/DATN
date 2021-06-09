@@ -58,6 +58,7 @@ const string = {
   PutStudio:'Bạn muốn đặt lịch thu âm ',
   map:'Địa chỉ phòng thu ',
   help:'Xin chào anh/chị em có thể giúp được gì anh chị ạ ?',
-  loadingMesse:"Đang tải tin nhắn"
+  loadingMesse:"Đang tải tin nhắn",
+  Intro:"Chào mừng bạn đến với ứng dụng đặt lịch phòng thu Hãy lựa chọn cách đăng nhập "
 };
 export default string;

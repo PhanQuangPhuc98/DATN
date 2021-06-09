@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { Text, View, Image, Button, StyleSheet, Platform, Dimensions, TouchableOpacity } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
@@ -10,11 +10,12 @@ import StackBottom from './stack/StackBottom'
 import StackAuth from './stack/StackAuth';
 import AsyncStorage from '@react-native-community/async-storage';
 import { showConfirm } from '../utils/AlertHelper'
-import { ASYNC_STORAGE } from '../constants/Constant'
+import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../constants/Constant'
 import Reactotron from 'reactotron-react-native';
 import StackApp from './stack/StackApp';
+import StackAdd from './stack/StackAdd';
 import SplashScreen from '../Screen/Authentication/SplashScreen';
-import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../utils/Constant';
+import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../utils/Constant';
 import R from '../assets/R'
 const dimension = Dimensions.get('window');
 const { width, height } = dimension;
@@ -32,14 +33,47 @@ const {
   ADPOST,
   UPDATEUSER,
   DETAILPUTCALENDAR,
-  MAP
+  MAP,
+  INTRO
 } = SCREEN_ROUTER_APP;
+const {
+  CHANGEPASSADD,
+  CHATADD,
+  DETAILUSER,
+  INFORUSERADD,
+  LISTCHATADD,
+  MANYUSER,
+  NOTIFICATION,
+  REVENUEADD,
+  REVENUEADDMONTH,
+  UPDATEINTROADD,
+  UPDATEPRICEADD,
+  UPDATEUSERADD,
+  USERADD
+} = SCREEN_ROUTER_APP_ADD;
 const { LOGIN, REGISTER, FORGOT_PASS } = SCREEN_ROUTER_AUTH
 const Stack = createStackNavigator();
 const AppStack = createStackNavigator();
+const AppAddStack =createStackNavigator();
 const AuthStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
 const ButtonTab = () => {
+  const [category,setCategory]=useState({
+    id:''
+  })
+  const DB = async()=>{
+    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+    setCategory({
+      ...category,
+      id:Category
+    })
+   console.log("Category1",Category);
+   console.log("Category2",category.id);
+  }
+  useEffect(() => {
+    DB()
+  }, [])
+ 
   return (
     <Tab.Navigator
       tabBar={props => (
@@ -56,8 +90,8 @@ const ButtonTab = () => {
       }}
     >
       <Tab.Screen
-        name={SCREEN_ROUTER_APP.HOME}
-        component={StackBottom[HOME]}
+        name={category.id==='0'?SCREEN_ROUTER_APP.HOME:SCREEN_ROUTER_APP_ADD.MANYUSER}
+        component={category.id==='0'?StackBottom[HOME]:StackBottom[USERADD]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -86,8 +120,8 @@ const ButtonTab = () => {
 
       />
       <Tab.Screen
-        name={SCREEN_ROUTER_APP.PRODUCT}
-        component={StackBottom[PRODUCT]}
+        name={category.id==='0'?SCREEN_ROUTER_APP.PRODUCT:null}
+        component={category.id==='0'?StackBottom[PRODUCT]:null}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -140,8 +174,8 @@ const ButtonTab = () => {
         }}
       />
       <Tab.Screen
-        name={SCREEN_ROUTER_APP.PUTCALENDAR}
-        component={StackBottom[PUTCALENDAR]}
+        name={category.id==='0'?SCREEN_ROUTER_APP.PUTCALENDAR:SCREEN_ROUTER_APP_ADD.LISTCHATADD}
+        component={category.id==='0'?StackBottom[PUTCALENDAR]:StackBottom[LISTCHATADD]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -194,8 +228,8 @@ const ButtonTab = () => {
         }}
       />
       <Tab.Screen
-        name={SCREEN_ROUTER_APP.NOTIFY}
-        component={StackBottom[NOTIFY]}
+        name={category.id==='0'?SCREEN_ROUTER_APP.NOTIFY:SCREEN_ROUTER_APP_ADD.NOTIFICATION}
+        component={category.id==='0'?StackBottom[NOTIFY]:StackBottom[NOTIFICATION]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -248,8 +282,8 @@ const ButtonTab = () => {
         }}
       />
       <Tab.Screen
-        name={SCREEN_ROUTER_APP.USER}
-        component={StackBottom[USER]}
+        name={category.id==='0'?SCREEN_ROUTER_APP.USER:SCREEN_ROUTER_APP_ADD.USERADD}
+        component={category.id==='0'?StackBottom[USER]:StackBottom[USERADD]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -380,7 +414,69 @@ const App = () => {
         name={SCREEN_ROUTER_APP.MAP}
         component={StackApp[MAP]}
       />
+      <AppStack.Screen
+        name={SCREEN_ROUTER_APP.INTRO}
+        component={StackApp[INTRO]}
+      />
     </AppStack.Navigator>
+  );
+}
+const AppAdd =()=>{
+  return (
+    <AppAddStack.Navigator headerMode="none">
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.MANYUSER}
+        component={StackAdd[MANYUSER]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.LISTCHATADD}
+        component={StackAdd[LISTCHATADD]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.MANYUSER}
+        component={StackAdd[NOTIFICATION]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.USERADD}
+        component={StackAdd[USERADD]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.CHATADD}
+        component={StackAdd[CHATADD]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.DETAILUSER}
+        component={StackAdd[DETAILUSER]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.NOTIFICATION}
+        component={StackAdd[NOTIFICATION]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.INFORUSERADD}
+        component={StackAdd[INFORUSERADD]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.UPDATEUSERADD}
+        component={StackAdd[UPDATEUSERADD]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.UPDATEINTROADD}
+        component={StackApp[UPDATEINTROADD]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.UPDATEPRICEADD}
+        component={StackAdd[UPDATEPRICEADD]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.REVENUEADD}
+        component={StackAdd[REVENUEADD]}
+      />
+      <AppAddStack.Screen
+        name={SCREEN_ROUTER_APP_ADD.REVENUEADDMONTH}
+        component={StackAdd[REVENUEADDMONTH]}
+      />
+    </AppAddStack.Navigator>
   );
 }
 const MainTab = () => {
@@ -400,11 +496,14 @@ const MainTab = () => {
         <Stack.Screen
           name={SCREEN_ROUTER.APP} component={App}
         />
+         <Stack.Screen
+          name={SCREEN_ROUTER.MAIN_ADMIN} component={AppAdd}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 const styles = StyleSheet.create({
-  LableTabButon: { fontSize: 11, fontFamily: R.fonts.bold }
+  LableTabButon: { fontSize: 11, fontFamily: R.fonts.bold, width:60,textAlign:'center' }
 })
 export default MainTab;

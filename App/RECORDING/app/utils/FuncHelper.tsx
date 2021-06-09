@@ -13,9 +13,12 @@ export function hasWhiteSpace(s) {
     if (!phone) return false;
     return REG_PHONE.test(phone);
   }
-  export function CutOneArrayObject(array){
-    let find=array.map((index,item)=>{
-         return item._id
-    }).indexOf(1)
-    return find.splice(find,0)
+  export function getCurrentDate(){
+    var date = new Date().getDate();
+    var month = new Date().getMonth() + 1;
+    var year = new Date().getFullYear();
+    var hours = new Date().getHours();
+    var minute = new Date().getMinutes();
+    var seconds = new Date().getSeconds()
+    return hours + ':' + minute + ':' +seconds+' '+ date + '-' + month + '-' + year;
   }

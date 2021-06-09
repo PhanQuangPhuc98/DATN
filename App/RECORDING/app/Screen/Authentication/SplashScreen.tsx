@@ -15,7 +15,7 @@ const SplashScreen = () => {
           if (!token) {
             await AsyncStorage.setItem(ASYNC_STORAGE.TOKEN, '');
           }
-          NavigationUtil.navigate(SCREEN_ROUTER.MAIN);
+        NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.INTRO});
         }, 2000);
     },[])
     return (

@@ -7,4 +7,5 @@ export const ASYNC_STORAGE = {
   TOKEN: 'TOKEN',
   USER: 'USER',
   ROLE: 'ROLE',
+  CATEGORY:"CATEGORY"
 };

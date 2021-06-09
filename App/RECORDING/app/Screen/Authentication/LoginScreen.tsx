@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, SafeAreaView, StyleSheet, TextInput, Platform, View, Button,ActivityIndicator, TouchableOpacity, Dimensions } from 'react-native'
+import { Text, SafeAreaView, StyleSheet, TextInput, Platform, View, Button, ActivityIndicator, TouchableOpacity, Dimensions, ScrollView } from 'react-native'
 import { Header } from "react-native-elements";
 import NavigationUtil from '../../navigation/NavigationUtil'
 import { colors } from '../../constants/Theme';
@@ -13,7 +13,7 @@ import { hasWhiteSpace, validateEmail } from '../../utils/FuncHelper';
 import { showMessages } from '../../utils/AlertHelper'
 import AsyncStorage from '@react-native-community/async-storage';
 // import auth from '@react-native-firebase/auth'
-import {firebase,Auth} from '../../firebase/firebaseSvc'
+import { firebase, Auth } from '../../firebase/firebaseSvc'
 const { height, width } = Dimensions.get("window");
 const Infor = (style, placeholder, onChangeText, value, secureTextEntry) => {
   return (
@@ -43,7 +43,7 @@ const ForgotPass = () => {
 }
 const Confirm = (onPress) => {
   return (
-    <View>
+    <View style={{alignItems:"center"}}>
       <TouchableOpacity
         onPress={onPress}
         style={styles.ContainerConfirm}>
@@ -60,9 +60,9 @@ const Confirm = (onPress) => {
 const Line = () => {
   return (
     <View style={styles.v_container_line}>
-      <View style={[styles.line, { marginLeft: 27 }]} />
+      <View style={[styles.line, { marginLeft: 35 }]} />
       <Text style={[styles.TextConfirm, { color: colors.focus, marginHorizontal: 14 }]}>hoặc</Text>
-      <View style={[styles.line, { marginRight: 27 }]} />
+      <View style={[styles.line, { marginRight: 35 }]} />
     </View>
   )
 }
@@ -100,7 +100,7 @@ const LoginScreen = ({ navigation }) => {
   }, [navigation]);
   const signInWithEmail = async () => {
     setLoading(true)
-   
+
     try {
       const res = await Auth().signInWithEmailAndPassword(payload.Username, payload.Pass);
       setLoading(false),
@@ -149,61 +149,64 @@ const LoginScreen = ({ navigation }) => {
         }
         statusBarProps={styles.ContainerHeader}
       />
-      <View style={{flex:1, alignItems:"center"}}>
-        <View style={styles.ContainerLogo}>
-          <FastImage
-            source={image.ic_Splash}
-            style={styles.ImageLogo}
-            resizeMode="contain"
-          />
+      <ScrollView
+      
+      showsVerticalScrollIndicator={false}>
+        <View style={{ flex: 1, alignItems: "center" }}>
+          <View style={styles.ContainerLogo}>
+            <FastImage
+              source={image.ic_Splash}
+              style={styles.ImageLogo}
+              resizeMode="contain"
+            />
+          </View>
+          <View style={styles.ContainerInput}>
+            {Infor(
+              [styles.TextInputStyle,{width:width-80}],
+              R.string.email,
+              (user) =>
+                setPayload({
+                  ...payload,
+                  Username: user,
+                }),
+              payload.Username,
+              null,
+            )}
+            {
+              <View style={{ flexDirection: 'row', paddingVertical: 25 }}>
+                {Infor([styles.TextInputStyle, { width: width - 100 }], R.string.pass, (pass) => setPayload({ ...payload, Pass: pass, }), payload.Pass, Password,)}
+                <TouchableOpacity
+                  onPress={() => { setPassword(!Password) }}
+                  style={{ borderBottomWidth: 0.5, paddingTop: 15 }}>
+                  <FastImage
+                    source={icon}
+                    style={styles.imgText}
+                    resizeMode={FastImage.resizeMode.contain}
+                  />
+                </TouchableOpacity>
+              </View>
+            }
+            {ForgotPass()}
+          </View>
+          {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
+            Confirm(() => {
+              if (!validateEmail(payload.Username)) {
+                showMessages(R.string.notification, 'Email không đúng');
+                return;
+              }
+              if (
+                payload.Pass.trim().length < 6 ||
+                hasWhiteSpace(payload.Pass)) {
+                showMessages(R.string.notification, 'Mật khẩu không đúng');
+                return;
+              }
+              signInWithEmail()
+            }
+            )}
+          {Line()}
+          {Logo()}
         </View>
-        <View style={styles.ContainerInput}>
-          {Infor(
-            styles.TextInputStyle,
-            R.string.email,
-            (user) =>
-              setPayload({
-                ...payload,
-                Username: user,
-              }),
-            payload.Username,
-            null,
-          )}
-          {
-            <View style={{ flexDirection: 'row', paddingVertical: 25 }}>
-              {Infor([styles.TextInputStyle, { width: width - 100 }], R.string.pass, (pass) => setPayload({ ...payload, Pass: pass, }), payload.Pass, Password,)}
-              <TouchableOpacity
-                onPress={() => { setPassword(!Password) }}
-                style={{ borderBottomWidth: 0.5, paddingTop: 15 }}>
-                <FastImage
-                  source={icon}
-                  style={styles.imgText}
-                  resizeMode={FastImage.resizeMode.contain}
-                />
-              </TouchableOpacity>
-            </View>
-          }
-          {ForgotPass()}
-        </View>
-        {isLoading?<ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
-        Confirm(() => {
-          if (!validateEmail(payload.Username)) {
-            showMessages(R.string.notification, 'Email không đúng');
-            return;
-          }
-          if (
-            payload.Pass.trim().length < 6 ||
-            hasWhiteSpace(payload.Pass)) {
-            showMessages(R.string.notification, 'Mật khẩu không đúng');
-            return;
-          }
-          signInWithEmail()
-        }
-        )}
-        {Line()}
-        {Logo()}
-      </View>
-
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -213,14 +216,14 @@ const styles = StyleSheet.create({
   LeftHeader: { flexDirection: "row", width: 200, height: 40 },
   ImageBack: { height: 14, width: 14, marginTop: 10 },
   TextLeft: { marginTop: 3, fontFamily: R.fonts.bold, fontSize: 18, color: colors.white, marginLeft: 5 },
-  ContainerLogo: {paddingVertical:15, },
+  ContainerLogo: { paddingVertical: 15, },
   ContainerInput: { alignItems: "center" },
-  ImageLogo: { height: height/4, width: width-100},
+  ImageLogo: { height: height /3, width: width },
   TextInputStyle: { borderBottomWidth: 0.5, width: 328, borderColor: colors.focus },
-  ForgotPass: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.focus, marginLeft: 220 },
+  ForgotPass: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.focus, marginLeft: Platform.Version==23?190:220},
   ContainerConfirm: {
-    height: 46, backgroundColor: colors.Sienna1, borderRadius: 30, width: 330,
-    alignItems: "center", justifyContent: "center", marginVertical: 20, marginHorizontal: 20
+    height: 46, backgroundColor: colors.Sienna1, borderRadius: 30, width: width-60,
+    alignItems: "center", justifyContent: "center", marginVertical: 20
   },
   TextConfirm: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.white },
   ContainerRegister: { flexDirection: "row", paddingHorizontal: 75 },

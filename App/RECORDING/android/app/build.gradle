@@ -136,6 +136,9 @@ android {
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [
+                                onesignal_app_id: "60b86870-551c-4dd1-9bdd-23ef1d247672",
+                                onesignal_google_project_number: "AAAAmP3r2No:APA91bEBXAygIll6J_zNmgxxDbtZE6v_Snv_2XomjlyEAxkeAHX7rQIRAYpEfo4Zz8O4IuOftjhR-mCLXVMLks-NQFTondHmkkYbY2NVi4UTeP3O1ljElffiJifA4gl4w9WKt1Fj7qB6"]
     }
     splits {
         abi {
@@ -237,3 +240,13 @@ task copyDownloadableDepsToLibs(type: Copy) {
 }
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+    dependencies {
+        classpath 'gradle.plugin.com.onesignal:onesignal-gradle-plugin:[0.12.10, 0.99.99]'
+    }
+}
+
+apply plugin: 'com.onesignal.androidsdk.onesignal-gradle-plugin'

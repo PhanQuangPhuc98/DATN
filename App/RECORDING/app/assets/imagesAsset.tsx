@@ -50,6 +50,10 @@ const images = {
   ic_money:require('./images/ic_money.png'),
   ic_introduct:require('./images/ic_introduct.png'),
   ic_PhoneNumber:require('./images/ic_PhoneNumber.png'),
-  ic_adress:require('./images/ic_adress.png')
+  ic_adress:require('./images/ic_adress.png'),
+  ic_expant:require('./images/ic_expant.png'),
+  ic_Content:require('./images/ic_Content.png'),
+  ic_MessegaeAdd:require('./images/ic_MessegaeAdd.png'),
+  ic_NotificationAdd:require('./images/ic_NotificationAdd.png')
 };
 export default images;

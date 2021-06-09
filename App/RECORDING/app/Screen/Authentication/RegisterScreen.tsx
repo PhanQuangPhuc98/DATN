@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, ActivityIndicator, TextInput, TouchableOpacity, Dimensions } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, ActivityIndicator, TextInput, TouchableOpacity, Dimensions, ScrollView,Platform } from 'react-native'
 import { Header, CheckBox } from "react-native-elements";
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
@@ -42,7 +42,7 @@ const RenderInput = (style, label, UserInput, cover) => {
 }
 const RenderCity = (data, onSelectedItemsChange, selectedItems, label) => {
   return (
-    <View style={[styles.TextInputStyle, { paddingTop: 15 }]}>
+    <View style={[styles.TextInputStyle, { paddingTop: 15,height:80 }]}>
       <Text style={styles.TextLable}>{label}</Text>
       <SectionedMultiSelect
         items={data}
@@ -73,7 +73,6 @@ const RegisterScreen = () => {
     Phone: '',
     Sex: '',
     Birth_Day: '',
-    id: '0',
     City: '',
     District: '',
     Address: '',
@@ -88,54 +87,50 @@ const RegisterScreen = () => {
   const [checked, setChecked] = useState(false);
   const [city, setCity] = useState([]);
   const [Password, setPassword] = useState(true);
+  const [category,setCategory]=useState({
+    id:''
+  })
   const [confirm_password, setconfirm_password] = useState(true);
   const [token, setToken] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
   const iconConfirm = confirm_password ? R.images.ic_visibility : R.images.ic_invisible;
-  console.log(payload.id);
-  // const CallCity = () => {
-  //   const city = database()
-  //     .ref("/City/")
-  //     .on('value', (snapshot) => {
-  //       let Data = [];
-  //       console.log(snapshot.val(), "city");
-  //       snapshot.forEach((child) => {
-  //         Data.push({
-  //           id: child.val().id,
-  //           name: child.val().name
-  //         })
-  //       })
-  //       setCity(Data)
-  //     });
-  // }
-  useEffect(() => {
+  const DB = async()=>{
+    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+    setCategory({
+      ...category,
+      id:Category
+    })
+    console.log("Category",Category);
+   
+  }
+  const CallCity = () => {
     setTimeout(async () => {
-      const city =await database()
+      const city = await database()
       if (!city) {
-       console.log("not network");
-       alert("not network")
+        console.log("not network");
+        alert("not network")
       }
       city.ref("/City/")
-      .on('value', (snapshot) => {
-        let Data = [];
-        console.log("connect network",snapshot.val());
-        snapshot.forEach((child) => {
-          Data.push({
-            id: child.val().id,
-            name: child.val().name
+        .on('value', (snapshot) => {
+          let Data = [];
+          // console.log("connect network",snapshot.val());
+          snapshot.forEach((child) => {
+            Data.push({
+              id: child.val().id,
+              name: child.val().name
+            })
           })
-        })
-        setCity(Data)
-      });
+          setCity(Data)
+        });
     }, 2000);
-
-    console.log(city);
-     
-  }, [city])
+  }
+  useEffect(() => {
+    CallCity()
+    DB()
+  }, [])
   const CreatAcout = async () => {
     setLoading(true)
-
     try {
       const res = await Auth().createUserWithEmailAndPassword(
         payload.Username,
@@ -145,7 +140,7 @@ const RegisterScreen = () => {
       userf.updateProfile({ displayName: payload.Name })
       database()
         .ref(`/users/${Fire.uid}`)
-        .set({ Name: payload.Name, _id: Fire.uid, Category: payload.id, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
+        .set({ Name: payload.Name, _id: Fire.uid, Category: category.id, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
       setLoading(false),
         setToken(res),
         await AsyncStorage.setItem(
@@ -164,7 +159,7 @@ const RegisterScreen = () => {
       setLoading(false), Reactotron.log('error', error);
     }
   };
-  Reactotron.log("city",city)
+  console.log("city", city)
   return (
     <SafeAreaView style={styles.Container}>
       <Header
@@ -187,101 +182,70 @@ const RegisterScreen = () => {
         }
         statusBarProps={styles.ContainerHeader}
       />
-      <View>
-        {RenderInput(styles.TextInputStyle, R.string.name, name => setPayload({ ...payload, Name: name }), false)}
-        {RenderInput(styles.TextInputStyle, R.string.email, user => setPayload({ ...payload, Username: user }), false)}
-        {RenderInput(styles.TextInputStyle, R.string.phone, phone => setPayload({ ...payload, Phone: phone }), false)}
-        {RenderCity(city, onSelectedItemsChange, payload.City, R.string.city)}
-        <View style={{ flexDirection: 'row' }}>
-          {RenderInput([styles.TextInputStyle, { width: width - 90 }], R.string.pass, pass => setPayload({ ...payload, Password: pass }), Password)}
-          <TouchableOpacity
-            onPress={() => { setPassword(!Password) }}
-            style={{ borderBottomWidth: 0.5, paddingTop: 45 }}>
-            <FastImage
-              source={icon}
-              style={styles.imgText}
-              resizeMode={FastImage.resizeMode.contain}
-            />
-          </TouchableOpacity>
+      <ScrollView
+       showsVerticalScrollIndicator={false}>
+        <View style={[styles.Container]}>
+          {RenderInput(styles.TextInputStyle, R.string.name, name => setPayload({ ...payload, Name: name }), false)}
+          {RenderInput(styles.TextInputStyle, R.string.email, user => setPayload({ ...payload, Username: user }), false)}
+          {RenderInput(styles.TextInputStyle, R.string.phone, phone => setPayload({ ...payload, Phone: phone }), false)}
+          {RenderCity(city, onSelectedItemsChange, payload.City, R.string.city)}
+          <View style={{ flexDirection: 'row' }}>
+            {RenderInput([styles.TextInputStyle, { width: width - 70 }], R.string.pass, pass => setPayload({ ...payload, Password: pass }), Password)}
+            <TouchableOpacity
+              onPress={() => { setPassword(!Password) }}
+              style={{ borderBottomWidth: 0.5, paddingTop: Platform.Version==23?42.5:42 }}>
+              <FastImage
+                source={icon}
+                style={styles.imgText}
+                resizeMode={FastImage.resizeMode.contain}
+              />
+            </TouchableOpacity>
+          </View>
+          <View style={{ flexDirection: 'row' }}>
+            {RenderInput([styles.TextInputStyle, { width: width - 70 }], R.string.confirm_password, confirm_password => setPayload({ ...payload, ConfimPass: confirm_password }), confirm_password)}
+            <TouchableOpacity
+              onPress={() => { setconfirm_password(!confirm_password) }}
+              style={{ borderBottomWidth: 0.5, paddingTop: 42 }}>
+              <FastImage
+                source={iconConfirm}
+                style={styles.imgText}
+                resizeMode={FastImage.resizeMode.contain}
+              />
+            </TouchableOpacity>
+          </View>
         </View>
-        <View style={{ flexDirection: 'row' }}>
-          {RenderInput([styles.TextInputStyle, { width: width - 90 }], R.string.confirm_password, confirm_password => setPayload({ ...payload, ConfimPass: confirm_password }), confirm_password)}
-          <TouchableOpacity
-            onPress={() => { setconfirm_password(!confirm_password) }}
-            style={{ borderBottomWidth: 0.5, paddingTop: 45 }}>
-            <FastImage
-              source={iconConfirm}
-              style={styles.imgText}
-              resizeMode={FastImage.resizeMode.contain}
-            />
-          </TouchableOpacity>
-        </View>
-        <View style={{ flexDirection: "row", backgroundColor: 'white', paddingVertical: 10 }}>
-          <CheckBox
-            title='Phòng thu'
-            containerStyle={{ backgroundColor: "white" }}
-            uncheckedIcon='circle-o'
-            checkedIcon='dot-circle-o'
-            checked={checked}
-            checkedColor={colors.Sienna1}
-            onPress={() => {
-              setPayload({
-                ...payload,
-                id: '1',
-              }),
-                setChecked(!checked)
+        {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
+          Confirm(() => {
+            if (!payload.Name.trim().length) {
+              showMessages(R.string.notification, 'Vui lòng nhập họ và tên !');
+              return;
             }
+            if (!validateEmail(payload.Username)) {
+              showMessages(R.string.notification, 'Email không hợp lệ !');
+              return;
             }
-          />
-          <CheckBox
-            title='Người dùng'
-            containerStyle={{ backgroundColor: "white" }}
-            uncheckedIcon='circle-o'
-            checkedIcon='dot-circle-o'
-            checked={checked ? false : true}
-            checkedColor={colors.Sienna1}
-            onPress={() => {
-              setPayload({
-                ...payload,
-                id: '0',
-              }),
-                setChecked(!checked)
+            if (!validatePhoneNumber(payload.Phone)) {
+              showMessages(R.string.notification, 'Số điện thoại không hợp lệ !');
+              return;
             }
+            if (payload.City == '') {
+              showMessages(R.string.notification, 'Vui lòng chọn Tỉnh/thành phố !');
+              return;
             }
-          />
-        </View>
-      </View>
-      {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
-        Confirm(() => {
-          if (!payload.Name.trim().length) {
-            showMessages(R.string.notification, 'Vui lòng nhập họ và tên !');
-            return;
-          }
-          if (!validateEmail(payload.Username)) {
-            showMessages(R.string.notification, 'Email không hợp lệ !');
-            return;
-          }
-          if (!validatePhoneNumber(payload.Phone)) {
-            showMessages(R.string.notification, 'Số điện thoại không hợp lệ !');
-            return;
-          }
-          if (payload.City == '') {
-            showMessages(R.string.notification, 'Vui lòng chọn Tỉnh/thành phố !');
-            return;
-          }
-          if (
-            payload.Password.trim().length < 6 ||
-            hasWhiteSpace(payload.Password)) {
-            showMessages(R.string.notification, 'Mật khẩu phải lớn hơn 6 ký tự !');
-            return;
-          }
-          if (payload.Password != payload.ConfimPass) {
-            showMessages(R.string.notification, 'Mật khẩu không hợp lệ, vui lòng thử lại !');
-            return;
-          }
-          CreatAcout()
-        })
-      }
+            if (
+              payload.Password.trim().length < 6 ||
+              hasWhiteSpace(payload.Password)) {
+              showMessages(R.string.notification, 'Mật khẩu phải lớn hơn 6 ký tự !');
+              return;
+            }
+            if (payload.Password != payload.ConfimPass) {
+              showMessages(R.string.notification, 'Mật khẩu không hợp lệ, vui lòng thử lại !');
+              return;
+            }
+            CreatAcout()
+          })
+        }
+      </ScrollView>
     </SafeAreaView>
   );
 }
@@ -290,13 +254,13 @@ const styles = StyleSheet.create({
   ContainerHeader: { backgroundColor: colors.Sienna1 },
   ContainerConfirm: {
     height: 46, backgroundColor: colors.Sienna1, borderRadius: 30, width: 330,
-    alignItems: "center", justifyContent: "center", marginTop: 20, marginHorizontal: 20
+    alignItems: "center", justifyContent: "center", marginVertical: 80, marginHorizontal: 20
   },
   TextConfirm: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.white },
   LeftHeader: { flexDirection: "row", width: 200, height: 40 },
   TextLeft: { marginTop: 3, fontFamily: R.fonts.bold, fontSize: 18, color: colors.white, marginLeft: 5 },
   ImageBack: { height: 14, width: 14, marginTop: 10 },
-  TextInputStyle: { borderBottomWidth: 0.5, width: 328, borderColor: colors.focus },
+  TextInputStyle: { borderBottomWidth: 0.5, width: width-50, borderColor: colors.focus,height:40 },
   TextLable: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.focus, },
   imgText: { height: 22, width: 22 }
 })

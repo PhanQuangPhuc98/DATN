@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Text, View, StyleSheet, ScrollView, StatusBar, SafeAreaView, TouchableOpacity, Dimensions, FlatList } from 'react-native';
+import { Text, View, StyleSheet, ScrollView, StatusBar, SafeAreaView, TouchableOpacity, Dimensions, FlatList,Platform } from 'react-native';
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
 import image from '../../assets/imagesAsset';
+import {getCurrentDate} from '../../utils/FuncHelper';
 import NavigationUtil from '../../navigation/NavigationUtil'
 import {
   SCREEN_ROUTER_AUTH,
@@ -12,7 +13,7 @@ import {
 import AsyncStorage from '@react-native-community/async-storage';
 import FastImage from 'react-native-fast-image';
 import { showConfirm } from '../../utils/AlertHelper'
-import {firebase,Auth} from '../../firebase/firebaseSvc'
+import { firebase, Auth } from '../../firebase/firebaseSvc'
 import { SwiperFlatList } from 'react-native-swiper-flatlist';
 import {
   DataImageProduct,
@@ -43,7 +44,7 @@ const Search = (onPress) => {
 const Information = (label, Add, onPress) => {
   return (
     <View style={styles.ContainerInfor}>
-      <Text style={[styles.TextSearch, { fontSize: 15, fontFamily: R.fonts.bold, color: colors.Sienna1, width: 200, marginRight: 75 }]}>
+      <Text style={[styles.TextSearch, { fontSize: 15, fontFamily: R.fonts.bold, color: colors.Sienna1, width: 200, marginRight: Platform.Version==23?50:70 }]}>
         {label}
       </Text>
       <TouchableOpacity
@@ -168,7 +169,7 @@ const ListPromotion = () => {
     </ScrollView>
   );
 }
-const HomeScreen = ({navigation}) => {
+const HomeScreen = ({ navigation }) => {
   const [token, setToken] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
   const toggleModal = () => {
@@ -205,18 +206,20 @@ const HomeScreen = ({navigation}) => {
     });
     return unsubscribe;
   }, [navigation]);
+
+  console.log("Time",getCurrentDate());
   Reactotron.log('setToken', token);
+
   return (
     <SafeAreaView style={styles.Container}>
       <View style={styles.Container}>
         <StatusBar barStyle="light-content" backgroundColor={colors.Sienna1} />
         <View
           style={{
-            height: width / 4,
+            height: width / 3,
             backgroundColor: colors.Sienna1,
-            alignItems: 'center',
-            justifyContent:'center',
-            paddingHorizontal:10
+            paddingVertical: 35,
+            paddingHorizontal: 25
           }}>
           {Search(() => {
             NavigationUtil.navigate(SCREEN_ROUTER.APP, {
@@ -224,14 +227,17 @@ const HomeScreen = ({navigation}) => {
             });
           })}
         </View>
-        {SliderBar()}
-        {Information('SẢN PHẨM', 'Xem thêm >>')}
-        {ListImage()}
-        <View style={{backgroundColor: colors.white, marginTop: 10}}>
-          {Information('KHUYẾN MẠI', 'Xem thêm >>')}
-        </View>
-        {ListPromotion()}
-        {/* <View 
+        <ScrollView
+        showsVerticalScrollIndicator={false}
+        >
+          {SliderBar()}
+          {Information('SẢN PHẨM', 'Xem thêm >>')}
+          {ListImage()}
+          <View style={{ backgroundColor: colors.white, marginTop: 10 }}>
+            {Information('KHUYẾN MẠI', 'Xem thêm >>')}
+          </View>
+          {ListPromotion()}
+          {/* <View 
         style={styles.Animated}>
           <ButtonAnimation
             ButtonMess={() => {
@@ -257,13 +263,14 @@ const HomeScreen = ({navigation}) => {
             //ButtonPhone={toggleModal}
           />
         </View> */}
-        <ModalDrop
-          toggleModal={toggleModal}
-          isModalVisible={isModalVisible}
-          cancle={R.string.cancle}
-          confirm={R.string.confirm}
-          content={R.string.calladmin}
-        />
+          <ModalDrop
+            toggleModal={toggleModal}
+            isModalVisible={isModalVisible}
+            cancle={R.string.cancle}
+            confirm={R.string.confirm}
+            content={R.string.calladmin}
+          />
+        </ScrollView>
       </View>
     </SafeAreaView>
   );
@@ -271,7 +278,7 @@ const HomeScreen = ({navigation}) => {
 const styles = StyleSheet.create({
   Container: { flex: 1, backgroundColor: colors.primary },
   HeaderStyle: { backgroundColor: colors.Sienna1 },
-  SearchStyle: { width: width-50, height: 44, backgroundColor: colors.white, flexDirection: "row", borderRadius: 5, marginTop: 40 },
+  SearchStyle: { width: width - 50, height: 44, backgroundColor: colors.white, flexDirection: "row", borderRadius: 10, marginVertical: 30 },
   TextSearch: { fontSize: 20, fontFamily: R.fonts.regular },
   HeaderSearch: { height: "100%", width: 30, alignItems: "center", justifyContent: "center" },
   ImageSearch: { height: 16, width: 16 },
@@ -279,13 +286,13 @@ const styles = StyleSheet.create({
   FontSlider: { backgroundColor: colors.Sienna1, borderBottomRightRadius: 140, borderBottomLeftRadius: 140 },
   NormalDot: { height: 12, width: 12, borderRadius: 12, backgroundColor: colors.Sienna1, marginHorizontal: 4 },
   StyleProduct: { width: width - 10, height: 76, borderRadius: 5, backgroundColor: colors.white },
-  ContainerInfor: { height: 30, flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: 10, },
+  ContainerInfor: { height: 30, flexDirection: "row", backgroundColor: colors.white, paddingHorizontal: Platform.Version==23?5:10, },
   ImgProduct: { height: 89, width: 121, borderTopRightRadius: 7, borderTopLeftRadius: 7 },
   TextProduct: { backgroundColor: colors.white, height: 76, padding: 5, borderBottomLeftRadius: 7, borderBottomRightRadius: 7 },
   ViewPromotion: { flexDirection: "row", marginHorizontal: 5, marginVertical: 5 },
   imgPromotion: { height: 88, width: 88, borderRadius: 5 },
   imgDate: { height: 11.74, width: 11.87, marginHorizontal: 5, marginTop: 5 },
   TextPromotion: { fontSize: 15, fontFamily: R.fonts.bold },
-  Animated: { flex:1,top: 40, position: "absolute", right:30 }
+  Animated: { flex: 1, top: 40, position: "absolute", right: 30 }
 })
 export default HomeScreen;
