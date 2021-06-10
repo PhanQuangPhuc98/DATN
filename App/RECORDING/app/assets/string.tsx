@@ -59,6 +59,12 @@ const string = {
   map:'Địa chỉ phòng thu ',
   help:'Xin chào anh/chị em có thể giúp được gì anh chị ạ ?',
   loadingMesse:"Đang tải tin nhắn",
-  Intro:"Chào mừng bạn đến với ứng dụng đặt lịch phòng thu Hãy lựa chọn cách đăng nhập "
+  Intro:"Chào mừng bạn đến với ứng dụng đặt lịch phòng thu Hãy lựa chọn cách đăng nhập ",
+  User:"Khách hàng",
+  Messages:"Tin nhắn",
+  InforStudio:"Thông tin phòng thu",
+  UpdateIntroStudio:"Cập nhật giới thiệu phòng thu",
+  Revenue:"Doanh Thu",
+  UpdatePriceCalender:"Cập nhật giá đặt lịch"
 };
 export default string;

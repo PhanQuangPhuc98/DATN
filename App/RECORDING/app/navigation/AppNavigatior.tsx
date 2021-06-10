@@ -57,6 +57,7 @@ const AppStack = createStackNavigator();
 const AppAddStack =createStackNavigator();
 const AuthStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const TabAdd=createBottomTabNavigator();
 const ButtonTab = () => {
   const [category,setCategory]=useState({
     id:''
@@ -90,8 +91,8 @@ const ButtonTab = () => {
       }}
     >
       <Tab.Screen
-        name={category.id==='0'?SCREEN_ROUTER_APP.HOME:SCREEN_ROUTER_APP_ADD.MANYUSER}
-        component={category.id==='0'?StackBottom[HOME]:StackBottom[USERADD]}
+        name={SCREEN_ROUTER_APP.HOME}
+        component={StackBottom[HOME]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -120,8 +121,8 @@ const ButtonTab = () => {
 
       />
       <Tab.Screen
-        name={category.id==='0'?SCREEN_ROUTER_APP.PRODUCT:null}
-        component={category.id==='0'?StackBottom[PRODUCT]:null}
+        name={SCREEN_ROUTER_APP.PRODUCT}
+        component={StackBottom[PRODUCT]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -174,8 +175,8 @@ const ButtonTab = () => {
         }}
       />
       <Tab.Screen
-        name={category.id==='0'?SCREEN_ROUTER_APP.PUTCALENDAR:SCREEN_ROUTER_APP_ADD.LISTCHATADD}
-        component={category.id==='0'?StackBottom[PUTCALENDAR]:StackBottom[LISTCHATADD]}
+        name={SCREEN_ROUTER_APP.PUTCALENDAR}
+        component={StackBottom[PUTCALENDAR]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -228,8 +229,8 @@ const ButtonTab = () => {
         }}
       />
       <Tab.Screen
-        name={category.id==='0'?SCREEN_ROUTER_APP.NOTIFY:SCREEN_ROUTER_APP_ADD.NOTIFICATION}
-        component={category.id==='0'?StackBottom[NOTIFY]:StackBottom[NOTIFICATION]}
+        name={SCREEN_ROUTER_APP.NOTIFY}
+        component={StackBottom[NOTIFY]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -282,8 +283,8 @@ const ButtonTab = () => {
         }}
       />
       <Tab.Screen
-        name={category.id==='0'?SCREEN_ROUTER_APP.USER:SCREEN_ROUTER_APP_ADD.USERADD}
-        component={category.id==='0'?StackBottom[USER]:StackBottom[USERADD]}
+        name={SCREEN_ROUTER_APP.USER}
+        component={StackBottom[USER]}
         options={{
           tabBarIcon: ({ focused, color, size }) => {
             const sizeIcon = focused ? 30 : 25;
@@ -336,6 +337,140 @@ const ButtonTab = () => {
         }}
       />
     </Tab.Navigator>
+  )
+}
+const ButtonTabAdd =()=>{
+ 
+  return (
+    <TabAdd.Navigator
+      tabBar={props => (
+        <BottomTabBar
+          {...props}
+          style={{
+            ...props.style,
+            height: Platform.OS != 'ios' ? height * 0.08 : height * 0.1
+          }}
+        />
+      )}
+      tabBarOptions={{
+        tabStyle: { paddingHorizontal: 10, height: 50 }
+      }}
+    >
+      <TabAdd.Screen
+        name={SCREEN_ROUTER_APP_ADD.MANYUSER}
+        component={StackBottom[MANYUSER]}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return (
+              <View>
+                <Image
+                  source={images.ic_many_user}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
+                >
+                </Image>
+              </View>
+            )
+          },
+          tabBarLabel: ({ focused, color }) => {
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return (
+              <Text
+                children={R.string.User}
+                style={[styles.LableTabButon, { color: tintColor }]}
+              />
+            )
+          }
+
+        }}
+
+      />
+      <TabAdd.Screen
+        name={SCREEN_ROUTER_APP_ADD.LISTCHATADD}
+        component={StackBottom[LISTCHATADD]}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return (
+              <View>
+                <Image
+                  source={images.ic_MessegaeAdd}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
+                >
+                </Image>
+              </View>
+            )
+          },
+          tabBarLabel: ({ focused, color }) => {
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return (
+              <Text
+                children={R.string.Messages}
+                style={[styles.LableTabButon, { color: tintColor }]}
+              />
+            )
+          },
+        }}
+      />
+      <TabAdd.Screen
+        name={SCREEN_ROUTER_APP_ADD.NOTIFICATION}
+        component={StackBottom[NOTIFICATION]}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return (
+              <View>
+                <Image
+                  source={images.ic_NotificationAdd}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
+                >
+                </Image>
+              </View>
+            )
+          },
+          tabBarLabel: ({ focused, color }) => {
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return (
+              <Text
+                children={R.string.notification}
+                style={[styles.LableTabButon, { color: tintColor }]}
+              />
+            )
+          },
+        }}
+      />
+      <TabAdd.Screen
+        name={SCREEN_ROUTER_APP_ADD.USERADD}
+        component={StackBottom[USERADD]}
+        options={{
+          tabBarIcon: ({ focused, color, size }) => {
+            const sizeIcon = focused ? 30 : 25;
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return (
+              <View>
+                <Image
+                  source={images.ic_User}
+                  style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
+                >
+                </Image>
+              </View>
+            )
+          },
+          tabBarLabel: ({ focused, color }) => {
+            const tintColor = focused ? colors.Sienna1 : colors.focus;
+            return (
+              <Text
+                children={R.string.user}
+                style={[styles.LableTabButon, { color: tintColor }]}
+              />
+            )
+          },
+        }}
+      />
+    </TabAdd.Navigator>
   )
 }
 const AuthStackScreen = () => {
@@ -433,10 +568,6 @@ const AppAdd =()=>{
         component={StackAdd[LISTCHATADD]}
       />
       <AppAddStack.Screen
-        name={SCREEN_ROUTER_APP_ADD.MANYUSER}
-        component={StackAdd[NOTIFICATION]}
-      />
-      <AppAddStack.Screen
         name={SCREEN_ROUTER_APP_ADD.USERADD}
         component={StackAdd[USERADD]}
       />
@@ -462,7 +593,7 @@ const AppAdd =()=>{
       />
       <AppAddStack.Screen
         name={SCREEN_ROUTER_APP_ADD.UPDATEINTROADD}
-        component={StackApp[UPDATEINTROADD]}
+        component={StackAdd[UPDATEINTROADD]}
       />
       <AppAddStack.Screen
         name={SCREEN_ROUTER_APP_ADD.UPDATEPRICEADD}
@@ -491,19 +622,22 @@ const MainTab = () => {
           name={SCREEN_ROUTER.MAIN} component={ButtonTab}
         />
         <Stack.Screen
+          name={SCREEN_ROUTER.MAIN_ADMIN} component={ButtonTabAdd}
+        />
+        <Stack.Screen
           name={SCREEN_ROUTER.AUTH} component={AuthStackScreen}
         />
         <Stack.Screen
           name={SCREEN_ROUTER.APP} component={App}
         />
          <Stack.Screen
-          name={SCREEN_ROUTER.MAIN_ADMIN} component={AppAdd}
+          name={SCREEN_ROUTER.APPADD} component={AppAdd}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
 const styles = StyleSheet.create({
-  LableTabButon: { fontSize: 11, fontFamily: R.fonts.bold, width:60,textAlign:'center' }
+  LableTabButon: { fontSize: 11, fontFamily: R.fonts.bold, width:80,textAlign:'center' }
 })
 export default MainTab;

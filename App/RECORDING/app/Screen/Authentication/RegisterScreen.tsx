@@ -15,7 +15,7 @@ import Fire from '../../firebase/firebaseSvc'
 import NavigationUtil from '../../navigation/NavigationUtil';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Auth, database } from '../../firebase/firebaseSvc'
-import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
+import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
 const { height, width } = Dimensions.get("window");
 const Confirm = (onPress) => {
@@ -64,7 +64,8 @@ const RenderCity = (data, onSelectedItemsChange, selectedItems, label) => {
     </View>
   )
 }
-const RegisterScreen = () => {
+const RegisterScreen = ({route,navigation,...props}) => {
+  const {data}=route.params
   const [payload, setPayload] = useState({
     Name: '',
     Username: '',
@@ -87,23 +88,23 @@ const RegisterScreen = () => {
   const [checked, setChecked] = useState(false);
   const [city, setCity] = useState([]);
   const [Password, setPassword] = useState(true);
-  const [category,setCategory]=useState({
-    id:''
-  })
+  // const [category,setCategory]=useState({
+  //   id:''
+  // })
   const [confirm_password, setconfirm_password] = useState(true);
   const [token, setToken] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
   const iconConfirm = confirm_password ? R.images.ic_visibility : R.images.ic_invisible;
-  const DB = async()=>{
-    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
-    setCategory({
-      ...category,
-      id:Category
-    })
-    console.log("Category",Category);
+  // const DB = async()=>{
+  //   let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+  //   setCategory({
+  //     ...category,
+  //     id:Category
+  //   })
+  //   console.log("Category",Category);
    
-  }
+  // }
   const CallCity = () => {
     setTimeout(async () => {
       const city = await database()
@@ -127,7 +128,7 @@ const RegisterScreen = () => {
   }
   useEffect(() => {
     CallCity()
-    DB()
+    // DB()
   }, [])
   const CreatAcout = async () => {
     setLoading(true)
@@ -140,26 +141,36 @@ const RegisterScreen = () => {
       userf.updateProfile({ displayName: payload.Name })
       database()
         .ref(`/users/${Fire.uid}`)
-        .set({ Name: payload.Name, _id: Fire.uid, Category: category.id, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
+        .set({ Name: payload.Name, _id: Fire.uid, Category: data, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
       setLoading(false),
         setToken(res),
         await AsyncStorage.setItem(
           ASYNC_STORAGE.TOKEN,
           res.user.uid.toString(),
         );
+      data==="0"?
       setTimeout(() => {
         !token
           ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
+            screen: SCREEN_ROUTER_APP_ADD.MANYUSER,
+          })
+          : alert(R.string.pleaseRegister);
+      }, 500):
+      setTimeout(() => {
+        !token
+          ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN, {
             screen: SCREEN_ROUTER_APP.HOME,
           })
           : alert(R.string.pleaseRegister);
-      }, 500);
+      }, 500)
       showMessages(R.string.notification, 'Đăng ký thành công!');
     } catch (error) {
       setLoading(false), Reactotron.log('error', error);
     }
   };
   console.log("city", city)
+  console.log("CategoryRegister",data);
+  
   return (
     <SafeAreaView style={styles.Container}>
       <Header

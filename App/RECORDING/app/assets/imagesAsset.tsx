@@ -54,6 +54,8 @@ const images = {
   ic_expant:require('./images/ic_expant.png'),
   ic_Content:require('./images/ic_Content.png'),
   ic_MessegaeAdd:require('./images/ic_MessegaeAdd.png'),
-  ic_NotificationAdd:require('./images/ic_NotificationAdd.png')
+  ic_NotificationAdd:require('./images/ic_NotificationAdd.png'),
+  ic_many_user:require('./images/ic_many_user.png'),
+  ic_revenue:require('./images/ic_revenue.png')
 };
 export default images;

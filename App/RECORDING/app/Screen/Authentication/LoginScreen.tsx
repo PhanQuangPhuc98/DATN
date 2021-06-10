@@ -7,7 +7,7 @@ import { ASYNC_STORAGE } from '../../constants/Constant';
 import R from '../../assets/R'
 import Reactotron from 'reactotron-react-native'
 import image from '../../assets/imagesAsset';
-import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER } from '../../utils/Constant'
+import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
 import { hasWhiteSpace, validateEmail } from '../../utils/FuncHelper';
 import { showMessages } from '../../utils/AlertHelper'
@@ -31,17 +31,17 @@ const Infor = (style, placeholder, onChangeText, value, secureTextEntry) => {
     </View>
   );
 };
-const ForgotPass = () => {
+const ForgotPass = (category) => {
   return (
     <TouchableOpacity
       onPress={() => {
-        NavigationUtil.navigate(SCREEN_ROUTER_AUTH.FORGOT_PASS);
+        NavigationUtil.navigate(SCREEN_ROUTER_AUTH.FORGOT_PASS,{data:category});
       }}>
       <Text style={styles.ForgotPass}>Quên mật khẩu?</Text>
     </TouchableOpacity>
   );
 }
-const Confirm = (onPress) => {
+const Confirm = (onPress,id) => {
   return (
     <View style={{alignItems:"center"}}>
       <TouchableOpacity
@@ -51,7 +51,7 @@ const Confirm = (onPress) => {
       </TouchableOpacity>
       <View style={styles.ContainerRegister}>
         <Text style={[styles.TextConfirm, { color: colors.focus }]}>Chưa có tài khoản?</Text>
-        <TouchableOpacity onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER_AUTH.REGISTER) }}>
+        <TouchableOpacity onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER_AUTH.REGISTER,{data:id}) }}>
           <Text style={[styles.TextConfirm, { color: colors.Sienna1, marginLeft: 3 }]}>Đăng ký</Text></TouchableOpacity>
       </View>
     </View>
@@ -89,7 +89,18 @@ const LoginScreen = ({ navigation }) => {
     Username: '',
     Pass: ''
   });
+  const [category,setCategory]=useState({
+    id:''
+  })
+  const DB = async()=>{
+    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+    setCategory({
+      ...category,
+      id:Category
+    })
+  }
   useEffect(() => {
+    DB()
     const unsubscribe = navigation.addListener('blur', () => {
       setPayload({
         Username: '',
@@ -110,13 +121,21 @@ const LoginScreen = ({ navigation }) => {
           res.user.uid.toString(),
         );
       showMessages(R.string.notification, 'Đăng nhập thành công!');
+      category.id==="0"?
       setTimeout(() => {
         !token
           ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
             screen: SCREEN_ROUTER_APP.HOME,
           })
           : alert(R.string.pleaseLogin);
-      }, 500);
+      }, 500) :
+      setTimeout(() => {
+        !token
+          ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN, {
+            screen: SCREEN_ROUTER_APP_ADD.MANYUSER,
+          })
+          : alert(R.string.pleaseLogin);
+      }, 500)
       Reactotron.log('res', res.user.uid)
 
     } catch (error) {
@@ -127,17 +146,20 @@ const LoginScreen = ({ navigation }) => {
 
   }
   Reactotron.log('payload', payload);
+  console.log("Categorylogin",category.id);
+  
   return (
     <SafeAreaView style={styles.Container}>
       <Header
         containerStyle={styles.ContainerHeader}
         leftComponent={
+          category.id==="0"?
           <TouchableOpacity
             style={styles.LeftHeader}
             onPress={() => {
               NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
                 screen: SCREEN_ROUTER_APP.HOME,
-              });
+              })
             }}>
             <FastImage
               source={image.ic_back}
@@ -146,6 +168,7 @@ const LoginScreen = ({ navigation }) => {
             />
             <Text style={styles.TextLeft}>{R.string.log_in}</Text>
           </TouchableOpacity>
+          :null
         }
         statusBarProps={styles.ContainerHeader}
       />
@@ -186,7 +209,7 @@ const LoginScreen = ({ navigation }) => {
                 </TouchableOpacity>
               </View>
             }
-            {ForgotPass()}
+            {ForgotPass(category.id)}
           </View>
           {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
             Confirm(() => {
@@ -201,7 +224,8 @@ const LoginScreen = ({ navigation }) => {
                 return;
               }
               signInWithEmail()
-            }
+            },
+            category.id
             )}
           {Line()}
           {Logo()}

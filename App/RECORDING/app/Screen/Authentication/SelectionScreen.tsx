@@ -1,17 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { StyleSheet, Text, View, SafeAreaView, TouchableOpacity } from 'react-native'
 import { Header, CheckBox } from "react-native-elements";
-import FastImage from 'react-native-fast-image';import NavigationUtil from '../../navigation/NavigationUtil';
+import FastImage from 'react-native-fast-image'; import NavigationUtil from '../../navigation/NavigationUtil';
 import Reactotron from 'reactotron-react-native';
 import {
-  SCREEN_ROUTER_AUTH,
-  SCREEN_ROUTER,
-  SCREEN_ROUTER_APP,
+    SCREEN_ROUTER_AUTH,
+    SCREEN_ROUTER,
+    SCREEN_ROUTER_APP,
 } from '../../utils/Constant';
 import ScreenComponent from '../../components/ScreenComponent';
 import R from '../../assets/R';
 import { colors } from '../../constants/Theme';
-import {ASYNC_STORAGE} from '../../constants/Constant';
+import { ASYNC_STORAGE } from '../../constants/Constant';
 import AsyncStorage from '@react-native-community/async-storage';
 const Confirm = (onPress) => {
     return (
@@ -41,15 +41,16 @@ const SelectionScreen = () => {
     const [payload, setPayload] = useState({
         id: '0',
     })
-    console.log("Category",payload.id);
-    
+    const [token, setToken] = useState(null);
+    console.log("Category", payload.id);
+
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
                 containerStyle={styles.ContainerHeader}
                 statusBarProps={styles.ContainerHeader}
                 children={
-                    <View style={[styles.Container,{paddingHorizontal:10}]}>
+                    <View style={[styles.Container, { paddingHorizontal: 10 }]}>
                         {RenderImageLogo()}
                         < Text style={styles.TextIntro}>{R.string.Intro}</Text>
                         <View style={styles.CotainerCheck}>
@@ -86,14 +87,15 @@ const SelectionScreen = () => {
                                 }
                             />
                         </View>
-                        {Confirm(async()=>{
-                            payload.id==="0"?NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{
-                                screen:SCREEN_ROUTER_APP.HOME}):
+                        {Confirm(async () => {
+                            payload.id === "0" ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
+                                screen: SCREEN_ROUTER_APP.HOME
+                            }) :
                                 NavigationUtil.navigate(SCREEN_ROUTER.AUTH)
-                                await AsyncStorage.setItem(
-                                    ASYNC_STORAGE.CATEGORY,
-                                    payload.id,
-                                  );
+                            await AsyncStorage.setItem(
+                                ASYNC_STORAGE.CATEGORY,
+                                payload.id,
+                            );
                         })}
                     </View>
                 }
@@ -115,7 +117,7 @@ const styles = StyleSheet.create({
         textAlign: "center"
     },
     CotainerCheck: {
-        flexDirection: "row", backgroundColor: 'white', paddingVertical: 25,paddingHorizontal:30
+        flexDirection: "row", backgroundColor: 'white', paddingVertical: 25, paddingHorizontal: 30
     },
     ContainerConfirm: {
         height: 46, backgroundColor: colors.Sienna1, borderRadius: 30, width: 293,
