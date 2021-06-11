@@ -45,7 +45,6 @@ const {
   MANYUSER,
   NOTIFICATION,
   REVENUEADD,
-  REVENUEADDMONTH,
   UPDATEINTROADD,
   UPDATEPRICEADD,
   UPDATEUSERADD,
@@ -604,8 +603,8 @@ const AppAdd =()=>{
         component={StackAdd[REVENUEADD]}
       />
       <AppAddStack.Screen
-        name={SCREEN_ROUTER_APP_ADD.REVENUEADDMONTH}
-        component={StackAdd[REVENUEADDMONTH]}
+        name={SCREEN_ROUTER_APP_ADD.CHANGEPASSADD}
+        component={StackAdd[CHANGEPASSADD]}
       />
     </AppAddStack.Navigator>
   );

@@ -5,7 +5,6 @@ import UpdateUserAddScreen from '../../Screen/AddStudio/Account/UpdateUserAddScr
 import UpdateInTroStudioScreen from '../../Screen/AddStudio/Account/UpdateInTroStudioScreen';
 import UpdatePricePutCalendarScreen from '../../Screen/AddStudio/Account/UpdatePricePutCalendarScreen';
 import ChangePassAdd from '../../Screen/AddStudio/Account/ChangePassAdd';
-import RevenueMonthScreen from '../../Screen/AddStudio/Account/RevenueMonthScreen';
 import RevenueScreen from '../../Screen/AddStudio/Account/RevenueScreen';
 import DetailUserScreen from '../../Screen/AddStudio/ManyUser/DetailUserScreen';
 import ManyUserScreen from '../../Screen/AddStudio/ManyUser/ManyUserScreen';
@@ -25,7 +24,6 @@ const {
     UPDATEPRICEADD,
     UPDATEUSERADD,
     USERADD,
-    REVENUEADDMONTH
 } = SCREEN_ROUTER_APP_ADD;
 export default {
   [MANYUSER]: ManyUserScreen,
@@ -37,7 +35,6 @@ export default {
   [INFORUSERADD]: InforUserAddScreen,
   [UPDATEINTROADD]: UpdateInTroStudioScreen,
   [REVENUEADD]: RevenueScreen,
-  [REVENUEADDMONTH]:RevenueMonthScreen,
   [UPDATEPRICEADD]:UpdatePricePutCalendarScreen,
   [UPDATEUSERADD]:UpdateUserAddScreen,
   [CHANGEPASSADD]:ChangePassAdd,

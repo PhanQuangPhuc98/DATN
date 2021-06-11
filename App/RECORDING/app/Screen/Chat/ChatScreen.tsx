@@ -12,7 +12,6 @@ import {
 } from 'react-native';
 import R from '../../assets/R';
 import { firebase } from '../../firebase/firebaseSvc'
-import { CutOneArrayObject } from '../../utils/FuncHelper';
 import Fire, { Auth, database,storage } from '../../firebase/firebaseSvc'
 import ImagePicker from 'react-native-image-crop-picker'
 import image from '../../assets/imagesAsset';

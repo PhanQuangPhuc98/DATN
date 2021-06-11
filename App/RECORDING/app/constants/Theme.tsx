@@ -6,6 +6,7 @@ const colors = {
   black: '#000000',
   line: '#E1E1E1',
   backgroundColor: '#F3F3F8',
+  brown:'#EFEEEE'
 };
 export {colors};
 const Theme ={colors};

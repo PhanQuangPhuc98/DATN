@@ -236,7 +236,7 @@ const styles = StyleSheet.create({
         width: width - 50,
         alignItems: 'center',
         justifyContent: 'center',
-        marginVertical: 30,
+        marginVertical: 60,
         // marginHorizontal: 20,
     },
     TextInputStyle: { borderBottomWidth: 0.5, width: width - 50, borderColor: colors.focus, height: 40 },

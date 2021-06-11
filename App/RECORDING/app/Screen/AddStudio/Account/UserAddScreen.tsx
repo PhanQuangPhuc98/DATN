@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Text, View, Button, SafeAreaView, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
 import NavigationUtil from '../../../navigation/NavigationUtil';
@@ -183,14 +182,19 @@ const UserAddScreen = () => {
                   images.ic_Orderproduct,
                   R.string.Revenue,
                   images.ic_BackRight,
-                  ()=>{},styles.ImgScreen
+                  ()=>{NavigationUtil.navigate(SCREEN_ROUTER.APPADD, {
+                    screen: SCREEN_ROUTER_APP_ADD.REVENUEADD
+                  });},
+                  styles.ImgScreen
                 )}
                 {Line()}
                 {ChildScreen(
                   images.ic_revenue,
                   R.string.UpdatePriceCalender,
                   images.ic_BackRight,
-                  ()=>{},
+                  ()=>{NavigationUtil.navigate(SCREEN_ROUTER.APPADD, {
+                    screen: SCREEN_ROUTER_APP_ADD.UPDATEPRICEADD
+                  });},
                   [styles.ImgScreen,{height:26}]
                 )}
                 {Line()}
@@ -198,7 +202,7 @@ const UserAddScreen = () => {
                   images.ic_ChangePass,
                   R.string.changepass,
                   images.ic_BackRight,
-                  () => { NavigationUtil.navigate(SCREEN_ROUTER.APP, { screen: SCREEN_ROUTER_APP.CHANGEPASS }) },
+                  () => { NavigationUtil.navigate(SCREEN_ROUTER.APPADD, { screen: SCREEN_ROUTER_APP_ADD.CHANGEPASSADD }) },
                   styles.ImgScreen
                 )}
                 {Line()}

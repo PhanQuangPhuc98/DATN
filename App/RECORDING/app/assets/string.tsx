@@ -65,6 +65,16 @@ const string = {
   InforStudio:"Thông tin phòng thu",
   UpdateIntroStudio:"Cập nhật giới thiệu phòng thu",
   Revenue:"Doanh Thu",
-  UpdatePriceCalender:"Cập nhật giá đặt lịch"
+  UpdatePriceCalender:"Cập nhật giá đặt lịch",
+  By_Week:'Theo ngày',
+  By_Month:'Theo tháng',
+  History_PutCalender:'Lịch sử đặt lịch',
+  Old_price:'Giá cũ',
+  New_Price:'Giá mới',
+  Sales_Promotion:'Khuyến mại',
+  Total_Revenue:'Tổng doanh thu',
+  Result_Search:"Kết quả tìm kiếm",
+  Search_User:"Tên, số điện thoại khách hàng",
+  InforUser:"Thông tin khách hàng"
 };
 export default string;

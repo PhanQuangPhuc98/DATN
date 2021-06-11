@@ -214,6 +214,24 @@ const DataSearch = [
         name: "M Audio M Track",
         price: "3.000.000"
     },
+    {
+        ID_Search: "14",
+        img: images.img_M_track,
+        name: "M Audio M Track",
+        price: "3.000.000"
+    },
+    {
+        ID_Search: "15",
+        img: images.img_M_track,
+        name: "M Audio M Track",
+        price: "3.000.000"
+    },
+    {
+        ID_Search: "16",
+        img: images.img_M_track,
+        name: "M Audio M Track",
+        price: "3.000.000"
+    },
 
 ];
 const DataUser = {
@@ -227,8 +245,109 @@ const DataMoney = {
 const Introduct = [
     {
         id:'0',
-        content: 'Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất,Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất'
+        content: 'Mstudio5A - 13 ngõ 204 Trần Duy Hưng ưu đãi đặc biệt giảm giá 50% chỉ còn 300.000đ/1bài. Với những thiết bị hiện đại nhất từ US & EU cùng với đội ngũ kỹ thuật viên nhiệt tình, chuyên môn cao, chúng tôi cam kết mang lại cho khách hàng những sản phẩm chất lượng chuyên nghiệp nhất'
     }
+]
+const DataHistory =[
+    {
+        id:'0',
+        name:'Phan Quang ll',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'1',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'2',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'3',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'4',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'5',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'6',
+        name:'Phan Quang P',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'7',
+        name:'Phan Quang hanh',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    }
+    ,
+    {
+        id:'8',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'9',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'10',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'11',
+        name:'Phan Quang Phúc',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'12',
+        name:'Phan Quang Linh',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
+    {
+        id:'13',
+        name:'Phan Quang Hanh',
+        phone:'0965630621',
+        date:'31/05/2021',
+        images:images.img_Avatar
+    },
 ]
 export {
     DataImage,
@@ -238,5 +357,6 @@ export {
     DataSearch,
     DataUser,
     DataMoney,
-    Introduct
+    Introduct,
+    DataHistory
 };
