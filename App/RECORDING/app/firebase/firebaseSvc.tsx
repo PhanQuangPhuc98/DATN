@@ -5,6 +5,7 @@ import { DEFAULT_PARAMS } from '../constants/Constant';
 import firestore from '@react-native-firebase/firestore';
 import R from '../assets/R';
 import storage from '@react-native-firebase/storage';
+import { log } from 'react-native-reanimated';
 class FirebaseSvc {
   constructor() {
     if (!firebase.apps.length) {
@@ -46,7 +47,7 @@ class FirebaseSvc {
     update[`rooms/${roomKey}/friend`] = friend._id;
     update[`rooms/${roomKey}/key`] = roomKey;
     db.ref().update(update).catch(error => console.log('registerRoomError', error));
-    db.ref(`messages/${roomKey}/rooms`).push({
+    db.ref(`messages/${roomKey}/`).push({
         _id: 1,
         text: R.string.help,
         createdAt:new Date().getTime(),
@@ -79,7 +80,12 @@ class FirebaseSvc {
     //   roomKey=this.creatZoom(me,friend)
     //   console.log(roomKey);
     // }
-    db.ref(`messages/${roomKey}/rooms`).push({
+    const updateUser = {};
+    updateUser[`rooms/${roomKey}/messagesUser`] = text;
+    updateUser[`rooms/${roomKey}/name`] = user.name;
+    updateUser[`rooms/${roomKey}/avatar`] = user.avatar;
+    db.ref().update(updateUser).catch(error => console.log('registerRoomError', error));
+    db.ref(`messages/${roomKey}/`).push({
       _id,
       text,
       user,

@@ -246,8 +246,8 @@ const ChatScreen = ({ route, navigation, ...props }) => {
                 // avatar: params.user.Image,
                 createdAt: new Date().getTime()
               },
-            //   params.user.Category===DEFAULT_PARAMS.USER?messagesUser:messagesStudio
-            MessagesUser
+              // params.user.Category===DEFAULT_PARAMS.USER?messagesUser:messagesStudio
+              messagesStudio
             )}
       />
     </SafeAreaView>

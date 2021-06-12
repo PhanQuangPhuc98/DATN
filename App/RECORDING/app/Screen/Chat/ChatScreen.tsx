@@ -145,7 +145,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const CallBackMess = (key) => {
     setLoading(true)
     setTimeout(async () => {
-      const db =  database().ref(`messages/${key}/rooms/`)
+      const db =  database().ref(`messages/${key}/`)
       if (!db) {
         console.log("not network");
         alert("not network")
@@ -227,6 +227,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   console.log("messseStudio", messagesStudio);
   console.log("image",image);
   console.log("imageMess",imageMessages);
+  console.log("Category",params.user.Category);
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent

@@ -19,7 +19,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
 import ModalDrop from '../../components/ModalDrop'
-import { log } from 'react-native-reanimated';
+import { color, log } from 'react-native-reanimated';
 const { height, width } = Dimensions.get('window');
 const left = () => {
   return (
@@ -147,7 +147,7 @@ const UserScreen = () => {
         containerStyle={styles.ContainerHeader}
         statusBarProps={styles.ContainerHeader}
         children={
-          <View>
+          <View style={{backgroundColor:colors.brown}}>
             {personal(
               Users.Image,
               () => NavigationUtil.navigate(SCREEN_ROUTER.APP, { screen: SCREEN_ROUTER_APP.ADPOST }),
@@ -197,7 +197,7 @@ const UserScreen = () => {
               onPress={() => {
                 toggleModal();
                 Logout();
-                NavigationUtil.navigate(SCREEN_ROUTER.AUTH, { screen: SCREEN_ROUTER_AUTH.LOGIN })
+                NavigationUtil.navigate(SCREEN_ROUTER.SPLASH)
               }
               }
               cancle={R.string.cancle}

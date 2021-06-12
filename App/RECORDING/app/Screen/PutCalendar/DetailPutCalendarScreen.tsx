@@ -139,7 +139,7 @@ const RenderListContent = () => {
 const RenderButton = (onChat, onPut) => {
     return (
         <SafeAreaView
-            style={{ width: width, height: 62, flexDirection: "row", justifyContent: "center", alignItems: "center" }}
+            style={{ width: width, height: 62, flexDirection: "row", justifyContent: "center", alignItems: "center", backgroundColor:colors.white }}
         >
             <TouchableOpacity
                 onPress={onChat}

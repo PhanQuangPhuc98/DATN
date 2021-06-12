@@ -6,6 +6,9 @@ import R from '../../assets/R'
 import { Text, View, SafeAreaView, Dimensions, Platform, StyleSheet,ActivityIndicator, TouchableOpacity } from 'react-native'
 import FastImage from 'react-native-fast-image';
 import ScreenComponent from '../../components/ScreenComponent';
+import AsyncStorage from '@react-native-community/async-storage';
+import {ASYNC_STORAGE}from '../../constants/Constant';
+import {SCREEN_ROUTER,SCREEN_ROUTER_APP,SCREEN_ROUTER_APP_ADD} from '../../utils/Constant';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import Fire from '../../firebase/firebaseSvc';
 import { firebase, storage, database } from '../../firebase/firebaseSvc'
@@ -63,6 +66,21 @@ const Confirm = (onPress) => {
   )
 }
 const PostAvatarScreen = () => {
+  const [category,setCategory]=useState({
+    id:''
+  })
+  const DB = async()=>{
+    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+    setCategory({
+      ...category,
+      id:Category
+    })
+   console.log("Category1",Category);
+   console.log("Category2",category.id);
+  }
+  useEffect(() => {
+    DB()
+  }, [])
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
@@ -128,9 +146,13 @@ const PostAvatarScreen = () => {
             uploading?<ActivityIndicator size="small" color={R.color.colors.Sienna1} />:
             Confirm(()=>{
               uploadImage(),
+              category.id==="0"?
               setTimeout(() => {
-                NavigationUtil.goBack()
-              }, 2000);
+                NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.USER})
+              }, 2000):
+              setTimeout(() => {
+                NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN,{screen:SCREEN_ROUTER_APP_ADD.USERADD})
+              }, 2000)
             })
             
             }

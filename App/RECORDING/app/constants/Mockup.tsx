@@ -349,6 +349,68 @@ const DataHistory =[
         images:images.img_Avatar
     },
 ]
+const DataNotification =[
+    {
+        id:"0",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"1",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"2",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"3",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"4",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"5",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"6",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"7",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"8",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"9",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"10",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    },
+    {
+        id:"11",
+        content:"Bạn có tin nhắn từ khách hàng Nguyễn Thị Thanh Hương",
+        date:"08/08/2019"
+    }
+]
 export {
     DataImage,
     DataImageProduct,
@@ -358,5 +420,6 @@ export {
     DataUser,
     DataMoney,
     Introduct,
-    DataHistory
+    DataHistory,
+    DataNotification
 };

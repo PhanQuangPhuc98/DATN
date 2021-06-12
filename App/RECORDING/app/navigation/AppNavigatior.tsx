@@ -56,6 +56,7 @@ const AppStack = createStackNavigator();
 const AppAddStack =createStackNavigator();
 const AuthStack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const active =false;
 const TabAdd=createBottomTabNavigator();
 const ButtonTab = () => {
   const [category,setCategory]=useState({
@@ -164,6 +165,15 @@ const ButtonTab = () => {
                     );
                     return;
                    
+                  }
+                  else if(active===false){
+                    showConfirm(
+                      R.string.notification,
+                      'Chức năng này đang được phát triển',null,
+                      null,
+                      'Xác nhận',
+                    );
+                    return;
                   }
                   buttonProps.onPress(e);
                 }

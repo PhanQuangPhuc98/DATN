@@ -12,7 +12,7 @@ import DatePicker from 'react-native-datepicker';
 import { CheckBox } from "react-native-elements";
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER, SCREEN_ROUTER_APP_ADD } from '../../../utils/Constant';
 import { showMessages } from '../../../utils/AlertHelper'
-import Fire, { database } from '../../../firebase/firebaseSvc';
+import Fire, { database, firebase, Auth, firestore, storage } from '../../../firebase/firebaseSvc';
 import Reactotron from 'reactotron-react-native';
 import { DataHistory } from '../../../constants/Mockup';
 import ScreenComponent from '../../../components/ScreenComponent'
@@ -48,14 +48,14 @@ const RenderItem = ({ index, item }) => {
             <Avatar
                 size={56}
                 avatarStyle={styles.AvatarStyle}
-                source={item.images}>
+                source={item.avatar?{uri:item.avatar}:images.ic_User}>
             </Avatar>
             <View style={{ paddingHorizontal: 10 }}>
                 <Text style={styles.TextName}>
                     {item.name}
                 </Text>
                 <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
-                    {item.phone}
+                    {item.messagesUser}
                 </Text>
 
             </View>
@@ -71,26 +71,28 @@ const RenderListUser = (DataHistory, handleLoadMore, onMomentumScrollBegin) => {
                 showsVerticalScrollIndicator={false}
                 keyExtractor={item => item.id}
                 onEndReachedThreshold={0.1}
-                // onRefresh={handleLoadMore}
                 onEndReached={handleLoadMore}
                 onMomentumScrollBegin={onMomentumScrollBegin}
-            // onRefresh={Refes}
             />
         </SafeAreaView>
     )
 }
 const ListChatScreen = () => {
+    const [Zoom, setKey] = useState([])
     const [page, setPage] = useState({
         currentPage: 0,
         newPage: 9
     })
+    const pushMessal =[];
+    const [messages,setMessages]=useState([])
+    const [allmessages,setAllMessages]=useState([])
     var onEndReachedCalledDuringMomentum = true;
     const onMomentumScrollBegin = () => {
         onEndReachedCalledDuringMomentum = false;
     };
     const [currentList, setCurrentList] = useState(DataHistory)
     const [newtList, setNewList] = useState([])
-    const newlist = DataHistory.slice(page.currentPage, page.newPage)
+    const newlist = Zoom.slice(page.currentPage, page.newPage)
     const handleLoadMore = () => {
         setPage({
             ...page,
@@ -98,10 +100,72 @@ const ListChatScreen = () => {
         })
         onEndReachedCalledDuringMomentum = true;
         console.log("hello");
-
-        // setNewList(DataHistory.slice(page.currentPage,page.newPage))
     }
+    const checkRoomsStudio =  () => {
+        const check = database().ref("rooms").on('value', (snal) => {
+            const Zoomkey = []
+            snal.forEach(keyroom => {
+                const { friend, key, me,avatar,messagesUser,name } = keyroom.val();
+                Zoomkey.push({
+                    friend:friend,
+                    key: key,
+                    me:me,
+                    avatar:avatar,
+                    messagesUser:messagesUser,
+                    name:name
+                })
+                setKey(Zoomkey)
+            })
+        })
+    }
+    const CallBackMess = (data) => {
+        const Messages =[];
+        const currentMess =Messages;
+        let List =null;
+        data.map((item) => {
+            const db = database().ref(`messages/${item.key}/rooms/`)
+                .on('value', snapshot => {
+                    snapshot.forEach((snap)=>{
+                        const {_id,createdAt,text,user} = snap.val()
+                        Messages.push({
+                            _id:_id,
+                            createdAt:createdAt,
+                            text:text,
+                            user:user
+                        })
+                        // newList.slice(0,2)
+                        List=currentMess.slice(currentMess.length-1,currentMess.length)
+                        Reactotron.log("newList",List)
+                        setMessages(messages.concat(List))
+                    })
+                    // alert(JSON.stringify(snapshot.val()));  
+                    // const {_id,createdAt,text,user} = snapshot.val()
+                   
+                    // messages.push({
+                    //     _id:_id,
+                    //     createdAt:createdAt,
+                    //     text:text,
+                    //     user:user
+                    // })
+                    // messages.push(snapshot.val())
+                    // setMessages(messages)
+                    // List=currentMess.slice(currentMess.length-1,currentMess.length)
+                    // Reactotron.log("newList",List)
+                    // setMessages(messages.concat(List))
+                });
+        })
 
+    }
+    useEffect(() => {
+        checkRoomsStudio()
+    }, [])
+    useEffect(() => {
+        CallBackMess(Zoom)
+    }, [Zoom])
+    Reactotron.log("key", Zoom);
+    Reactotron.log("messages",messages)
+
+    // alert(JSON.stringify(messages))
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
