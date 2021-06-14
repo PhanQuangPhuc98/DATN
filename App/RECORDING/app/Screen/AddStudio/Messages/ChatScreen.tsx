@@ -35,7 +35,6 @@ const Back = (onPress) => {
     </TouchableOpacity>
   );
 };
-
 const renderSend = (props) => {
   return (
     <Send {...props}>
@@ -49,8 +48,6 @@ const renderSend = (props) => {
     </Send>
   );
 };
-
-
 const renderIsloading = () => {
   return (
     <SafeAreaView style={styles.containerLoading}>
@@ -61,34 +58,26 @@ const renderIsloading = () => {
   )
 }
 const ChatScreen = ({ route, navigation, ...props }) => {
-//   const { data, params, Key } = route.params;
+  const { data, params } = route.params;
   const [loaData, setLoadata] = useState(false)
   const [uploading, setUploading] = useState(false);
-  const [key, setKey] = useState(null)
-  const [ZoomId, setZoomId] = useState(null)
   const [image, setImage] = useState(null);
   const [imageMessages,setImageMessages]=useState(null);
   const [isLoading, setLoading] = useState(false);
-  let MessagesUser = [];
   let MessagesStudio=[];
   const roomKey = database().ref().push().key;
-  const [messagesUser, setMessagesUser] = useState([]);
   const [messagesStudio, setMessagesStudio] = useState([]);
-//   const checkRoomsUSer = async () => {
-//     setLoading(true)
-//     const check = await database().ref("rooms").on('value', (snal) => {
-//       setLoading(false)
-//       snal ? snal.forEach(keyroom => {
-//         if (params.user.Category === "0" && keyroom.val().friend === data._id) {
-//           if (keyroom.val().me === params.user._id) {
-//             setKey(keyroom.val().key)
-//             // setZoomId(keyroom.val().key)
-//           }
-//         }
-//       }) : null
-//     })
-//   }
-  const uploadImage = async () => {
+  const [category,setCategory]=useState({
+    id:''
+  })
+  const DB = async()=>{
+    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+    setCategory({
+      ...category,
+      id:Category
+    })
+  }
+  const uploadImage = async (image) => {
     if (image == null) {
       return null;
     }
@@ -104,7 +93,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
           .getDownloadURL()
           .then((downloadURL) => {
             setImageMessages(downloadURL)
-            Fire.OnSend(roomKey, "","", key,imageMessages)
+            Fire.OnSend(roomKey, "","", data.key,downloadURL)
           })
       })
    
@@ -118,77 +107,48 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       console.log(image);
       const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
       setImage(imageUri);
-      uploadImage()
+      uploadImage(imageUri)
     });
     
   };
-//   const checkRoomsStudio = async () => {
-//     setLoading(true)
-//     const check = await database().ref("rooms").on('value', (snal) => {
-//       setLoading(false)
-//       snal ? snal.forEach(keyroom => {
-//         if (params.user.Category === "1" && keyroom.val().me === data._id) {
-//           if (keyroom.val().friend === params.user._id) {
-//             setKey(keyroom.val().key)
-//             // setZoomId(keyroom.val().key)
-//           }
-//         }
-//       }) : null
-//     })
-//   }
-//   const FirtMess = () => {
-//     if (key === null && Key.key === null) {
-//       return Fire.creatZoom(params.user, data, data)
-//     }
-
-//   }
-//   const CallBackMess = (key) => {
-//     setLoading(true)
-//     setTimeout(async () => {
-//       const db =  database().ref(`messages/${key}/rooms/`)
-//       if (!db) {
-//         console.log("not network");
-//         alert("not network")
-//       }
-//       db.limitToLast(100)
-//         .on('child_added', snapshot => {
-//           setLoading(false)
-//           const { _id, createdAt: numberStamp, text, user,image } = snapshot.val()
-//           const createdAt = new Date(numberStamp);
-//           const message = { _id, createdAt, text, user,image };
-//           if(data.Category == DEFAULT_PARAMS.USER&&_id!=1){
-//             MessagesStudio.push(message)
+  const CallBackMess = (key) => {
+    setLoading(true)
+    setTimeout(async () => {
+      const db =  database().ref(`messages/${key}/`)
+      if (!db) {
+        console.log("not network");
+        alert("not network")
+      }
+      db.limitToLast(100)
+        .on('child_added', snapshot => {
+          setLoading(false)
+          const { _id, createdAt: numberStamp, text, user,image } = snapshot.val()
+          const createdAt = new Date(numberStamp);
+          const message = { _id, createdAt, text, user,image };
+          if(_id!=1){
+            MessagesStudio.push(message)
             
-//             MessagesStudio.sort((a, b) => {
-//             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-//           });
-//           setMessagesStudio(MessagesStudio)
-//           }
-//          else  if(data.Category == DEFAULT_PARAMS.STUDIO){
-//            MessagesUser.push(message)
-//            MessagesUser.sort((a, b) => {
-//             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-//           });
-//           setMessagesUser(MessagesUser)
-//         }
-//           setLoading(false)
-//         });
-//     }, 200);
-//   }
-//   const Send = (Messages = []) => {
+            MessagesStudio.sort((a, b) => {
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+          });
+          setMessagesStudio(MessagesStudio)
+          }
+          // setLoading(false)
+        });
+    }, 200);
+  }
+  const Send = (Messages = []) => {
     
-//     CallBackMess(key)
-//     Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key)
-//     setLoadata(true)
-//   }
-//   useEffect(() => {
-//     FirtMess()
-//     // params.user.Category === "0" ? checkRoomsUSer() : params.user.Category === "1" ? checkRoomsStudio() : null
-//     // getZooomID()
-//     setTimeout(() => {
-//       loaData === false ? CallBackMess(key) : null
-//     }, 500);
-//   }, [key]);
+    CallBackMess(data.key)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id)
+    setLoadata(true)
+  }
+  useEffect(() => {
+    DB()
+    setTimeout(() => {
+      loaData === false ? CallBackMess(data.key) : null
+    }, 500);
+  }, []);
   const renderActions = () => {
     return (
       <TouchableOpacity 
@@ -220,13 +180,17 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       />
     );
   };
+  Reactotron.log("Acout",data.key) 
+  Reactotron.log("Me",params.user.Image)
+  console.log("Category",category.id);
+  
 //   console.log('key2', Key.key);
-  console.log("key1", key);
-  console.log("Zooomid", ZoomId);
-  console.log("messseuser", messagesUser);
-  console.log("messseStudio", messagesStudio);
-  console.log("image",image);
-  console.log("imageMess",imageMessages);
+  // console.log("key1", key);
+  // console.log("Zooomid", ZoomId);
+  // console.log("messseuser", messagesUser);
+  Reactotron.log("messseStudio", messagesStudio);
+  // console.log("image",image);
+  // console.log("imageMess",imageMessages);
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -243,10 +207,9 @@ const ChatScreen = ({ route, navigation, ...props }) => {
               {
                 _id: Fire.uid,
                 name: Fire.name,
-                // avatar: params.user.Image,
+                avatar: params.user.Image,
                 createdAt: new Date().getTime()
               },
-              // params.user.Category===DEFAULT_PARAMS.USER?messagesUser:messagesStudio
               messagesStudio
             )}
       />

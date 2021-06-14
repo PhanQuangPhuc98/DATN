@@ -88,23 +88,23 @@ const RegisterScreen = ({route,navigation,...props}) => {
   const [checked, setChecked] = useState(false);
   const [city, setCity] = useState([]);
   const [Password, setPassword] = useState(true);
-  // const [category,setCategory]=useState({
-  //   id:''
-  // })
+  const [category,setCategory]=useState({
+    id:''
+  })
   const [confirm_password, setconfirm_password] = useState(true);
   const [token, setToken] = useState(null);
   const [isLoading, setLoading] = useState(false);
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
   const iconConfirm = confirm_password ? R.images.ic_visibility : R.images.ic_invisible;
-  // const DB = async()=>{
-  //   let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
-  //   setCategory({
-  //     ...category,
-  //     id:Category
-  //   })
-  //   console.log("Category",Category);
+  const DB = async()=>{
+    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+    setCategory({
+      ...category,
+      id:Category
+    })
+    console.log("Category",Category);
    
-  // }
+  }
   const CallCity = () => {
     setTimeout(async () => {
       const city = await database()
@@ -128,8 +128,30 @@ const RegisterScreen = ({route,navigation,...props}) => {
   }
   useEffect(() => {
     CallCity()
-    // DB()
+    DB()
   }, [])
+  const CreatIntro =()=>{
+    const db = database()
+    try {
+      db
+      .ref(`/IntroStudio/${Fire.uid}`)
+      .set({content:""})
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const CreatPrice =()=>{
+    const db = database()
+    try {
+      db
+      .ref(`/PriceStudio/${Fire.uid}`)
+      .set({oldPrice:'0',newPrice:'0',SalesPromotion:'0'})
+      
+    } catch (error) {
+      console.log(error);
+    }
+  }
   const CreatAcout = async () => {
     setLoading(true)
     try {
@@ -142,6 +164,10 @@ const RegisterScreen = ({route,navigation,...props}) => {
       database()
         .ref(`/users/${Fire.uid}`)
         .set({ Name: payload.Name, _id: Fire.uid, Category: data, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
+        if(category.id==="1"){
+          CreatIntro()
+          CreatPrice()
+        }
       setLoading(false),
         setToken(res),
         await AsyncStorage.setItem(

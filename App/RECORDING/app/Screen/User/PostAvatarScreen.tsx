@@ -75,17 +75,33 @@ const PostAvatarScreen = () => {
       ...category,
       id:Category
     })
-   console.log("Category1",Category);
-   console.log("Category2",category.id);
   }
-  useEffect(() => {
-    DB()
-  }, [])
+
   const [image, setImage] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [transferred, setTransferred] = useState(0);
   const [post, setPost] = useState(null);
+  const [Zoom, setKey] = useState([])
 
+  const checkRoomsStudio =  () => {
+    const check = database().ref("rooms").on('value', (snal) => {
+        const Zoomkey = []
+        snal.forEach(keyroom => {
+            const { friend, key, me,avatar,messagesUser,name } = keyroom.val();
+            if(Fire.uid===me){
+              Zoomkey.push({
+                key: key,
+            })
+            setKey(Zoomkey)
+            }
+        })
+    })
+}
+Reactotron.log("category",category.id)
+useEffect(() => {
+  DB()
+  checkRoomsStudio()
+}, [])
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
       width: 1200,
@@ -126,6 +142,11 @@ const PostAvatarScreen = () => {
             database().ref(`/users/${Fire.uid}`).update({
               Image: downloadURL
             })
+            category.id==="0"?Zoom.map((item)=>{
+              database().ref(`/rooms/${item.key}`).update({
+                avatar:downloadURL
+              })
+            }):null
           })
       })
   };

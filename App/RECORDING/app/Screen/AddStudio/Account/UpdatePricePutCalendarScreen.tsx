@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Text, View, Button, SafeAreaView, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
+import { Text, View, Button, SafeAreaView, StyleSheet, TouchableOpacity, Dimensions, ActivityIndicator, Platform } from 'react-native';
 import NavigationUtil from '../../../navigation/NavigationUtil';
 import Reactotron from 'reactotron-react-native';
 import {
@@ -12,6 +12,7 @@ import { DataUser } from '../../../constants/Mockup'
 import { Avatar } from 'react-native-elements'
 import R from '../../../assets/R'
 import { colors } from '../../../constants/Theme'
+import { showMessages } from '../../../utils/AlertHelper'
 import Fire from '../../../firebase/firebaseSvc';
 import { firebase, database, Auth } from '../../../firebase/firebaseSvc';
 import { ASYNC_STORAGE } from '../../../constants/Constant';
@@ -42,24 +43,92 @@ const Confirm = (onPress) => {
         </View>
     );
 };
-const RenderChangePrice =(lable,value,onChangeText)=>{
-    return(
+const RenderChangePrice = (lable, value, onChangeText) => {
+    return (
         <SafeAreaView>
             <Text style={styles.TextLable}>
                 {lable}
             </Text>
             <TextInput
-            style={styles.TextInputStyle}
-            value={value}
-            onChangeText={onChangeText}
-            >
-            </TextInput>
+                style={styles.TextInputStyle}
+                value={value}
+                onChangeText={onChangeText}
+            />
         </SafeAreaView>
     )
 }
 const UpdatePricePutCalendarScreen = () => {
+    const [price, setPrice] = useState({
+        newPrice: '0',
+        oldPrice: '0',
+        SalesPromotion: '0%'
+    })
+    const [loading, setLoading] = useState(false)
+    const DB = database();
+    const UpdatePriceUser =()=>{
+        setLoading(true)
+        setTimeout(() => {
+            try {
+                setLoading(false)
+                DB
+                .ref(`/users/${Fire.uid}`)
+                .update({ newPrice:price.newPrice,oldPrice:price.oldPrice})
+                showMessages(R.string.notification, R.string.Update_Sucess);
+                NavigationUtil.goBack()
+            } catch (error) {
+                console.log(error);
+                setLoading(false)
+            }
+        }, 1000)
+
+    }
+    const callPrice = () => {
+        setLoading(true)
+        setTimeout(() => {
+            try {
+                setLoading(false)
+                DB
+                    .ref(`/PriceStudio/${Fire.uid}`)
+                    .on("value", snap => {
+                        const { oldPrice, newPrice, SalesPromotion } = snap.val()
+                        setPrice({
+                            ...price,
+                            newPrice: newPrice,
+                            oldPrice: oldPrice,
+                            SalesPromotion: SalesPromotion + "%"
+                        })
+                    })
+            } catch (error) {
+                console.log(error);
+                setLoading(false)
+            }
+        }, 1000)
+
+    }
+    const updatePrice = () => {
+        setLoading(true)
+        setTimeout(() => {
+            try {
+                setLoading(false)
+                DB
+                    .ref(`/PriceStudio/${Fire.uid}`)
+                    .update({
+                        newPrice: price.newPrice,
+                        oldPrice: price.oldPrice,
+                        SalesPromotion: price.SalesPromotion
+                    })
+            } catch (error) {
+                console.log(error);
+                setLoading(false)
+            }
+        },1000)
+
+    }
+    useEffect(() => {
+        callPrice()
+    }, [])
     return (
-        <SafeAreaView style={styles.Container}> 
+        <SafeAreaView style={styles.Container}>
             <ScreenComponent
                 leftComponent={Back(() => {
                     NavigationUtil.goBack();
@@ -67,12 +136,31 @@ const UpdatePricePutCalendarScreen = () => {
                 containerStyle={styles.ContainerHeader}
                 statusBarProps={styles.ContainerHeader}
                 children={
-                    <SafeAreaView style={{paddingHorizontal:20, paddingVertical:20}}>
-                        {RenderChangePrice(R.string.Old_price,'300.000')}
-                        {RenderChangePrice(R.string.New_Price,'600.000')}
-                        {RenderChangePrice(R.string.Sales_Promotion,'25%')}
-                        {Confirm()}
-                    </SafeAreaView>    
+                    <SafeAreaView style={{ paddingHorizontal: 20, paddingVertical: 20 }}>
+                        {RenderChangePrice(R.string.Old_price, price.oldPrice, oldPrice => { setPrice({ ...price, oldPrice: oldPrice }) })}
+                        {RenderChangePrice(R.string.New_Price, price.newPrice, newPrice => { setPrice({ ...price, newPrice: newPrice }) })}
+                        {/* {RenderChangePrice(R.string.Sales_Promotion, price.SalesPromotion, SalesPromotion => { setPrice({ ...price, SalesPromotion: SalesPromotion }) })} */}
+                        {loading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
+
+                            Confirm(() => {
+                                if (!price.oldPrice.trim().length) {
+                                    showMessages(R.string.notification, 'Vui lòng nhập giá cũ !');
+                                    return;
+                                }
+                                if (!price.newPrice.trim().length) {
+                                    showMessages(R.string.notification, 'Vui lòng nhập giá mới !');
+                                    return;
+                                }
+                                if (!price.SalesPromotion.trim().length) {
+                                    showMessages(R.string.notification, 'Vui lòng nhập khuyến mại !');
+                                    return;
+                                }
+                                updatePrice()
+                                UpdatePriceUser()
+                            })
+
+                        }
+                    </SafeAreaView>
                 }
             />
         </SafeAreaView>
@@ -107,6 +195,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         marginVertical: 60,
     },
-    TextInputStyle: { borderBottomWidth: 0.5, width: width - 50, borderColor: colors.focus, height: 40,marginVertical:10 },
+    TextInputStyle: { borderBottomWidth: 0.5, width: width - 50, borderColor: colors.focus, height: 40, marginVertical: 10 },
 });
 export default UpdatePricePutCalendarScreen

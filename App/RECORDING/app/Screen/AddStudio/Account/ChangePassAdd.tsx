@@ -7,7 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
-  Button
+  Button,
+  ActivityIndicator
 } from 'react-native';
 import images from '../../../assets/imagesAsset';
 import {firebase} from '../../../firebase/firebaseSvc';
@@ -68,6 +69,7 @@ const Back = (onPress) => {
 const ChangePassAdd = () => {
     const [Password, setPassword] = useState(true);
     const [NewPassword, setNewPassword] = useState(true);
+    const [loading, setLoading] = useState(false)
     const [confirm_password, setconfirm_password] = useState(true);
     const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
     const iconNew = NewPassword ? R.images.ic_visibility : R.images.ic_invisible;
@@ -84,14 +86,23 @@ const ChangePassAdd = () => {
       return user.reauthenticateWithCredential(cred);
     }
     const changePassword = (currentPassword, newPassword) => {
-      reauthenticate(currentPassword).then(() => {
-        var user = firebase.auth().currentUser;
-        user.updatePassword(newPassword).then(() => {
-          showMessages(R.string.notification, R.string.ChangePass_Sucess);
-          Reactotron.log("Password updated!");
-          NavigationUtil.goBack();
-        }).catch((error) => { Reactotron.log(error); });
-      }).catch((error) => { Reactotron.log(error); });
+      setLoading(true)
+      setTimeout(()=>{
+        try {
+          reauthenticate(currentPassword).then(() => {
+            var user = firebase.auth().currentUser;
+            user.updatePassword(newPassword).then(() => {
+              setLoading(false)
+              showMessages(R.string.notification, R.string.ChangePass_Sucess);
+              Reactotron.log("Password updated!");
+              NavigationUtil.goBack();
+            }).catch((error) => { Reactotron.log(error); });
+          }).catch((error) => { Reactotron.log(error); });
+        } catch (error) {
+          console.log(error);
+          setLoading(false)
+        }
+      },2000)
     }
     return (
       <SafeAreaView style={styles.Container}>
@@ -107,7 +118,8 @@ const ChangePassAdd = () => {
             } 
             {renderInput(R.string.new_password,iconNew,()=>{setNewPassword(!NewPassword)},NewPassword,payLoad.NewPassword,NewPassword=>{setPayLoad({...payLoad,NewPassword:NewPassword});})} 
             {renderInput(R.string.confirm_new_password,iconConfirm,()=>{setconfirm_password(!confirm_password)},confirm_password,payLoad.confirm_password,confirm_password=>{setPayLoad({...payLoad,confirm_password:confirm_password});})}
-            {Confirm(()=>{
+            {loading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
+            Confirm(()=>{
               if (
                 payLoad.NewPassword.trim().length < 6 ||
                 payLoad.NewPassword != payLoad.confirm_password ||

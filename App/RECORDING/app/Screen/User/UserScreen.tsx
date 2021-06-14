@@ -167,15 +167,18 @@ const UserScreen = () => {
               {Line()}
               {ChildScreen(
                 images.ic_Orderproduct,
-                R.string.order,
-                images.ic_BackRight
+                R.string.History_PutCalender,
+                images.ic_BackRight,
+                ()=>{
+                  NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.HISTORYPUT})
+                }
               )}
-              {Line()}
+              {/* {Line()}
               {ChildScreen(
                 images.ic_Language,
                 R.string.language,
                 images.ic_BackRight,
-              )}
+              )} */}
               {Line()}
               {ChildScreen(
                 images.ic_ChangePass,

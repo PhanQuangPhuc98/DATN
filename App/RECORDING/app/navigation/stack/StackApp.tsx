@@ -14,6 +14,7 @@ import UpdateUserScreen from '../../Screen/User//UpdateUserScreen'
 import DetailPutCalendarScreen from '../../Screen/PutCalendar/DetailPutCalendarScreen';
 import MapScreen from '../../Screen/PutCalendar/MapScreen';
 import SelectionScreen from '../../Screen/Authentication/SelectionScreen';
+import HistoryPutScree from '../../Screen/User/HistoryPutScree';
 const {
   HOME,
   PRODUCT,
@@ -29,7 +30,8 @@ const {
   UPDATEUSER,
   DETAILPUTCALENDAR,
   MAP,
-  INTRO
+  INTRO,
+  HISTORYPUT
 } = SCREEN_ROUTER_APP;
 export default {
   [HOME]: HomeScreen,
@@ -46,5 +48,6 @@ export default {
   [UPDATEUSER]:UpdateUserScreen,
   [DETAILPUTCALENDAR]:DetailPutCalendarScreen,
   [MAP]:MapScreen,
-  [INTRO]:SelectionScreen
+  [INTRO]:SelectionScreen,
+  [HISTORYPUT]:HistoryPutScree
 };

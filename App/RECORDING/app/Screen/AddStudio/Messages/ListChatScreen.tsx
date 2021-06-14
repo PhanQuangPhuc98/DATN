@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator, Dimensions, TextInput, Platform, FlatList } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity,RefreshControl, ScrollView, ActivityIndicator, Dimensions, TextInput, Platform, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image';
 import images from '../../../assets/imagesAsset';
 import R from '../../../assets/R';
@@ -39,45 +39,28 @@ const SearchUser = (lable) => {
         </SafeAreaView>
     )
 }
-const RenderItem = ({ index, item }) => {
 
-    return (
-        <TouchableOpacity
-            onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER.APPADD, { screen: SCREEN_ROUTER_APP_ADD.CHATADD }) }}
-            style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 20, width: width - 40, }]}>
-            <Avatar
-                size={56}
-                avatarStyle={styles.AvatarStyle}
-                source={item.avatar?{uri:item.avatar}:images.ic_User}>
-            </Avatar>
-            <View style={{ paddingHorizontal: 10 }}>
-                <Text style={styles.TextName}>
-                    {item.name}
-                </Text>
-                <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
-                    {item.messagesUser}
-                </Text>
-
-            </View>
-        </TouchableOpacity>
-    );
-}
-const RenderListUser = (DataHistory, handleLoadMore, onMomentumScrollBegin) => {
-    return (
-        <SafeAreaView style={{ borderTopWidth: 0.5, flex: 1 }}>
-            <FlatList
-                data={DataHistory}
-                renderItem={RenderItem}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={item => item.id}
-                onEndReachedThreshold={0.1}
-                onEndReached={handleLoadMore}
-                onMomentumScrollBegin={onMomentumScrollBegin}
-            />
-        </SafeAreaView>
-    )
-}
 const ListChatScreen = () => {
+    let studio = [];
+    let users = [];
+    // const [Studio, setStudio] = useState(null);
+    const [User, setUser] = useState({
+        FulldataUsers: users,
+        DataUsers: users
+    })
+    const [Studio, setStudio] = useState({
+        _id: '',
+        Image: '',
+        Name: '',
+        Category: '',
+        Email: '',
+        Phone: '',
+        Sex: '',
+        Birth_Day: '',
+        City: '',
+        District: '',
+        Address: '',
+    })
     const [Zoom, setKey] = useState([])
     const [page, setPage] = useState({
         currentPage: 0,
@@ -118,54 +101,132 @@ const ListChatScreen = () => {
             })
         })
     }
-    const CallBackMess = (data) => {
-        const Messages =[];
-        const currentMess =Messages;
-        let List =null;
-        data.map((item) => {
-            const db = database().ref(`messages/${item.key}/rooms/`)
-                .on('value', snapshot => {
-                    snapshot.forEach((snap)=>{
-                        const {_id,createdAt,text,user} = snap.val()
-                        Messages.push({
-                            _id:_id,
-                            createdAt:createdAt,
-                            text:text,
-                            user:user
+    const CallAcout =()=>{
+        Auth().onAuthStateChanged(user => {
+            if (user) {
+                console.log("state = definitely signed in")
+                const onValueChange = database()
+                    .ref('/users/')
+                    .on('value', (snapshot) => {
+                        snapshot.forEach((child) => {
+                            if (child.val().Category === "1" && child.val()._id === Fire.uid) {
+                                setStudio({
+                                    ...Studio,
+                                    _id: child.val()._id,
+                                    Image: child.val().Image,
+                                    Name: child.val().Name,
+                                    Category: child.val().Category,
+                                    Email: child.val().email,
+                                    Phone: child.val().Phone,
+                                    Sex: child.val().Sex,
+                                    Birth_Day: child.val().Birth_Day,
+                                    City: child.val().City,
+                                    District: child.val().District,
+                                    Address: child.val().Address,
+                                })
+                            } else if (child.val().Category != "1" && child.val()._id != Fire.uid) {
+                                users.push({
+                                    _id: child.val()._id,
+                                    Image: child.val().Image,
+                                    Name: child.val().Name,
+                                    Category: child.val().Category,
+                                    Email: child.val().email,
+                                    Phone: child.val().Phone,
+                                    Sex: child.val().Sex,
+                                    Birth_Day: child.val().Birth_Day,
+                                    City: child.val().City,
+                                    District: child.val().District,
+                                    Address: child.val().Address,
+                                })
+                            }
+                            // } else if (child.val()._id === Fire.uid) {
+                            //     setCategory({
+                            //         ...Categoty,
+                            //         _id: child.val()._id,
+                            //         Image: child.val().Image,
+                            //         Name: child.val().Name,
+                            //         Category: child.val().Category,
+                            //         Email: child.val().email,
+                            //         Phone: child.val().Phone,
+                            //         Sex: child.val().Sex,
+                            //         Birth_Day: child.val().Birth_Day,
+                            //         City: child.val().City,
+                            //         District: child.val().District,
+                            //         Address: child.val().Address,
+                            //     })
+                            // }
                         })
-                        // newList.slice(0,2)
-                        List=currentMess.slice(currentMess.length-1,currentMess.length)
-                        Reactotron.log("newList",List)
-                        setMessages(messages.concat(List))
-                    })
-                    // alert(JSON.stringify(snapshot.val()));  
-                    // const {_id,createdAt,text,user} = snapshot.val()
-                   
-                    // messages.push({
-                    //     _id:_id,
-                    //     createdAt:createdAt,
-                    //     text:text,
-                    //     user:user
-                    // })
-                    // messages.push(snapshot.val())
-                    // setMessages(messages)
-                    // List=currentMess.slice(currentMess.length-1,currentMess.length)
-                    // Reactotron.log("newList",List)
-                    // setMessages(messages.concat(List))
-                });
-        })
-
+                        // setStudio({
+                        //     ...Studio,
+                        //     fulldata: studio,
+                        //     data: studio
+                        // });
+                        setUser({
+                            ...User,
+                            FulldataUsers: users,
+                            DataUsers: users
+                        })
+                    });
+            }
+            else {
+                console.log("state = definitely signed out")
+            }
+        }) 
     }
     useEffect(() => {
         checkRoomsStudio()
+        CallAcout()
     }, [])
-    useEffect(() => {
-        CallBackMess(Zoom)
-    }, [Zoom])
-    Reactotron.log("key", Zoom);
-    Reactotron.log("messages",messages)
+    const RenderItem = ({ index, item }) => {
 
-    // alert(JSON.stringify(messages))
+        return (
+            <TouchableOpacity
+                onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER.APPADD, { screen: SCREEN_ROUTER_APP_ADD.CHATADD,params:{
+                    data:item,
+                    params: {
+                        user: Studio
+                    },
+                } }) }}
+                style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 20, width: width - 40, }]}>
+                <Avatar
+                    size={56}
+                    avatarStyle={styles.AvatarStyle}
+                    source={item.avatar?{uri:item.avatar}:images.ic_User}>
+                </Avatar>
+                <View style={{ paddingHorizontal: 10 }}>
+                    <Text style={styles.TextName}>
+                        {item.name?item.name:"Khách hàng đang tạo phòng"}
+                    </Text>
+                    <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
+                        {item.messagesUser?item.messagesUser:"Khách hàng đang tạo phòng"}
+                    </Text>
+    
+                </View>
+            </TouchableOpacity>
+        );
+    }
+    const RenderListUser = (DataHistory, handleLoadMore, onMomentumScrollBegin) => {
+        return (
+            <SafeAreaView style={{ borderTopWidth: 0.5, flex: 1 }}>
+                <FlatList
+                    data={DataHistory}
+                    renderItem={RenderItem}
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={item => item.id}
+                    refreshControl={<RefreshControl
+                        refreshing={false}
+                        onRefresh={()=>{checkRoomsStudio()}}
+                    />}
+                    onEndReachedThreshold={0.1}
+                    onEndReached={handleLoadMore}
+                    onMomentumScrollBegin={onMomentumScrollBegin}
+                />
+            </SafeAreaView>
+        )
+    }
+    Reactotron.log("key", Zoom);
+    Reactotron.log("User",User)
+    Reactotron.log("Studio",Studio)
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent

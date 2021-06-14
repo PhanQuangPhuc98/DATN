@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import DatePicker from 'react-native-datepicker';
 import { CheckBox } from "react-native-elements";
-import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../../utils/Constant';
+import { SCREEN_ROUTER_APP, SCREEN_ROUTER, SCREEN_ROUTER_APP_ADD } from '../../../utils/Constant';
 import { showMessages } from '../../../utils/AlertHelper'
 import Fire, { database } from '../../../firebase/firebaseSvc';
 import Reactotron from 'reactotron-react-native';
@@ -164,7 +164,7 @@ const UpdateUserAddScreen = ({ route, ...props }) => {
                 })
             setLoading(false);
             showMessages(R.string.notification, R.string.Update_Sucess);
-            NavigationUtil.navigate(SCREEN_ROUTER.MAIN, { screen: SCREEN_ROUTER_APP.USER })
+            NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN, { screen: SCREEN_ROUTER_APP_ADD.USERADD })
         } catch (error) {
             setLoading(false);
             console.log(error);

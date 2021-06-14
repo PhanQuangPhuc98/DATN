@@ -75,6 +75,7 @@ const string = {
   Total_Revenue:'Tổng doanh thu',
   Result_Search:"Kết quả tìm kiếm",
   Search_User:"Tên, số điện thoại khách hàng",
-  InforUser:"Thông tin khách hàng"
+  InforUser:"Thông tin khách hàng",
+  Put_Sucess:"Đặt lịch thành công",
 };
 export default string;

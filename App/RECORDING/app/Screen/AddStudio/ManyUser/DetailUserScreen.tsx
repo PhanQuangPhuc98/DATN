@@ -33,13 +33,13 @@ const Back = (onPress) => {
         </TouchableOpacity>
     );
 };
-const personal = (name, phone) => {
+const personal = (image,name, phone) => {
     return (
         <View style={styles.HeaderPerson}>
             <Avatar
                 size={56}
                 avatarStyle={styles.AvatarStyle}
-                source={images.img_Avatar}>
+                source={image?{uri:image}:images.ic_User}>
             </Avatar>
             <View style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
                 <Text style={styles.TextName}>
@@ -71,7 +71,10 @@ const renderInfor = (lable, infor) => {
       </SafeAreaView>
     )
   }
-const DetailUserScreen = () => {
+const DetailUserScreen = ({route, navigation}) => {
+    const { data} = route.params;
+    console.log("data",data);
+    
     return (
         <SafeAreaView style={{ flex: 1, backgroundColor: R.color.colors.brown }}>
             <ScreenComponent
@@ -81,16 +84,16 @@ const DetailUserScreen = () => {
                 chilStyle={{ backgroundColor: R.color.colors.brown }}
                 children={
                     <SafeAreaView>
-                        {personal()}
+                        {personal(data.Image,data.Name,data.Phone)}
                         <Text style={{ borderBottomWidth: 0.7, backgroundColor: R.color.colors.white, textAlign: 'center',color:R.color.colors.Sienna1, height:30,paddingVertical:5}}>
                             {R.string.InforUser}
                         </Text>
-                        {renderInfor(R.string.name )}
-                        {renderInfor(R.string.phone)}
-                        {renderInfor(R.string.email)}
-                        {renderInfor(R.string.city)}
-                        {renderInfor(R.string.District)}
-                        {renderInfor(R.string.Address)}
+                        {renderInfor(R.string.name,data.Name )}
+                        {renderInfor(R.string.phone,data.Phone)}
+                        {renderInfor(R.string.email,data.email)}
+                        {renderInfor(R.string.city,data.City)}
+                        {renderInfor(R.string.District,data.District)}
+                        {renderInfor(R.string.Address,data.Address)}
                     </SafeAreaView>
                 }
             />

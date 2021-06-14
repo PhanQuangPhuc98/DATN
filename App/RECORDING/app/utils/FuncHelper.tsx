@@ -1,6 +1,6 @@
 import {REG_EMAIL,REG_PHONE} from './Constant'
 
-
+import { Platform } from 'react-native';
 export function hasWhiteSpace(s) {
     return s.indexOf(' ') >= 0;
   }
@@ -13,6 +13,14 @@ export function hasWhiteSpace(s) {
     if (!phone) return false;
     return REG_PHONE.test(phone);
   }
+  // export function formatNumberToString(value) {
+  //   if (!value) return '';
+  //   return value
+  //     .toString()
+  //     .split(',')
+  //     .join('');
+  // }
+  
   export function getCurrentDate(){
     var date = new Date().getDate();
     var month = new Date().getMonth() + 1;
@@ -20,5 +28,12 @@ export function hasWhiteSpace(s) {
     var hours = new Date().getHours();
     var minute = new Date().getMinutes();
     var seconds = new Date().getSeconds()
-    return hours + ':' + minute + ':' +seconds+' '+ date + '-' + month + '-' + year;
+    return  date + '/' + month + '/' + year;
+  }
+  export function formatPrice(value) {
+    // if (Platform.OS === 'android') {
+    //   require('intl'); // import intl object
+    //   require('intl/locale-data/jsonp/en'); // load the required locale details
+    // }
+    // return new Intl.NumberFormat('en-ES').format(formatNumberToString(value));
   }

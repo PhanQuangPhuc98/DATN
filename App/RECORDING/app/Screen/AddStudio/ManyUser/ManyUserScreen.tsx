@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator, Dimensions, TextInput, Platform, FlatList } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator,RefreshControl, Dimensions, TextInput, Platform, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image';
 import images from '../../../assets/imagesAsset';
 import R from '../../../assets/R';
@@ -12,10 +12,11 @@ import DatePicker from 'react-native-datepicker';
 import { CheckBox } from "react-native-elements";
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER, SCREEN_ROUTER_APP_ADD } from '../../../utils/Constant';
 import { showMessages } from '../../../utils/AlertHelper'
-import Fire, { database } from '../../../firebase/firebaseSvc';
+import Fire, { database, Auth } from '../../../firebase/firebaseSvc';
 import Reactotron from 'reactotron-react-native';
 import { DataHistory } from '../../../constants/Mockup';
 import ScreenComponent from '../../../components/ScreenComponent'
+import { useFocusEffect } from '@react-navigation/native';
 const { height, width } = Dimensions.get('window');
 const Back = (onPress) => {
     return (
@@ -24,96 +25,250 @@ const Back = (onPress) => {
         </View>
     );
 };
-const SearchUser =(lable)=>{
-    return(
-        <SafeAreaView style={{width:width,backgroundColor:R.color.colors.white, paddingHorizontal:20,paddingVertical:10}}>
-            <View style={{width:width-50,backgroundColor:R.color.colors.brown, marginHorizontal:5,borderRadius:2.5}}>
-            <TextInput
-            style={{width:width-50,height:35,borderRadius:2.5}}
-            placeholder={lable}
-            >
+const SearchUser = (lable, onChangeText) => {
+    return (
+        <SafeAreaView style={{ width: width, backgroundColor: R.color.colors.white, paddingHorizontal: 20, paddingVertical: 10 }}>
+            <View style={{ width: width - 50, backgroundColor: R.color.colors.brown, marginHorizontal: 5, borderRadius: 2.5 }}>
+                <TextInput
+                    style={{ width: width - 50, height: 35, borderRadius: 2.5 }}
+                    placeholder={lable}
+                    onChangeText={onChangeText}
+                >
 
-            </TextInput>
+                </TextInput>
             </View>
-           
+
         </SafeAreaView>
     )
 }
-const RenderItem = ({ index, item }) => {
-
+const RenderResultSearch = (cout) => {
     return (
-        <TouchableOpacity 
-        onPress={()=>{NavigationUtil.navigate(SCREEN_ROUTER.APPADD,{screen:SCREEN_ROUTER_APP_ADD.DETAILUSER})}}
-        style={[styles.HeaderPerson,{borderBottomWidth:0.5,marginHorizontal:20,  width:width-40, }]}>
-            <Avatar
-                size={56}
-                avatarStyle={styles.AvatarStyle}
-                source={item.images}>
-            </Avatar>
-            <View style={{ paddingHorizontal: 10 }}>
-                <Text style={styles.TextName}>
-                    {item.name}
-                </Text>
-                <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical:10 }]}>
-                    {item.phone}
-                </Text>
-
-            </View>
-        </TouchableOpacity>
-    ); 
-}
-const RenderResultSearch =()=>{
-    return(
-        <SafeAreaView style={{flexDirection:'row',paddingHorizontal:15}}>
+        <SafeAreaView style={{ flexDirection: 'row', paddingHorizontal: 15 }}>
             <Text style={styles.TextSearch}>
-                {R.string.Result_Search}: <Text style={[styles.TextSearch,{color:R.color.colors.Sienna1}]}>10</Text>
+                {R.string.Result_Search}: <Text style={[styles.TextSearch, { color: R.color.colors.Sienna1 }]}>{cout ? cout : 0}</Text>
             </Text>
         </SafeAreaView>
     )
 }
 
-const RenderListUser =(DataHistory,handleLoadMore,onMomentumScrollBegin)=>{
-    return(
-        <SafeAreaView style={{borderTopWidth:0.5,flex:1}}>
-            {RenderResultSearch()}
-          <FlatList
-            data={DataHistory}
-            renderItem={RenderItem}
-            showsVerticalScrollIndicator={false}
-            keyExtractor={item =>item.id}
-            onEndReachedThreshold={0.1}
-            // onRefresh={handleLoadMore}
-            onEndReached={handleLoadMore}
-            onMomentumScrollBegin={onMomentumScrollBegin}
-            // onRefresh={Refes}
-            />
-        </SafeAreaView>
-    )
-}
 
 const ManyUserScreen = () => {
-    const [page,setPage]=useState({
-        currentPage:0,
-        newPage:9
+    var count = 0;
+    const [Count, setCount] = useState({
+        result: count
+    })
+    let studio = [];
+    let users = [];
+    const [Studio, setStudio] = useState({
+        fulldata: studio,
+        data: studio
+    });
+    const [User, setUser] = useState({
+        FulldataUsers: users,
+        DataUsers: []
+    })
+    const [Categoty, setCategory] = useState({
+        _id: '',
+        Image: '',
+        Name: '',
+        Category: '',
+        Email: '',
+        Phone: '',
+        Sex: '',
+        Birth_Day: '',
+        City: '',
+        District: '',
+        Address: '',
+    })
+    const CallUser = () => {
+        Auth().onAuthStateChanged(user => {
+            if (user) {
+                console.log("state = definitely signed in")
+                const onValueChange = database()
+                    .ref('/users/')
+                    .on('child_added', (snapshot) => {
+                        const { _id, Image, Name, Category, email, Phone, Sex, Birth_Day, City, District, Address } = snapshot.val()
+                        if (Category == "1" && _id != Fire.uid) {
+                            studio.push({
+                                _id: _id,
+                                Image: Image,
+                                Name: Name,
+                                Category: Category,
+                                Email: email,
+                                Phone: Phone,
+                                Sex: Sex,
+                                Birth_Day: Birth_Day,
+                                City: City,
+                                District: District,
+                                Address: Address,
+                            })
+                        } else if (Category != "1" && _id != Fire.uid) {
+                            users.push({
+                                _id: _id,
+                                Image: Image,
+                                Name: Name,
+                                Category: Category,
+                                Email: email,
+                                Phone: Phone,
+                                Sex: Sex,
+                                Birth_Day: Birth_Day,
+                                City: City,
+                                District: District,
+                                Address: Address,
+                            })
+                        } else if (_id == Fire.uid) {
+                            setCategory({
+                                ...Categoty,
+                                _id: _id,
+                                Image: Image,
+                                Name: Name,
+                                Category: Category,
+                                Email: email,
+                                Phone: Phone,
+                                Sex: Sex,
+                                Birth_Day: Birth_Day,
+                                City: City,
+                                District: District,
+                                Address: Address,
+                            })
+                        }
+
+                        setStudio({
+                            ...Studio,
+                            fulldata: studio,
+                            data: studio
+                        });
+                        setUser({
+                            ...User,
+                            FulldataUsers: users,
+                        })
+                    });
+            }
+            else {
+                console.log("state = definitely signed out")
+            }
+        })
+    }
+    const handleSearch = (search) => {
+        const formatText = search.toLowerCase();
+        console.log('search', search);
+        console.log('formatText', formatText);
+        setTimeout(() => {
+            setUser({
+                FulldataUsers: User.FulldataUsers,
+                DataUsers: formatText.length > 0 ? User.FulldataUsers.filter(item =>
+                    item ? item.Name.toLowerCase().includes(formatText) : []
+                ) : []
+            }
+            )
+            if (User.DataUsers.length > 0) {
+                for (let i = 0; i < User.DataUsers.length; i++) {
+                    count++;
+                    console.log("For1", count);
+
+                    setCount({
+                        ...Count,
+                        result: count
+                    })
+
+                }
+            }
+            if (User.DataUsers.length < 0) {
+                for (let i = 0; i < User.DataUsers.length; i++) {
+                    count -2;
+                    console.log("For2", count);
+                    setCount({
+                        result: 0
+                    })
+
+
+                }
+            }
+            // else if(User.DataUsers.length===0){
+            //     setCount({
+            //         ...Count,
+            //         result: 0
+            //     })
+            // }
+
+
+        }, 500);
+    }
+    const [page, setPage] = useState({
+        currentPage: 0,
+        newPage: 9
     })
     var onEndReachedCalledDuringMomentum = true;
     const onMomentumScrollBegin = () => {
         onEndReachedCalledDuringMomentum = false;
-      };
-    const [currentList,setCurrentList] =useState(DataHistory)
-    const [newtList,setNewList] =useState([])
-    const newlist = DataHistory.slice(page.currentPage,page.newPage)
-    const handleLoadMore=()=>{
+    };
+    const [currentList, setCurrentList] = useState(DataHistory)
+    const [newtList, setNewList] = useState([])
+    const newlist = User.DataUsers.length <= 0 ? User.FulldataUsers.slice(page.currentPage, page.newPage) : User.DataUsers.slice(page.currentPage, page.newPage)
+    const handleLoadMore = () => {
         setPage({
             ...page,
-            newPage:page.newPage+1
+            newPage: page.newPage + 1
         })
         onEndReachedCalledDuringMomentum = true;
         console.log("hello");
-        
+
         // setNewList(DataHistory.slice(page.currentPage,page.newPage))
     }
+    useEffect(() => {
+        CallUser()
+    }, [])
+    const RenderItem = ({ index, item }) => {
+
+        return (
+            <TouchableOpacity
+                onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER.APPADD, { screen: SCREEN_ROUTER_APP_ADD.DETAILUSER,params:{data:item} }) }}
+                style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 20, width: width - 40, }]}>
+                <Avatar
+                    size={56}
+                    avatarStyle={styles.AvatarStyle}
+                    source={item.Image ? { uri: item.Image } : images.ic_User}>
+                </Avatar>
+                <View style={{ paddingHorizontal: 10 }}>
+                    <Text style={styles.TextName}>
+                        {item.Name}
+                    </Text>
+                    <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
+                        {item.Phone}
+                    </Text>
     
+                </View>
+            </TouchableOpacity>
+        );
+    }
+    
+    
+    const RenderListUser = (DataHistory, handleLoadMore, onMomentumScrollBegin, cout) => {
+        return (
+            <SafeAreaView style={{ borderTopWidth: 0.5, flex: 1 }}>
+                {/* {RenderResultSearch(cout)} */}
+                <FlatList
+                    data={DataHistory}
+                    renderItem={RenderItem}
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={item => item.id}
+                    onEndReachedThreshold={0.1}
+                    refreshControl={<RefreshControl
+                        refreshing={false}
+                        onRefresh={()=>{CallUser()}}
+                    />}
+                    onEndReached={handleLoadMore}
+                    onMomentumScrollBegin={onMomentumScrollBegin}
+                // onRefresh={Refes}
+                />
+            </SafeAreaView>
+        )
+    }
+    Reactotron.log("UserData", User.DataUsers)
+    console.log("UserData", User.DataUsers);
+    console.log("coutTT", Count.result);
+    console.log("coutDD", 1+9);
+
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -125,9 +280,9 @@ const ManyUserScreen = () => {
                 chilStyle={styles.Container}
                 children={
                     <SafeAreaView style={styles.Container}>
-                        {SearchUser(R.string.Search_User)}
-                        {RenderListUser(newlist,handleLoadMore,onMomentumScrollBegin)}
-                    </SafeAreaView> 
+                        {SearchUser(R.string.Search_User, handleSearch)}
+                        {RenderListUser(newlist, handleLoadMore, onMomentumScrollBegin, Count.result)}
+                    </SafeAreaView>
                 }
             />
         </SafeAreaView>
@@ -186,10 +341,10 @@ const styles = StyleSheet.create({
         // paddingHorizontal: 24,
         marginBottom: 5
     },
-    TextSearch:{
-        fontFamily:R.fonts.bold,
-        color:R.color.colors.black,
-        fontSize:14,
+    TextSearch: {
+        fontFamily: R.fonts.bold,
+        color: R.color.colors.black,
+        fontSize: 14,
 
     }
 })

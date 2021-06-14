@@ -34,7 +34,8 @@ const {
   UPDATEUSER,
   DETAILPUTCALENDAR,
   MAP,
-  INTRO
+  INTRO,
+  HISTORYPUT
 } = SCREEN_ROUTER_APP;
 const {
   CHANGEPASSADD,
@@ -561,6 +562,10 @@ const App = () => {
       <AppStack.Screen
         name={SCREEN_ROUTER_APP.INTRO}
         component={StackApp[INTRO]}
+      />
+      <AppStack.Screen
+        name={SCREEN_ROUTER_APP.HISTORYPUT}
+        component={StackApp[HISTORYPUT]}
       />
     </AppStack.Navigator>
   );

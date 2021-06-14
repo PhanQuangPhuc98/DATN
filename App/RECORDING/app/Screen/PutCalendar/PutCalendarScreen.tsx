@@ -71,56 +71,59 @@ const PutCalendarScreen = () => {
         District: '',
         Address: '',
     })
-    useEffect(() => {
+    const CallUser =()=>{
         Auth().onAuthStateChanged(user => {
             if (user) {
                 console.log("state = definitely signed in")
                 const onValueChange = database()
                     .ref('/users/')
                     .on('value', (snapshot) => {
-                        snapshot.forEach((child) => {
-                            if (child.val().Category == "1" && child.val()._id != Fire.uid) {
+                        snapshot.forEach((snap)=>{
+                            const {_id,Image,Name,Category,email,Phone,Sex,Birth_Day,City,District,Address,newPrice,oldPrice}= snap.val()
+                            if (Category == "1" && _id != Fire.uid) {
                                 studio.push({
-                                    _id: child.val()._id,
-                                    Image: child.val().Image,
-                                    Name: child.val().Name,
-                                    Category: child.val().Category,
-                                    Email: child.val().email,
-                                    Phone: child.val().Phone,
-                                    Sex: child.val().Sex,
-                                    Birth_Day: child.val().Birth_Day,
-                                    City: child.val().City,
-                                    District: child.val().District,
-                                    Address: child.val().Address,
+                                    _id: _id,
+                                    Image: Image,
+                                    Name: Name,
+                                    Category: Category,
+                                    Email: email,
+                                    Phone: Phone,
+                                    Sex: Sex,
+                                    Birth_Day: Birth_Day,
+                                    City: City,
+                                    District: District,
+                                    Address: Address,
+                                    newPrice:newPrice,
+                                    oldPrice:oldPrice
                                 })
-                            } else if (child.val().Category != "1" && child.val()._id != Fire.uid) {
+                            } else if (Category != "1" && _id != Fire.uid) {
                                 users.push({
-                                    _id: child.val()._id,
-                                    Image: child.val().Image,
-                                    Name: child.val().Name,
-                                    Category: child.val().Category,
-                                    Email: child.val().email,
-                                    Phone: child.val().Phone,
-                                    Sex: child.val().Sex,
-                                    Birth_Day: child.val().Birth_Day,
-                                    City: child.val().City,
-                                    District: child.val().District,
-                                    Address: child.val().Address,
+                                    _id: _id,
+                                    Image: Image,
+                                    Name: Name,
+                                    Category: Category,
+                                    Email: email,
+                                    Phone: Phone,
+                                    Sex: Sex,
+                                    Birth_Day: Birth_Day,
+                                    City: City,
+                                    District: District,
+                                    Address: Address,
                                 })
-                            } else if (child.val()._id == Fire.uid) {
+                            } else if (_id == Fire.uid) {
                                 setCategory({
                                     ...Categoty,
-                                    _id: child.val()._id,
-                                    Image: child.val().Image,
-                                    Name: child.val().Name,
-                                    Category: child.val().Category,
-                                    Email: child.val().email,
-                                    Phone: child.val().Phone,
-                                    Sex: child.val().Sex,
-                                    Birth_Day: child.val().Birth_Day,
-                                    City: child.val().City,
-                                    District: child.val().District,
-                                    Address: child.val().Address,
+                                    _id: _id,
+                                    Image: Image,
+                                    Name: Name,
+                                    Category: Category,
+                                    Email: email,
+                                    Phone: Phone,
+                                    Sex: Sex,
+                                    Birth_Day: Birth_Day,
+                                    City: City,
+                                    District: District,
+                                    Address: Address,
                                 })
                             }
                         })
@@ -140,6 +143,9 @@ const PutCalendarScreen = () => {
                 console.log("state = definitely signed out")
             }
         })
+    }
+    useEffect(() => {
+        CallUser()
     }, [])
     const handleSearch = (search) => {
         const formatText = search.toLowerCase();
@@ -176,9 +182,9 @@ const PutCalendarScreen = () => {
                     <Text style={[styles.StyleTextItem, { color: colors.black }]}>
                         {item.Name}
                     </Text>
-                    <Text style={{ fontSize: 14, fontFamily: R.fonts.bold, color: colors.Sienna1, textDecorationLine: 'line-through' }} children={DataMoney.real + ' VND'} />
+                    <Text style={{ fontSize: 14, fontFamily: R.fonts.bold, color: colors.Sienna1, textDecorationLine: 'line-through' }}  >{item.oldPrice}VND</Text>
                     <Text style={[styles.StyleTextItem, { color: colors.Sienna1 }]}>
-                        {DataMoney.sale} VND
+                        {item.newPrice} VND
                 </Text>
                 </View>
             </TouchableOpacity>
@@ -199,8 +205,8 @@ const PutCalendarScreen = () => {
         )
     }
     Reactotron.log('studio', Studio.data)
-    Reactotron.log('user', User.DataUsers)
-    Reactotron.log('Categoty', Categoty)
+    // Reactotron.log('user', User.DataUsers)
+    // Reactotron.log('Categoty', Categoty)
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -210,7 +216,7 @@ const PutCalendarScreen = () => {
                 statusBarProps={styles.ContainerHeader}
                 chilStyle={{paddingHorizontal:10}}
                 children={
-                    RenderItem(Categoty.Category == DEFAULT_PARAMS.USER ? Studio.data : User.DataUsers)
+                    RenderItem(Studio.data)
                 }
             />
         </SafeAreaView>

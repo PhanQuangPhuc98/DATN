@@ -14,6 +14,8 @@ import {
 } from 'react-native'
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
+import {getCurrentDate} from '../../utils/FuncHelper';
+import {showMessages} from '../../utils/AlertHelper';
 import { callNumber } from '../../utils/CallPhone'
 import Fire from '../../firebase/firebaseSvc';
 import { ASYNC_STORAGE } from '../../constants/Constant';
@@ -27,6 +29,7 @@ import NavigationUtil from '../../navigation/NavigationUtil';
 import R from '../../assets/R';
 import { DataMoney, Introduct } from '../../constants/Mockup'
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
+import { log } from 'react-native-reanimated';
 const { height, width } = Dimensions.get('window');
 const Back = (onPress) => {
     return (
@@ -49,7 +52,7 @@ const RenderAvatar = (data) => {
         </SafeAreaView>
     )
 }
-const RenderInforStudio = (name, adress, onPhone, onAdress) => {
+const RenderInforStudio = (name, adress, onPhone, onAdress,price) => {
     return (
         <SafeAreaView style={{ paddingHorizontal: 10, paddingVertical: 5 }}>
             <Text style={{ fontFamily: R.fonts.bold, fontSize: 20, color: colors.black }}>
@@ -73,7 +76,7 @@ const RenderInforStudio = (name, adress, onPhone, onAdress) => {
 
                 <View style={{ flexDirection: "row-reverse", flex: 1 }}>
                     <Text style={{ fontFamily: R.fonts.bold, fontSize: 22, color: colors.Sienna1 }}>
-                        {DataMoney.sale} VND
+                        {price} VND
                     </Text>
                     <FastImage
                         source={R.images.ic_money}
@@ -124,11 +127,11 @@ const RenderContent = ({ index, item }) => {
 
     )
 }
-const RenderListContent = () => {
+const RenderListContent = (data) => {
     return (
         <View>
             <FlatList
-                data={Introduct}
+                data={data}
                 keyExtractor={item => { item.id }}
                 renderItem={RenderContent}
             >
@@ -169,6 +172,9 @@ const RenderButton = (onChat, onPut) => {
 };
 const DetailPutCalendarScreen = ({ route, navigation }) => {
     const { data,params } = route.params;
+    const Content =[];
+    const putKey = database().ref().push().key;
+    const [intro, setIntro] = useState([])
     const [Users, setUsers] = useState({
         _id: '',
         Name: '',
@@ -185,10 +191,62 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     });
     const [key, setKey] = useState(null)
     const [isModalVisible, setModalVisible] = useState(false);
+    const [isModalVisiblePut, setModalVisiblePut] = useState(false);
     const toggleModal = () => {
         setModalVisible(!isModalVisible);
     };
-    useEffect(() => {
+    const toggleModalPut = () => {
+        setModalVisiblePut(!isModalVisiblePut);
+    };
+    const [isLoading, setLoading] = useState(false);
+    const CallIntro = () => {
+        setLoading(true)
+        const db = database()
+        setTimeout(() => {
+            try {
+                setLoading(false)
+                db
+                    .ref(`/IntroStudio/${data._id}`)
+                    .on("value", snap => {
+                        const { content } = snap.val()
+                        Content.push({
+                            content:content
+                        })
+                        setIntro(Content)
+                    })
+            } catch (error) {
+                console.log(error);
+                setLoading(false)
+            }
+        }, 1000)
+    }
+    const PutCalendar =()=>{
+        const db = database()
+        setTimeout(() => {
+            try {
+                setLoading(false)
+                db
+                    .ref(`/PutCaledar/${putKey}`)
+                    .update({
+                        idUser:params.user._id,
+                        ImageUser:params.user.Image,
+                        ImageStudio:data.Image,
+                        NameStudio:data.Name,
+                        NameUser:params.user.Name,
+                        Price:data.newPrice,
+                        Date:getCurrentDate(),
+                        idStudio:data._id,
+                        PhoneStudio:data.Phone,
+                        PhoneUser:params.user.Phone
+                    })
+                showMessages(R.string.notification, R.string.Put_Sucess)
+            } catch (error) {
+                console.log(error);
+                setLoading(false)
+            }
+        }, 1000)
+    }
+    const CallUser =()=>{
         Auth().onAuthStateChanged(user => {
             if (user) {
                 console.log("state = definitely signed in")
@@ -215,6 +273,10 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                 console.log("state = definitely signed out")
             }
         })
+    }
+    useEffect(() => {
+        CallUser()
+        CallIntro()
     }, [])
     const checkRoomsUSer = async () => {
         const check = await database().ref("rooms").on('value', (snal) => {
@@ -242,10 +304,16 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     useEffect(() => {
         params.user.Category === "0" ? checkRoomsUSer() : params.user.Category === "1" ?checkRoomsStudio():null
     }, [])
-    Reactotron.log("data", data)
-    Reactotron.log("user", Users)
-    Reactotron.log("key", key)
+
+    // Reactotron.log("data", data)
+    // Reactotron.log("user", Users)
+    // Reactotron.log("key", key)
+    // console.log("Key",key);
+    var x = parseInt('1000',10);
+    var y = parseInt('1000',10);
+    console.log("Number",x+y);
     Reactotron.log("params",params.user)
+    // Reactotron.log("content",intro) 
     return (
         <SafeAreaView style={styles.Container}>
             {
@@ -257,13 +325,26 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                     statusBarProps={styles.ContainerHeader}
                     children={<SafeAreaView>
                         {RenderAvatar(data)}
-                        {RenderInforStudio(data.Name, data.Address + ',' + data.District + ',' + data.City, toggleModal, () => { NavigationUtil.navigate(SCREEN_ROUTER_APP.MAP, { data: data }) })}
+                        {RenderInforStudio(data.Name, data.Address + ',' + data.District + ',' + data.City, toggleModal, () => { NavigationUtil.navigate(SCREEN_ROUTER_APP.MAP, { data: data }) },data.newPrice)}
                         {Line()}
                         {RenderIntroduct()}
-                        {RenderListContent()}
+                        {RenderListContent(intro)}
                     </SafeAreaView>}
                 />
             }
+            <View>
+                <ModalDrop
+                    toggleModal={toggleModalPut}
+                    isModalVisible={isModalVisiblePut}
+                    cancle={R.string.exit}
+                    confirm={R.string.confirm}
+                    content={R.string.PutStudio}
+                    onPress={() => {
+                        toggleModalPut(),
+                        PutCalendar()
+                    }}
+                />
+            </View>
             <View>
                 <ModalDrop
                     toggleModal={toggleModal}
@@ -290,6 +371,8 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                         }
                     }
                 })
+            },()=>{
+                toggleModalPut()
             })}
         </SafeAreaView>
     )

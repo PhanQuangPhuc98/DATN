@@ -56,23 +56,26 @@ const Line = () => {
 const RenderItem = ({ index, item }) => {
 
     return (
-        <View style={[styles.HeaderPerson,{borderBottomWidth:0.5,marginHorizontal:35,  width:width-80, }]}>
-            <Avatar
-                size={56}
-                avatarStyle={styles.AvatarStyle}
-                source={item.images}>
-            </Avatar>
-            <View style={{ paddingHorizontal: 10 }}>
-                <Text style={styles.TextName}>
-                    {item.name}
-                </Text>
-                <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical:10 }]}>
-                    {item.phone}
-                </Text>
+        <View style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 35, width: width - 80, flex: 1 }]}>
+            <View style={{width:width/2,flexDirection: 'row',}}>
+                <Avatar
+                    size={56}
+                    avatarStyle={styles.AvatarStyle}
+                    source={item.images}>
+                </Avatar>
+                <View style={{ paddingHorizontal: 10 }}>
+                    <Text style={styles.TextName}>
+                        {item.name}
+                    </Text>
+                    <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
+                        {item.phone}
+                    </Text>
 
+                </View>
             </View>
-            <View style={{paddingVertical:35,marginHorizontal:20}}>
-                <Text style={{textAlign:'center',fontSize: 14, color: colors.focus,}}>
+
+            <View style={{width:width/2, paddingVertical:32,paddingHorizontal:35 }}>
+                <Text style={{fontSize: 14, color: colors.focus, }}>
                     {item.date}
                 </Text>
             </View>
@@ -81,14 +84,14 @@ const RenderItem = ({ index, item }) => {
 }
 const RenderListHistoryDay = () => {
     return (
-        <SafeAreaView style={{paddingTop:10, paddingHorizontal:10,flex:1}}>
-            <Text style={{marginHorizontal:30,fontSize:15, fontFamily:R.fonts.bold}}>
+        <SafeAreaView style={{ paddingTop: 10, paddingHorizontal: 10, flex: 1 }}>
+            <Text style={{ marginHorizontal: 30, fontSize: 15, fontFamily: R.fonts.bold }}>
                 {R.string.History_PutCalender}
             </Text>
             <FlatList
                 data={DataHistory}
                 showsVerticalScrollIndicator={false}
-                keyExtractor={item => item.id }
+                keyExtractor={item => item.id}
                 renderItem={RenderItem}
             >
             </FlatList>
@@ -97,14 +100,14 @@ const RenderListHistoryDay = () => {
 }
 const RenderListHistoryMonth = () => {
     return (
-        <SafeAreaView style={{paddingTop:10, paddingHorizontal:10,flex:1}}>
-            <Text style={{marginHorizontal:30,fontSize:15, fontFamily:R.fonts.bold}}>
+        <SafeAreaView style={{ paddingTop: 10, paddingHorizontal: 10, flex: 1 }}>
+            <Text style={{ marginHorizontal: 30, fontSize: 15, fontFamily: R.fonts.bold }}>
                 {R.string.History_PutCalender}
             </Text>
             <FlatList
                 data={DataHistory}
                 showsVerticalScrollIndicator={false}
-                keyExtractor={item => item.id }
+                keyExtractor={item => item.id}
                 renderItem={RenderItem}
             >
             </FlatList>
@@ -113,8 +116,8 @@ const RenderListHistoryMonth = () => {
 }
 const RenderDay = () => {
     return (
-        <SafeAreaView style={[styles.Container,{paddingVertical:10}]}>
-            <View style={{ flexDirection: "row", width: width,paddingVertical:10 }}>
+        <SafeAreaView style={[styles.Container, { paddingVertical: 10 }]}>
+            <View style={{ flexDirection: "row", width: width, paddingVertical: 10 }}>
                 <Text style={{ width: width / 2, textAlign: 'center' }}>
                     31/05/2021
                 </Text>
@@ -123,21 +126,21 @@ const RenderDay = () => {
                 </Text>
             </View>
 
-            <View style={{flexDirection:'row',paddingVertical:10}}> 
+            <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
 
-                <Text style={{width:width/2,textAlign:'center',fontFamily:R.fonts.bold, fontSize:15}}>
+                <Text style={{ width: width / 2, textAlign: 'center', fontFamily: R.fonts.bold, fontSize: 15 }}>
                     {R.string.Total_Revenue}
                 </Text>
-                <View style={{ flexDirection: 'row' , width:width/2,alignItems:'center',justifyContent:'center'}}>
+                <View style={{ flexDirection: 'row', width: width / 2, alignItems: 'center', justifyContent: 'center' }}>
                     <FastImage
                         source={R.images.ic_money}
                         style={{ height: 19, width: 16, marginRight: 5, marginTop: 10 }}
                     >
 
                     </FastImage>
-                    <Text style={{fontFamily:R.fonts.bold, fontSize:22, color:R.color.colors.Sienna1}}>
+                    <Text style={{ fontFamily: R.fonts.bold, fontSize: 22, color: R.color.colors.Sienna1 }}>
                         300.0000 VND
-                </Text>
+                    </Text>
                 </View>
             </View>
             {Line()}
@@ -147,31 +150,31 @@ const RenderDay = () => {
 }
 const RenderMonth = () => {
     return (
-        <SafeAreaView style={[styles.Container,{paddingVertical:10}]}>
-            <View style={{ flexDirection: "row", width: width,paddingVertical:10 }}>
+        <SafeAreaView style={[styles.Container, { paddingVertical: 10 }]}>
+            <View style={{ flexDirection: "row", width: width, paddingVertical: 10 }}>
                 <Text style={{ width: width / 2, textAlign: 'center' }}>
-                01/06/2021
+                    01/06/2021
                 </Text>
                 <Text style={{ width: width / 2, textAlign: 'center' }}>
-                30/06/2021
+                    30/06/2021
                 </Text>
             </View>
 
-            <View style={{flexDirection:'row',paddingVertical:10}}> 
+            <View style={{ flexDirection: 'row', paddingVertical: 10 }}>
 
-                <Text style={{width:width/2,textAlign:'center',fontFamily:R.fonts.bold, fontSize:15}}>
+                <Text style={{ width: width / 2, textAlign: 'center', fontFamily: R.fonts.bold, fontSize: 15 }}>
                     {R.string.Total_Revenue}
                 </Text>
-                <View style={{ flexDirection: 'row' , width:width/2,alignItems:'center',justifyContent:'center'}}>
+                <View style={{ flexDirection: 'row', width: width / 2, alignItems: 'center', justifyContent: 'center' }}>
                     <FastImage
                         source={R.images.ic_money}
                         style={{ height: 19, width: 16, marginRight: 5, marginTop: 10 }}
                     >
 
                     </FastImage>
-                    <Text style={{fontFamily:R.fonts.bold, fontSize:22, color:R.color.colors.Sienna1}}>
+                    <Text style={{ fontFamily: R.fonts.bold, fontSize: 22, color: R.color.colors.Sienna1 }}>
                         300.0000 VND
-                </Text>
+                    </Text>
                 </View>
             </View>
             {Line()}
@@ -209,10 +212,10 @@ const styles = StyleSheet.create({
     },
     ContainerLine: {
         borderWidth: 0.65,
-        width:width-80,
-        marginHorizontal:40,
+        width: width - 80,
+        marginHorizontal: 40,
         borderColor: colors.line,
-        marginVertical:10
+        marginVertical: 10
     },
     HeaderBack: { flexDirection: 'row', width: width },
     ic_Back: { height: 16, width: 10, marginTop: 10, marginRight: 15 },

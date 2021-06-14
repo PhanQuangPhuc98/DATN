@@ -88,7 +88,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       }) : null
     })
   }
-  const uploadImage = async () => {
+  const uploadImage = async (image) => {
     if (image == null) {
       return null;
     }
@@ -104,7 +104,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
           .getDownloadURL()
           .then((downloadURL) => {
             setImageMessages(downloadURL)
-            Fire.OnSend(roomKey, "","", key,imageMessages)
+            Fire.OnSend(roomKey, "","", key,downloadURL)
           })
       })
    
@@ -118,7 +118,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       console.log(image);
       const imageUri = Platform.OS === 'ios' ? image.sourceURL : image.path;
       setImage(imageUri);
-      uploadImage()
+      uploadImage(imageUri)
     });
     
   };

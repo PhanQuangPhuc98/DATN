@@ -11,7 +11,7 @@ import DatePicker from 'react-native-datepicker';
 import { CheckBox } from "react-native-elements";
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../../utils/Constant';
 import { showMessages } from '../../../utils/AlertHelper'
-import Fire, { database } from '../../../firebase/firebaseSvc';
+import Fire, { database, Auth, firebase } from '../../../firebase/firebaseSvc';
 import Reactotron from 'reactotron-react-native';
 import { Introduct } from '../../../constants/Mockup';
 import ScreenComponent from '../../../components/ScreenComponent'
@@ -38,37 +38,56 @@ const Confirm = (onPress) => {
 };
 
 const UpdateInTroStudioScreen = () => {
-    const [intro,setIntro]=useState({
-        content:''
+    const [intro, setIntro] = useState({
+        content: ''
     })
-    const RenderContent = ({ index, item }) => {
-        return (
-            <SafeAreaView> 
-                <TextInput 
-                multiline={true}
-                onChangeText={Intro=>{
-                    setIntro({
-                        ...intro,
-                        content:Intro
-                    })
-                }}
-                value={item.content}>
-                </TextInput>
-            </SafeAreaView>
-        )
-    };
-    const RenderListContent = () => {
-        return (
-            <View>
-                <FlatList
-                    data={Introduct}
-                    keyExtractor={item => { item.id }}
-                    renderItem={RenderContent}
-                >
-                </FlatList>
-            </View>
-        )
+    const [callintro, setCallIntro] = useState({
+        content: ''
+    })
+    const [isLoading, setLoading] = useState(false);
+    const UpdateIntro = () => {
+        setLoading(true)
+        const db = database()
+        setTimeout(() => {
+            try {
+                setLoading(false)
+                db
+                    .ref(`/IntroStudio/${Fire.uid}`)
+                    .set({ content: intro.content })
+                    showMessages(R.string.notification, R.string.Update_Sucess);
+                    NavigationUtil.goBack();
+                    return;
+            } catch (error) {
+                console.log(error);
+                setLoading(false)
+            }
+        }, 2000)
+
     }
+    const CallIntro = () => {
+        setLoading(true)
+        const db = database()
+        setTimeout(() => {
+            try {
+                setLoading(false)
+                db
+                    .ref(`/IntroStudio/${Fire.uid}`)
+                    .on("value", snap => {
+                        const { content } = snap.val()
+                        setIntro({
+                            ...intro,
+                            content:content
+                        })
+                    })
+            } catch (error) {
+                console.log(error);
+                setLoading(false)
+            }
+        }, 1000)
+    }
+    useEffect(()=>{
+        CallIntro()
+    },[])
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -82,8 +101,30 @@ const UpdateInTroStudioScreen = () => {
                         <Text style={styles.TextIntro}>
                             {R.string.introduct}
                         </Text>
-                        {RenderListContent()}
-                        {Confirm()}
+                        <ScrollView
+                            showsVerticalScrollIndicator={false}
+                        >
+                            <TextInput
+                                onChangeText={Intro => {
+                                    setIntro({
+                                        ...intro,
+                                        content: Intro
+                                    })
+                                }}
+                                placeholder={"Vui lòng nhập nội dung"}
+                                value={intro.content}
+                                />
+                        </ScrollView>
+
+                        {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
+                            Confirm(() => {
+                                if (!intro.content.trim().length) {
+                                    showMessages(R.string.notification, 'Vui lòng nhập nội dung !');
+                                    return;
+                                }
+                                UpdateIntro()
+                            })
+                        }
                     </SafeAreaView>
                 }
             />
@@ -91,7 +132,7 @@ const UpdateInTroStudioScreen = () => {
     )
 }
 const styles = StyleSheet.create({
-    Container: { flex: 1, backgroundColor: colors.backgroundColor},
+    Container: { flex: 1, backgroundColor: colors.backgroundColor },
     ContainerScreen: {
         backgroundColor: colors.white,
         paddingHorizontal: 10,
@@ -123,9 +164,9 @@ const styles = StyleSheet.create({
         marginHorizontal: 15,
     },
     TextInputStyle: { borderBottomWidth: 0.5, width: width - 50, borderColor: colors.focus, height: 40 },
-    TextIntro:{
-        fontFamily:R.fonts.bold,
-        fontSize:14
+    TextIntro: {
+        fontFamily: R.fonts.bold,
+        fontSize: 14
     }
 })
 export default UpdateInTroStudioScreen;

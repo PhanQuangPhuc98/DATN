@@ -74,16 +74,21 @@ class FirebaseSvc {
   get timestamp(){
     return firebase.database.ServerValue.TIMESTAMP;
   }
-  OnSend =(_id,text,user,roomKey,image)=>{
+  OnSend =(_id,text,user,roomKey,image,Category)=>{
     const db = firebase.database();
+    console.log("helloPhuc",Category);
+    
     // if(roomKey ===null){
     //   roomKey=this.creatZoom(me,friend)
     //   console.log(roomKey);
     // }
+  
     const updateUser = {};
     updateUser[`rooms/${roomKey}/messagesUser`] = text;
     updateUser[`rooms/${roomKey}/name`] = user.name;
-    updateUser[`rooms/${roomKey}/avatar`] = user.avatar;
+    if(Category!="1"||Category!=1){
+      updateUser[`rooms/${roomKey}/avatar`] = user.avatar;
+    }
     db.ref().update(updateUser).catch(error => console.log('registerRoomError', error));
     db.ref(`messages/${roomKey}/`).push({
       _id,
