@@ -24,13 +24,14 @@ const Back = (onPress) => {
         </View>
     );
 };
-const SearchUser = (lable) => {
+const SearchUser = (lable,onChangeText) => {
     return (
         <SafeAreaView style={{ width: width, backgroundColor: R.color.colors.white, paddingHorizontal: 20, paddingVertical: 10 }}>
             <View style={{ width: width - 50, backgroundColor: R.color.colors.brown, marginHorizontal: 5, borderRadius: 2.5 }}>
                 <TextInput
                     style={{ width: width - 50, height: 35, borderRadius: 2.5 }}
                     placeholder={lable}
+                    onChangeText={onChangeText}
                 >
 
                 </TextInput>
@@ -61,7 +62,24 @@ const ListChatScreen = () => {
         District: '',
         Address: '',
     })
-    const [Zoom, setKey] = useState([])
+    const handleSearch = (search) => {
+        const formatText = search.toLowerCase();
+        console.log(formatText);
+        setTimeout(() => {
+            setKey({
+                ...Zoom,
+                dataZoom: Zoom.fullZoom.filter(item =>
+                    item.name ? item.name.toLowerCase().includes(formatText) : item
+                )
+            }
+            )
+        }, 500);
+    }
+    const Zoomkey = []
+    const [Zoom, setKey] = useState({
+        fullZoom:Zoomkey,
+        dataZoom:Zoomkey
+    })
     const [page, setPage] = useState({
         currentPage: 0,
         newPage: 9
@@ -75,7 +93,7 @@ const ListChatScreen = () => {
     };
     const [currentList, setCurrentList] = useState(DataHistory)
     const [newtList, setNewList] = useState([])
-    const newlist = Zoom.slice(page.currentPage, page.newPage)
+    const newlist = Zoom.dataZoom.slice(page.currentPage, page.newPage)
     const handleLoadMore = () => {
         setPage({
             ...page,
@@ -86,7 +104,7 @@ const ListChatScreen = () => {
     }
     const checkRoomsStudio =  () => {
         const check = database().ref("rooms").on('value', (snal) => {
-            const Zoomkey = []
+          
             snal.forEach(keyroom => {
                 const { friend, key, me,avatar,messagesUser,name } = keyroom.val();
                 Zoomkey.push({
@@ -97,14 +115,18 @@ const ListChatScreen = () => {
                     messagesUser:messagesUser,
                     name:name
                 })
-                setKey(Zoomkey)
+                setKey({
+                    ...Zoom,
+                    fullZoom:Zoomkey,
+                    dataZoom:Zoomkey
+                })
             })
         })
     }
     const CallAcout =()=>{
         Auth().onAuthStateChanged(user => {
             if (user) {
-                console.log("state = definitely signed in")
+                // console.log("state = definitely signed in")
                 const onValueChange = database()
                     .ref('/users/')
                     .on('value', (snapshot) => {
@@ -238,7 +260,7 @@ const ListChatScreen = () => {
                 chilStyle={styles.Container}
                 children={
                     <SafeAreaView style={styles.Container}>
-                        {SearchUser(R.string.Search_User)}
+                        {SearchUser(R.string.Search_User,handleSearch)}
                         {RenderListUser(newlist, handleLoadMore, onMomentumScrollBegin)}
                     </SafeAreaView>
                 }

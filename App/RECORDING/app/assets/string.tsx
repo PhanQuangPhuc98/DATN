@@ -74,8 +74,9 @@ const string = {
   Sales_Promotion:'Khuyến mại',
   Total_Revenue:'Tổng doanh thu',
   Result_Search:"Kết quả tìm kiếm",
-  Search_User:"Tên, số điện thoại khách hàng",
+  Search_User:"Nhập tên khách hàng",
   InforUser:"Thông tin khách hàng",
   Put_Sucess:"Đặt lịch thành công",
+  UpdateFailde:"Cập nhật mật khẩu không thành công"
 };
 export default string;

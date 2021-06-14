@@ -83,7 +83,7 @@ const ManyUserScreen = () => {
     const CallUser = () => {
         Auth().onAuthStateChanged(user => {
             if (user) {
-                console.log("state = definitely signed in")
+                // console.log("state = definitely signed in")
                 const onValueChange = database()
                     .ref('/users/')
                     .on('child_added', (snapshot) => {
@@ -145,7 +145,7 @@ const ManyUserScreen = () => {
                     });
             }
             else {
-                console.log("state = definitely signed out")
+                // console.log("state = definitely signed out")
             }
         })
     }

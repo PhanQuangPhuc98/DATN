@@ -131,22 +131,23 @@ const ChatScreen = ({ route, navigation, ...props }) => {
             MessagesStudio.sort((a, b) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           });
-          setMessagesStudio(MessagesStudio)
+          setMessagesStudio(()=>{
+            return GiftedChat.append(messagesStudio,MessagesStudio)
+          })
           }
-          // setLoading(false)
         });
     }, 200);
   }
   const Send = (Messages = []) => {
     
-    CallBackMess(data.key)
+    // CallBackMess(data.key)
     Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id)
     setLoadata(true)
   }
   useEffect(() => {
     DB()
     setTimeout(() => {
-      loaData === false ? CallBackMess(data.key) : null
+       CallBackMess(data.key)
     }, 500);
   }, []);
   const renderActions = () => {

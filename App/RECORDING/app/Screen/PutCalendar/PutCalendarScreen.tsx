@@ -7,7 +7,8 @@ import {
     Dimensions,
     TouchableOpacity,
     TextInput,
-    FlatList
+    FlatList,
+    RefreshControl
 } from 'react-native'
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
@@ -58,6 +59,22 @@ const PutCalendarScreen = () => {
         FulldataUsers: users,
         DataUsers: users
     })
+    const [page, setPage] = useState({
+        currentPage: 0,
+        newPage: 9
+    })
+    var onEndReachedCalledDuringMomentum = true;
+    const onMomentumScrollBegin = () => {
+        onEndReachedCalledDuringMomentum = false;
+    };
+    const handleLoadMore = () => {
+        setPage({
+            ...page,
+            newPage: page.newPage + 1
+        })
+        onEndReachedCalledDuringMomentum = true;
+        console.log("hello");
+    }
     const [Categoty, setCategory] = useState({
         _id: '',
         Image: '',
@@ -74,7 +91,7 @@ const PutCalendarScreen = () => {
     const CallUser =()=>{
         Auth().onAuthStateChanged(user => {
             if (user) {
-                console.log("state = definitely signed in")
+                // console.log("state = definitely signed in")
                 const onValueChange = database()
                     .ref('/users/')
                     .on('value', (snapshot) => {
@@ -190,7 +207,7 @@ const PutCalendarScreen = () => {
             </TouchableOpacity>
         )
     }
-    const RenderItem = (Data) => {
+    const RenderItem = (Data,onRefresh) => {
         return (
             <View>
                 <FlatList
@@ -200,6 +217,13 @@ const PutCalendarScreen = () => {
                     renderItem={Item}
                     horizontal={false}
                     numColumns={2}
+                    refreshControl={<RefreshControl
+                        refreshing={false}
+                        onRefresh={onRefresh}
+                    />}
+                    onEndReachedThreshold={0.1}
+                    onEndReached={handleLoadMore}
+                    onMomentumScrollBegin={onMomentumScrollBegin}
                 />
             </View>
         )
@@ -216,7 +240,7 @@ const PutCalendarScreen = () => {
                 statusBarProps={styles.ContainerHeader}
                 chilStyle={{paddingHorizontal:10}}
                 children={
-                    RenderItem(Studio.data)
+                    RenderItem(Studio.data,CallUser)
                 }
             />
         </SafeAreaView>

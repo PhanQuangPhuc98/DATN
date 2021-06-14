@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator, Dimensions, TextInput, Platform, FlatList } from 'react-native'
+import { Text, View, StyleSheet,RefreshControl, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator, Dimensions, TextInput, Platform, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image';
 import images from '../../../assets/imagesAsset';
 import R from '../../../assets/R';
@@ -61,14 +61,14 @@ const RenderItem = ({ index, item }) => {
                 <Avatar
                     size={56}
                     avatarStyle={styles.AvatarStyle}
-                    source={item.images}>
+                    source={item.ImageUser?{uri:item.ImageUser}:images.ic_User}>
                 </Avatar>
                 <View style={{ paddingHorizontal: 10 }}>
                     <Text style={styles.TextName}>
-                        {item.name}
+                        {item.NameUser}
                     </Text>
                     <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
-                        {item.phone}
+                        {item.PhoneUser}
                     </Text>
 
                 </View>
@@ -76,45 +76,53 @@ const RenderItem = ({ index, item }) => {
 
             <View style={{width:width/2, paddingVertical:32,paddingHorizontal:35 }}>
                 <Text style={{fontSize: 14, color: colors.focus, }}>
-                    {item.date}
+                    {item.Date}
                 </Text>
             </View>
         </View>
     );
 }
-const RenderListHistoryDay = () => {
+const RenderListHistoryDay = (dataDay,onRefresh) => {
     return (
         <SafeAreaView style={{ paddingTop: 10, paddingHorizontal: 10, flex: 1 }}>
             <Text style={{ marginHorizontal: 30, fontSize: 15, fontFamily: R.fonts.bold }}>
                 {R.string.History_PutCalender}
             </Text>
             <FlatList
-                data={DataHistory}
+                data={dataDay}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={item => item.id}
                 renderItem={RenderItem}
+                refreshControl={<RefreshControl
+                    refreshing={false}
+                    onRefresh={onRefresh}
+                />}
             >
             </FlatList>
         </SafeAreaView>
     )
 }
-const RenderListHistoryMonth = () => {
+const RenderListHistoryMonth = (dataMonth,onRefresh) => {
     return (
         <SafeAreaView style={{ paddingTop: 10, paddingHorizontal: 10, flex: 1 }}>
             <Text style={{ marginHorizontal: 30, fontSize: 15, fontFamily: R.fonts.bold }}>
                 {R.string.History_PutCalender}
             </Text>
             <FlatList
-                data={DataHistory}
+                data={dataMonth}
                 showsVerticalScrollIndicator={false}
                 keyExtractor={item => item.id}
                 renderItem={RenderItem}
+                refreshControl={<RefreshControl
+                    refreshing={false}
+                    onRefresh={onRefresh}
+                />}
             >
             </FlatList>
         </SafeAreaView>
     )
 }
-const RenderDay = () => {
+const RenderDay = (data,onRefresh) => {
     return (
         <SafeAreaView style={[styles.Container, { paddingVertical: 10 }]}>
             <View style={{ flexDirection: "row", width: width, paddingVertical: 10 }}>
@@ -144,11 +152,11 @@ const RenderDay = () => {
                 </View>
             </View>
             {Line()}
-            {RenderListHistoryDay()}
+            {RenderListHistoryDay(data,onRefresh)}
         </SafeAreaView>
     )
 }
-const RenderMonth = () => {
+const RenderMonth = (month,onRefresh) => {
     return (
         <SafeAreaView style={[styles.Container, { paddingVertical: 10 }]}>
             <View style={{ flexDirection: "row", width: width, paddingVertical: 10 }}>
@@ -178,12 +186,55 @@ const RenderMonth = () => {
                 </View>
             </View>
             {Line()}
-            {RenderListHistoryMonth()}
+            {RenderListHistoryMonth(month,onRefresh)}
         </SafeAreaView>
     )
 }
 const RevenueScreen = () => {
     const [convert, setConvert] = useState(false)
+    const history =[];
+    const [callHistory,setHistory]=useState([])
+    const DB =database();
+    const [isLoading,setisLoading]=useState(false)
+    const CallHistoryPrice =()=>{
+        setisLoading(true)
+        setTimeout(()=>{
+            try {
+                DB
+                .ref('/PutCaledar/')
+                .on("value",snapot=>{
+                    setisLoading(false)
+                    snapot.forEach((snap)=>{
+                        const {idUser,ImageUser,ImageStudio,NameStudio,NameUser,Price,Date,idStudio,PhoneStudio,PhoneUser}=snap.val()
+                        if(idStudio===Fire.uid){
+                            history.push({
+                                idUser:idUser,
+                                ImageUser:ImageUser,
+                                ImageStudio:ImageStudio,
+                                NameStudio:NameStudio,
+                                NameUser:NameUser,
+                                Price:Price,
+                                Date:Date,
+                                PhoneStudio:PhoneStudio,
+                                PhoneUser:PhoneUser
+                            })
+                        }
+                    })
+                    setHistory(history)
+                })
+            } catch (error) {
+                setisLoading(false)
+                console.log(error);
+            }
+        })
+    }
+    useEffect(() => {
+        CallHistoryPrice()
+    }, [])
+    var x = parseInt('1000',10);
+    var y = parseInt('1000',10);
+    console.log("Number",x+y);
+    Reactotron.log("Data",callHistory)
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -195,7 +246,7 @@ const RevenueScreen = () => {
                 children={
                     <View style={styles.Container}>
                         {RenderMultiScreen(() => { setConvert(!convert) }, () => { setConvert(!convert) }, convert)}
-                        {convert == false ? RenderDay() : RenderMonth()}
+                        {convert == false ? RenderDay(callHistory,()=>{CallHistoryPrice}) : RenderMonth(callHistory,()=>{CallHistoryPrice})}
                     </View>
                 }
             />

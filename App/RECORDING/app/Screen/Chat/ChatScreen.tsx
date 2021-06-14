@@ -169,7 +169,9 @@ const ChatScreen = ({ route, navigation, ...props }) => {
            MessagesUser.sort((a, b) => {
             return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
           });
-          setMessagesUser(MessagesUser)
+          setMessagesUser(()=>{
+            return GiftedChat.append(messagesUser,MessagesUser)
+          })
         }
           setLoading(false)
         });
@@ -177,7 +179,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   }
   const Send = (Messages = []) => {
     
-    CallBackMess(key)
+    // CallBackMess(key)
     Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key)
     setLoadata(true)
   }

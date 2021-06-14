@@ -7,7 +7,8 @@ import {
   Dimensions,
   TouchableOpacity,
   TextInput,
-  Button
+  Button,
+  ActivityIndicator
 } from 'react-native';
 import images from '../../assets/imagesAsset';
 import {firebase} from '../../firebase/firebaseSvc';
@@ -77,6 +78,7 @@ const ChangePassScreen = () => {
     NewPassword: '',
     confirm_password: '',
   });
+  const [isLoading, setLoading] = useState(false);
   const reauthenticate = (currentPassword) => {
     var user = firebase.auth().currentUser;
     var cred = firebase.auth.EmailAuthProvider.credential(
@@ -84,14 +86,24 @@ const ChangePassScreen = () => {
     return user.reauthenticateWithCredential(cred);
   }
   const changePassword = (currentPassword, newPassword) => {
-    reauthenticate(currentPassword).then(() => {
-      var user = firebase.auth().currentUser;
-      user.updatePassword(newPassword).then(() => {
-        showMessages(R.string.notification, R.string.ChangePass_Sucess);
-        Reactotron.log("Password updated!");
-        NavigationUtil.goBack();
-      }).catch((error) => { Reactotron.log(error); });
-    }).catch((error) => { Reactotron.log(error); });
+    setLoading(true)
+    setTimeout(()=>{
+      try {
+        reauthenticate(currentPassword).then(() => {
+          var user = firebase.auth().currentUser;
+          user.updatePassword(newPassword).then(() => {
+            setLoading(false)
+            showMessages(R.string.notification, R.string.ChangePass_Sucess);
+            Reactotron.log("Password updated!");
+            NavigationUtil.goBack();
+          }).catch((error) => { Reactotron.log(error); });
+        }).catch((error) => { Reactotron.log(error); });
+      } catch (error) {
+        setLoading(false)
+        showMessages(R.string.notification, R.string.UpdateFailde);
+      }
+    },1500)
+
   }
   return (
     <SafeAreaView style={styles.Container}>
@@ -107,7 +119,7 @@ const ChangePassScreen = () => {
           } 
           {renderInput(R.string.new_password,iconNew,()=>{setNewPassword(!NewPassword)},NewPassword,payLoad.NewPassword,NewPassword=>{setPayLoad({...payLoad,NewPassword:NewPassword});})} 
           {renderInput(R.string.confirm_new_password,iconConfirm,()=>{setconfirm_password(!confirm_password)},confirm_password,payLoad.confirm_password,confirm_password=>{setPayLoad({...payLoad,confirm_password:confirm_password});})}
-          {Confirm(()=>{
+          {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :Confirm(()=>{
             if (
               payLoad.NewPassword.trim().length < 6 ||
               payLoad.NewPassword != payLoad.confirm_password ||
