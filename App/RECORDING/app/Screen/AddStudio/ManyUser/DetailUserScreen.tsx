@@ -85,12 +85,12 @@ const DetailUserScreen = ({route, navigation}) => {
                 children={
                     <SafeAreaView>
                         {personal(data.Image,data.Name,data.Phone)}
-                        <Text style={{ borderBottomWidth: 0.7, backgroundColor: R.color.colors.white, textAlign: 'center',color:R.color.colors.Sienna1, height:30,paddingVertical:5}}>
+                        <Text style={{ borderBottomWidth: 0.5, backgroundColor: R.color.colors.white, textAlign: 'center',color:R.color.colors.Sienna1, height:30,paddingVertical:5}}>
                             {R.string.InforUser}
                         </Text>
                         {renderInfor(R.string.name,data.Name )}
                         {renderInfor(R.string.phone,data.Phone)}
-                        {renderInfor(R.string.email,data.email)}
+                        {renderInfor(R.string.email,data.Email)}
                         {renderInfor(R.string.city,data.City)}
                         {renderInfor(R.string.District,data.District)}
                         {renderInfor(R.string.Address,data.Address)}

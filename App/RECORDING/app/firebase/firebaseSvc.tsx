@@ -1,11 +1,11 @@
 import firebase from '@react-native-firebase/app';
 import Auth from '@react-native-firebase/auth';
 import database from '@react-native-firebase/database';
-import { DEFAULT_PARAMS } from '../constants/Constant';
 import firestore from '@react-native-firebase/firestore';
+import { getCurrentDate } from '../utils/FuncHelper';
+import { DEFAULT_PARAMS } from '../constants/Constant';
 import R from '../assets/R';
 import storage from '@react-native-firebase/storage';
-import { log } from 'react-native-reanimated';
 class FirebaseSvc {
   constructor() {
     if (!firebase.apps.length) {
@@ -21,22 +21,22 @@ class FirebaseSvc {
       })
     }
   }
-  get uid(){
+  get uid() {
     return (firebase.auth().currentUser || {}).uid;
   }
-  get name(){
-    return(firebase.auth().currentUser||{}).displayName;
+  get name() {
+    return (firebase.auth().currentUser || {}).displayName;
   }
-  get ref(){
-    const currentUser =firebase.auth().currentUser.uid;
-    if(currentUser!=null){
+  get ref() {
+    const currentUser = firebase.auth().currentUser.uid;
+    if (currentUser != null) {
       return firebase.database().ref('messages')
     }
   }
-  get email(){
-    return(firebase.auth().currentUser||{}).email;
+  get email() {
+    return (firebase.auth().currentUser || {}).email;
   }
-  creatZoom =async (me,friend,data)=>{
+  creatZoom = async (me, friend, data) => {
     const db = await firebase.database();
     const roomKey = db.ref(`rooms`).push().key;
     const update = {};
@@ -48,46 +48,56 @@ class FirebaseSvc {
     update[`rooms/${roomKey}/key`] = roomKey;
     db.ref().update(update).catch(error => console.log('registerRoomError', error));
     db.ref(`messages/${roomKey}/`).push({
-        _id: 1,
-        text: R.string.help,
-        createdAt:new Date().getTime(),
-        user: {
-          _id: 2,
-          name: data.Name,
-          avatar: data.Image,
-        },
-      })
+      _id: 1,
+      text: R.string.help,
+      createdAt: new Date().getTime(),
+      user: {
+        _id: 2,
+        name: data.Name,
+        avatar: data.Image,
+      },
+    })
     return roomKey;
   }
-  parse = snapshot => {
-    const { createdAt: numberStamp, text, user } = snapshot.val();
-    const { key: _id } = snapshot;
-    const createdAt = new Date(numberStamp);
-    const message = {_id, createdAt, text, user};
-    return message;
-  };
-  on =callback=>{
-    this.ref
-    .limitToLast(100)
-    .on('child_added', snapshot => callback(this.parse(snapshot)));
-  }
-  get timestamp(){
+  get timestamp() {
     return firebase.database.ServerValue.TIMESTAMP;
   }
-  OnSend =(_id,text,user,roomKey,image,Category)=>{
+  OnSend = (_id, text, user, roomKey, image, Category, friend) => {
     const db = firebase.database();
+    const NotificatoinKey = db.ref().push().key;
     console.log("helloPhuc",Category);
-    
-    // if(roomKey ===null){
-    //   roomKey=this.creatZoom(me,friend)
-    //   console.log(roomKey);
-    // }
-  
     const updateUser = {};
-    updateUser[`rooms/${roomKey}/messagesUser`] = text;
-    updateUser[`rooms/${roomKey}/name`] = user.name;
-    if(Category!="1"||Category!=1){
+    if (Category != "1" || Category != 1) {
+      /**Update Room */
+      updateUser[`rooms/${roomKey}/messagesUser`] = text;
+      updateUser[`rooms/${roomKey}/name`] = user.name;
       updateUser[`rooms/${roomKey}/avatar`] = user.avatar;
+      updateUser[`rooms/${roomKey}/newMess`] = DEFAULT_PARAMS.USER;
+      updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.NO;
+      /** Update Notification */
+      updateUser[`Notification/${NotificatoinKey}/NameUser`] = user.name;
+      // updateUser[`Notification/${NotificatoinKey}/IdUser`] = user._id;
+      updateUser[`Notification/${NotificatoinKey}/IdStudio`] = friend._id;
+      updateUser[`Notification/${NotificatoinKey}/Red`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificatoinKey}/key`] = NotificatoinKey;
+      updateUser[`Notification/${NotificatoinKey}/Date`] = getCurrentDate();
+      updateUser[`Notification/${NotificatoinKey}/Put`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificatoinKey}/Messages`] = DEFAULT_PARAMS.YES;
+    }
+    if (Category === "1" || Category === 1) {
+      /**Update Room */
+      updateUser[`rooms/${roomKey}/newMess`] = DEFAULT_PARAMS.STUDIO;
+      updateUser[`rooms/${roomKey}/messagesStudio`] = text;
+      updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.YES;
+      /** Update Notification */
+      updateUser[`Notification/${NotificatoinKey}/NameUser`] = user.name;
+      updateUser[`Notification/${NotificatoinKey}/IdUser`] = friend;
+      updateUser[`Notification/${NotificatoinKey}/key`] = NotificatoinKey;
+      // updateUser[`Notification/${NotificatoinKey}/IdStudio`] =user._id ;
+      updateUser[`Notification/${NotificatoinKey}/Red`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificatoinKey}/Date`] = getCurrentDate(); 
+      updateUser[`Notification/${NotificatoinKey}/Put`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificatoinKey}/Messages`] = DEFAULT_PARAMS.YES;
     }
     db.ref().update(updateUser).catch(error => console.log('registerRoomError', error));
     db.ref(`messages/${roomKey}/`).push({
@@ -96,20 +106,11 @@ class FirebaseSvc {
       user,
       createdAt: this.timestamp,
       image
-  });
+    });
   }
-  send = (messages=[]) => {
-      // for(let i =0;i<messages.length;i++){
-      //   const { text, user } = messages[i];
-      //   const message = {text, user, createdAt: this.timestamp};
-      //   this.append(message);
-      // }
-      console.log("mess",messages);
-      
-  };
   append = message => this.ref.push(message);
 
-  off(){
+  off() {
     this.ref.off();
   }
 }

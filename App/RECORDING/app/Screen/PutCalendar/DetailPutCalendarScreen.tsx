@@ -14,11 +14,11 @@ import {
 } from 'react-native'
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
-import {getCurrentDate} from '../../utils/FuncHelper';
+import {getCurrentDate,getCurrentDay,getCurrentMonth,getCurrentYear} from '../../utils/FuncHelper';
 import {showMessages} from '../../utils/AlertHelper';
 import { callNumber } from '../../utils/CallPhone'
 import Fire from '../../firebase/firebaseSvc';
-import { ASYNC_STORAGE } from '../../constants/Constant';
+import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
 import Reactotron from 'reactotron-react-native';
 import { colors } from '../../constants/Theme';
 import { firebase, database, Auth } from '../../firebase/firebaseSvc';
@@ -173,6 +173,7 @@ const RenderButton = (onChat, onPut) => {
 const DetailPutCalendarScreen = ({ route, navigation }) => {
     const { data,params } = route.params;
     const Content =[];
+    const DB = database();
     const putKey = database().ref().push().key;
     const [intro, setIntro] = useState([])
     const [Users, setUsers] = useState({
@@ -237,7 +238,10 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                         Date:getCurrentDate(),
                         idStudio:data._id,
                         PhoneStudio:data.Phone,
-                        PhoneUser:params.user.Phone
+                        PhoneUser:params.user.Phone,
+                        Day:getCurrentDay(),
+                        Month:getCurrentMonth(),
+                        Year:getCurrentYear()
                     })
                 showMessages(R.string.notification, R.string.Put_Sucess)
             } catch (error) {
@@ -304,7 +308,43 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     useEffect(() => {
         params.user.Category === "0" ? checkRoomsUSer() : params.user.Category === "1" ?checkRoomsStudio():null
     }, [])
-
+    const PutActiveUser =()=>{
+        try {
+            DB
+            .ref(`/ListCustomer/${putKey}`)
+            .update({
+                 Name:params.user.Name,
+                 IdUser:params.user._id,
+                 IdStudio:data._id,
+                 Phone:params.user.Phone,
+                 Email:params.user.Email,
+                 City:params.user.City,
+                 District:params.user.District,
+                 Address:params.user.Address,
+                 Image:params.user.Image
+            })
+        } catch (error) {
+            
+        }
+    }
+    const PutNotification =()=>{
+        try {
+            DB
+            .ref(`/Notification/${putKey}`)
+            .update({
+                NameUser:params.user.Name,
+                IdUser:params.user._id,
+                IdStudio:data._id,
+                Red:DEFAULT_PARAMS.NO,
+                Date:getCurrentDate(),
+                Put:DEFAULT_PARAMS.YES,
+                Messages:DEFAULT_PARAMS.NO,
+                key:putKey
+            })
+        } catch (error) {
+            
+        }
+    }
     // Reactotron.log("data", data)
     // Reactotron.log("user", Users)
     // Reactotron.log("key", key)
@@ -319,7 +359,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
             {
                 <ScreenComponent
                     leftComponent={Back(() => {
-                        NavigationUtil.goBack();
+                        NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.PUTCALENDAR});
                     })}
                     containerStyle={styles.ContainerHeader}
                     statusBarProps={styles.ContainerHeader}
@@ -341,7 +381,9 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                     content={R.string.PutStudio}
                     onPress={() => {
                         toggleModalPut(),
-                        PutCalendar()
+                        PutCalendar(),
+                        PutActiveUser(),
+                        PutNotification()
                     }}
                 />
             </View>
@@ -373,7 +415,8 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                 })
             },()=>{
                 toggleModalPut()
-            })}
+            }
+            )}
         </SafeAreaView>
     )
 };

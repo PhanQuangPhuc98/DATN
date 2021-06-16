@@ -1,4 +1,3 @@
-import R from '@app/assets/R';
 import { Alert } from 'react-native';
 
 export const showConfirm = (title, content, action?, textCancel?, textConfirm?) => {

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity,RefreshControl, ScrollView, ActivityIndicator, Dimensions, TextInput, Platform, FlatList } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, RefreshControl, ScrollView, ActivityIndicator, Dimensions, TextInput, Platform, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image';
 import images from '../../../assets/imagesAsset';
 import R from '../../../assets/R';
@@ -24,7 +24,7 @@ const Back = (onPress) => {
         </View>
     );
 };
-const SearchUser = (lable,onChangeText) => {
+const SearchUser = (lable, onChangeText) => {
     return (
         <SafeAreaView style={{ width: width, backgroundColor: R.color.colors.white, paddingHorizontal: 20, paddingVertical: 10 }}>
             <View style={{ width: width - 50, backgroundColor: R.color.colors.brown, marginHorizontal: 5, borderRadius: 2.5 }}>
@@ -76,17 +76,19 @@ const ListChatScreen = () => {
         }, 500);
     }
     const Zoomkey = []
+    const [active, setActive] = useState(false)
     const [Zoom, setKey] = useState({
-        fullZoom:Zoomkey,
-        dataZoom:Zoomkey
+        fullZoom: Zoomkey,
+        dataZoom: Zoomkey
     })
     const [page, setPage] = useState({
         currentPage: 0,
         newPage: 9
     })
-    const pushMessal =[];
-    const [messages,setMessages]=useState([])
-    const [allmessages,setAllMessages]=useState([])
+    const DB = database()
+    const pushMessal = [];
+    const [messages, setMessages] = useState([])
+    const [allmessages, setAllMessages] = useState([])
     var onEndReachedCalledDuringMomentum = true;
     const onMomentumScrollBegin = () => {
         onEndReachedCalledDuringMomentum = false;
@@ -102,28 +104,44 @@ const ListChatScreen = () => {
         onEndReachedCalledDuringMomentum = true;
         console.log("hello");
     }
-    const checkRoomsStudio =  () => {
-        const check = database().ref("rooms").on('value', (snal) => {
-          
+    const UpdateRead = (roomKey) => {
+        try {
+            DB
+                .ref(`rooms/${roomKey}/`)
+                .update({
+                    Read: "Yes"
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const checkRoomsStudio = () => {
+        const check = DB.ref("rooms").on('value', (snal) => {
             snal.forEach(keyroom => {
-                const { friend, key, me,avatar,messagesUser,name } = keyroom.val();
-                Zoomkey.push({
-                    friend:friend,
-                    key: key,
-                    me:me,
-                    avatar:avatar,
-                    messagesUser:messagesUser,
-                    name:name
-                })
-                setKey({
-                    ...Zoom,
-                    fullZoom:Zoomkey,
-                    dataZoom:Zoomkey
-                })
+                const { friend, key, me, avatar, messagesUser, name, messagesStudio, newMess, Read } = keyroom.val();
+                if (friend === Fire.uid) {
+                    Zoomkey.push({
+                        friend: friend,
+                        key: key,
+                        me: me,
+                        avatar: avatar,
+                        messagesUser: messagesUser,
+                        name: name,
+                        messagesStudio: messagesStudio,
+                        newMess: newMess,
+                        Read: Read
+                    })
+                    setKey({
+                        ...Zoom,
+                        fullZoom: Zoomkey,
+                        dataZoom: Zoomkey
+                    })
+                }
             })
         })
+
     }
-    const CallAcout =()=>{
+    const CallAcout = () => {
         Auth().onAuthStateChanged(user => {
             if (user) {
                 // console.log("state = definitely signed in")
@@ -193,7 +211,7 @@ const ListChatScreen = () => {
             else {
                 console.log("state = definitely signed out")
             }
-        }) 
+        })
     }
     useEffect(() => {
         checkRoomsStudio()
@@ -203,26 +221,35 @@ const ListChatScreen = () => {
 
         return (
             <TouchableOpacity
-                onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER.APPADD, { screen: SCREEN_ROUTER_APP_ADD.CHATADD,params:{
-                    data:item,
-                    params: {
-                        user: Studio
-                    },
-                } }) }}
+                onPress={() => {
+                    NavigationUtil.navigate(SCREEN_ROUTER.APPADD, {
+                        screen: SCREEN_ROUTER_APP_ADD.CHATADD, params: {
+                            data: item,
+                            params: {
+                                user: Studio
+                            },
+                        }
+                    })
+                    UpdateRead(item.key)
+                    // alert(index)
+                    // item.key ===item.key?alert("yes"):alert("no")
+                    // item?setActive(!active):setActive(active)
+                    // alert(item.name);
+                }}
                 style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 20, width: width - 40, }]}>
                 <Avatar
                     size={56}
                     avatarStyle={styles.AvatarStyle}
-                    source={item.avatar?{uri:item.avatar}:images.ic_User}>
+                    source={item.avatar ? { uri: item.avatar } : images.ic_User}>
                 </Avatar>
                 <View style={{ paddingHorizontal: 10 }}>
                     <Text style={styles.TextName}>
-                        {item.name?item.name:"Khách hàng đang tạo phòng"}
+                        {item.name ? item.name : "Khách hàng đang tạo phòng"}
                     </Text>
-                    <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
-                        {item.messagesUser?item.messagesUser:"Khách hàng đang tạo phòng"}
+                    <Text style={[styles.TextName, { fontSize: 14, color: item.Read === "No" ? colors.black : colors.focus, marginVertical: 10 }]}>
+                        {item.newMess === "0" ? item.messagesUser : "Bạn :" + " " + item.messagesStudio}
                     </Text>
-    
+
                 </View>
             </TouchableOpacity>
         );
@@ -237,7 +264,7 @@ const ListChatScreen = () => {
                     keyExtractor={item => item.id}
                     refreshControl={<RefreshControl
                         refreshing={false}
-                        onRefresh={()=>{checkRoomsStudio()}}
+                        onRefresh={() => { checkRoomsStudio() }}
                     />}
                     onEndReachedThreshold={0.1}
                     onEndReached={handleLoadMore}
@@ -247,8 +274,10 @@ const ListChatScreen = () => {
         )
     }
     Reactotron.log("key", Zoom);
-    Reactotron.log("User",User)
-    Reactotron.log("Studio",Studio)
+    Reactotron.log("User", User)
+    Reactotron.log("Studio", Studio)
+    // console.log("active",active);
+
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -260,7 +289,7 @@ const ListChatScreen = () => {
                 chilStyle={styles.Container}
                 children={
                     <SafeAreaView style={styles.Container}>
-                        {SearchUser(R.string.Search_User,handleSearch)}
+                        {SearchUser(R.string.Search_User, handleSearch)}
                         {RenderListUser(newlist, handleLoadMore, onMomentumScrollBegin)}
                     </SafeAreaView>
                 }

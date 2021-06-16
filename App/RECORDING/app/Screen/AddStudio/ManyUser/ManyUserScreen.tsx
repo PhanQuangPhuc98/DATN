@@ -83,69 +83,29 @@ const ManyUserScreen = () => {
     const CallUser = () => {
         Auth().onAuthStateChanged(user => {
             if (user) {
-                // console.log("state = definitely signed in")
                 const onValueChange = database()
-                    .ref('/users/')
+                    .ref('/ListCustomer/')
                     .on('child_added', (snapshot) => {
-                        const { _id, Image, Name, Category, email, Phone, Sex, Birth_Day, City, District, Address } = snapshot.val()
-                        if (Category == "1" && _id != Fire.uid) {
-                            studio.push({
-                                _id: _id,
-                                Image: Image,
-                                Name: Name,
-                                Category: Category,
-                                Email: email,
-                                Phone: Phone,
-                                Sex: Sex,
-                                Birth_Day: Birth_Day,
-                                City: City,
-                                District: District,
-                                Address: Address,
-                            })
-                        } else if (Category != "1" && _id != Fire.uid) {
+                        const {Name, IdStudio,IdUser, Image, Phone, Email, City, District, Address } = snapshot.val()
+                         if (IdStudio=== Fire.uid) {
                             users.push({
-                                _id: _id,
+                                IdStudio: IdStudio,
+                                IdUser:IdUser,
                                 Image: Image,
                                 Name: Name,
-                                Category: Category,
-                                Email: email,
+                                Email: Email,
                                 Phone: Phone,
-                                Sex: Sex,
-                                Birth_Day: Birth_Day,
                                 City: City,
                                 District: District,
                                 Address: Address,
                             })
-                        } else if (_id == Fire.uid) {
-                            setCategory({
-                                ...Categoty,
-                                _id: _id,
-                                Image: Image,
-                                Name: Name,
-                                Category: Category,
-                                Email: email,
-                                Phone: Phone,
-                                Sex: Sex,
-                                Birth_Day: Birth_Day,
-                                City: City,
-                                District: District,
-                                Address: Address,
-                            })
-                        }
-
-                        setStudio({
-                            ...Studio,
-                            fulldata: studio,
-                            data: studio
-                        });
+                        } 
+                        console.log("users",users);
                         setUser({
                             ...User,
                             FulldataUsers: users,
                         })
                     });
-            }
-            else {
-                // console.log("state = definitely signed out")
             }
         })
     }
@@ -180,18 +140,8 @@ const ManyUserScreen = () => {
                     setCount({
                         result: 0
                     })
-
-
                 }
             }
-            // else if(User.DataUsers.length===0){
-            //     setCount({
-            //         ...Count,
-            //         result: 0
-            //     })
-            // }
-
-
         }, 500);
     }
     const [page, setPage] = useState({
@@ -264,8 +214,7 @@ const ManyUserScreen = () => {
             </SafeAreaView>
         )
     }
-    Reactotron.log("UserData", User.DataUsers)
-    console.log("UserData", User.DataUsers);
+    console.log("UserData", User.FulldataUsers);
     console.log("coutTT", Count.result);
     console.log("coutDD", 1+9);
 

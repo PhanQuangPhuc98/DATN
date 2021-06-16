@@ -9,7 +9,8 @@ import {
     TouchableOpacity,
     StatusBar,
     Platform,
-    FlatList
+    FlatList,
+    RefreshControl
 } from 'react-native';
 import R from '../../assets/R';
 import { firebase } from '../../firebase/firebaseSvc'
@@ -33,58 +34,23 @@ const left = () => {
         </View>
     );
 };
-const RenderItem = ({ index, item }) => {
-    return (
-        <SafeAreaView style={{ flexDirection: 'row', borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
-            <View style={{marginRight:10}}>
-                <FastImage
-                    source={R.images.ic_Notification}
-                    style={styles.ImgScreen}
-                    tintColor={R.color.colors.Sienna1}
-                    resizeMode={FastImage.resizeMode.contain}
-                />
-            </View>
-            <View>
-                <Text style={styles.TextName}>
-                    {item.content}
-                </Text>
-                <Text style={[styles.TextName, { color: R.color.colors.focus }]}>
-                    {item.date}
-                </Text>
-            </View>
-        </SafeAreaView>
-    )
-}
-const RenderNotifi = (data, handleLoadMore, onMomentumScrollBegin) => {
-    return (
-        <SafeAreaView>
-            <FlatList
-                data={data}
-                renderItem={RenderItem}
-                showsVerticalScrollIndicator={false}
-                keyExtractor={item => item.id}
-                onEndReachedThreshold={0.1}
-                // onRefresh={handleLoadMore}
-                onEndReached={handleLoadMore}
-                onMomentumScrollBegin={onMomentumScrollBegin}
-            >
 
-            </FlatList>
-        </SafeAreaView>
-    )
-}
 const NotificationScreen = () => {
     const [page, setPage] = useState({
         currentPage: 0,
         newPage: 9
     })
+    const DB = database();
+    const List =[];
     var onEndReachedCalledDuringMomentum = true;
     const onMomentumScrollBegin = () => {
         onEndReachedCalledDuringMomentum = false;
     };
+    const [ListNotification, setListNotification] = useState([])
+    const [isLoading,setisLoading]= useState(false);
     const [currentList, setCurrentList] = useState(DataNotification)
     const [newtList, setNewList] = useState([])
-    const newlist = DataNotification.slice(page.currentPage, page.newPage)
+    const newlist = ListNotification.slice(page.currentPage, page.newPage)
     const handleLoadMore = () => {
         setPage({
             ...page,
@@ -95,6 +61,94 @@ const NotificationScreen = () => {
 
         // setNewList(DataHistory.slice(page.currentPage,page.newPage))
     }
+    const CallNotification =()=>{
+        setisLoading(true)
+        try {
+            DB
+            .ref('Notification')
+            .on("value",snapot=>{
+                snapot.forEach((snap)=>{
+                    setisLoading(false)
+                    const {NameUser,IdUser,Red,Date,Put,Messages,key}=snap.val()
+                    if(IdUser===Fire.uid){
+                        List.push({
+                            NameUser:NameUser,
+                            IdUser:IdUser,
+                            Red:Red,
+                            Date:Date,
+                            Put:Put,
+                            Messages:Messages,
+                            key:key
+                        })
+                        setListNotification(List.reverse())
+                    }
+                })
+            })
+        } catch (error) {
+            setisLoading(false)
+            console.log(error);
+        }
+    }
+    const UpdateRead = (roomKey) => {
+        try {
+            DB
+                .ref(`Notification/${roomKey}/`)
+                .update({
+                    Read: DEFAULT_PARAMS.YES
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    const RenderItem = ({ index, item }) => {
+        return (
+            <SafeAreaView style={{ flexDirection: 'row', borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5,backgroundColor:R.color.colors.white }}>
+                <View style={{marginRight:10}}>
+                    <FastImage
+                        source={R.images.ic_Notification}
+                        style={styles.ImgScreen}
+                        tintColor={R.color.colors.Sienna1}
+                        resizeMode={FastImage.resizeMode.contain}
+                    />
+                </View>
+                <View>
+                    <Text style={styles.TextName}>
+                        {item.Messages===DEFAULT_PARAMS.YES?R.string.NotificationMessStudio+" "+item.NameUser:null}
+                    </Text>
+                    <Text style={[styles.TextName, { color: R.color.colors.focus }]}>
+                        {item.Date}
+                    </Text>
+                </View>
+            </SafeAreaView>
+        )
+    }
+    const RenderNotifi = (data, handleLoadMore, onMomentumScrollBegin,onRefresh) => {
+        return (
+            <SafeAreaView>
+                <FlatList
+                    data={data}
+                    renderItem={RenderItem}
+                    showsVerticalScrollIndicator={false}
+                    keyExtractor={item => item.id}
+                    onEndReachedThreshold={0.1}
+                    // onRefresh={handleLoadMore}
+                    onEndReached={handleLoadMore}
+                    refreshControl={<RefreshControl
+                        refreshing={false}
+                        onRefresh={onRefresh}
+                    />}
+                    onMomentumScrollBegin={onMomentumScrollBegin}
+                >
+    
+                </FlatList>
+            </SafeAreaView>
+        )
+    }
+    console.log("list",ListNotification);
+    
+    useEffect(() => {
+        CallNotification()
+    }, [])
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -103,7 +157,7 @@ const NotificationScreen = () => {
                 statusBarProps={styles.ContainerHeader}
                 children={
                     <SafeAreaView style={styles.Container}>
-                        {RenderNotifi(DataNotification, handleLoadMore, onMomentumScrollBegin)}
+                        {RenderNotifi(newlist, handleLoadMore, onMomentumScrollBegin,()=>{CallNotification()})}
                     </SafeAreaView>
                 }
             />

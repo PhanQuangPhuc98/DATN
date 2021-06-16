@@ -24,14 +24,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { colors } from '../../../constants/Theme';
 import NavigationUtil from '../../../navigation/NavigationUtil';
 const { height, width } = Dimensions.get('window');
-const Back = (onPress) => {
+const Back = (onPress,lable) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.HeaderBack}>
       <FastImage
         style={styles.ic_Back}
         source={image.ic_back}
         resizeMode={FastImage.resizeMode.contain}></FastImage>
-      <Text style={styles.TextHeader}>{R.string.Chat}</Text>
+      <Text style={styles.TextHeader}>{R.string.ChatWithUser+" "+lable}</Text>
     </TouchableOpacity>
   );
 };
@@ -141,7 +141,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const Send = (Messages = []) => {
     
     // CallBackMess(data.key)
-    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id,data.me)
     setLoadata(true)
   }
   useEffect(() => {
@@ -181,7 +181,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       />
     );
   };
-  Reactotron.log("Acout",data.key) 
+  console.log("Acout",data) 
   Reactotron.log("Me",params.user.Image)
   console.log("Category",category.id);
   
@@ -199,7 +199,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         statusBarProps={styles.ContainerHeader}
         leftComponent={Back(() => {
           NavigationUtil.goBack();
-        })}
+        },data.name)}
         leftContainerStyle={{ width: 200 }}
         children={
           isLoading === true ? renderIsloading() :

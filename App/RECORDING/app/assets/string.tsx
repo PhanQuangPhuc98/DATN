@@ -77,6 +77,11 @@ const string = {
   Search_User:"Nhập tên khách hàng",
   InforUser:"Thông tin khách hàng",
   Put_Sucess:"Đặt lịch thành công",
-  UpdateFailde:"Cập nhật mật khẩu không thành công"
+  UpdateFailde:"Cập nhật mật khẩu không thành công",
+  ChatWith:'Chat với phòng thu',
+  ChatWithUser:'Chat với khách hàng',
+  NotificationMess:"Bạn có tin nhắn từ khách hàng",
+  NotificationMessStudio:"Bạn có tin nhắn từ phòng thu",
+  NotificationPut:"Bạn có đơn đặt hàng mới"
 };
 export default string;
