@@ -64,6 +64,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const [image, setImage] = useState(null);
   const Data = database()
   const [imageMessages,setImageMessages]=useState(null);
+  const [OnlineUser,setOnlineUser]=useState(DEFAULT_PARAMS.NO)
   const [isLoading, setLoading] = useState(false);
   let MessagesStudio=[];
   const roomKey = database().ref().push().key;
@@ -140,7 +141,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
     }, 200);
   }
   const Send = (Messages = []) => {
-    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id,data.me,null,data.RedUser)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id,data.me,null,data.RedUser,null,null,OnlineUser)
     setLoadata(true)
   }
   const UpdateRead = (roomKey) => {
@@ -148,18 +149,34 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       Data
             .ref(`rooms/${roomKey}/`)
             .update({
-                RedStudio: DEFAULT_PARAMS.NO
+                RedStudio: DEFAULT_PARAMS.NO,
+                newMessStudio:DEFAULT_PARAMS.NO
             })
     } catch (error) {
         console.log(error);
     }
 }
+const CheckOnlineUser =(token)=>{
+  try {
+    Data
+    .ref(`/Online/${token}/`)
+    .on("value",snapot=>{
+      const {OnlineUser} = snapot.val();
+      setOnlineUser(OnlineUser)
+    })
+  } catch (error) {
+    
+  }
+}
   useEffect(() => {
     DB()
+    CheckOnlineUser(data.me)
     setTimeout(() => {
        CallBackMess(data.key)
     }, 500);
   }, []);
+  // console.log("OnlineUser",OnlineUser);
+  // console.log("Data",data);
   const renderActions = () => {
     return (
       <TouchableOpacity 

@@ -26,6 +26,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { colors } from '../../../constants/Theme';
 import { DataNotification } from '../../../constants/Mockup';
 import NavigationUtil from '../../../navigation/NavigationUtil';
+import { SCREEN_ROUTER, SCREEN_ROUTER_APP_ADD } from '../../../utils/Constant';
 const { height, width } = Dimensions.get('window');
 const left = () => {
     return (
@@ -65,6 +66,8 @@ const NotificationScreen = () => {
             <TouchableOpacity
             onPress={()=>{
                 UpdateRead(item.key)
+                item.Messages===DEFAULT_PARAMS.YES?NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN,{screen:SCREEN_ROUTER_APP_ADD.LISTCHATADD}):
+                NavigationUtil.navigate(SCREEN_ROUTER.APPADD,{screen:SCREEN_ROUTER_APP_ADD.REVENUEADD})
             }}
              style={{ flexDirection: 'row', borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5 }}>
                 <View style={{marginRight:10}}>
@@ -76,7 +79,7 @@ const NotificationScreen = () => {
                     />
                 </View>
                 <View>
-                    <Text style={styles.TextName}>
+                    <Text style={[styles.TextName,{height:45}]}>
                         {item.Messages===DEFAULT_PARAMS.YES?R.string.NotificationMess+" "+item.NameUser:R.string.NotificationPut+" "+item.NameUser}
                     </Text>
                     <Text style={[styles.TextName, { color: R.color.colors.focus }]}>
@@ -158,7 +161,7 @@ const NotificationScreen = () => {
                 containerStyle={styles.ContainerHeader}
                 statusBarProps={styles.ContainerHeader}
                 children={
-                    <SafeAreaView style={styles.Container}>
+                    <SafeAreaView style={[styles.Container,{paddingHorizontal:15}]}>
                         {RenderNotifi(newlist, handleLoadMore, onMomentumScrollBegin,()=>{ CallNotification()})}
                     </SafeAreaView>
                 }

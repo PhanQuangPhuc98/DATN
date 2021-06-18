@@ -62,26 +62,31 @@ class FirebaseSvc {
   get timestamp() {
     return firebase.database.ServerValue.TIMESTAMP;
   }
-  OnSend = (_id, text, user, roomKey, image, Category, friend, RedStudio, RedUser) => {
+  OnSend = (_id, text, user, roomKey, image, Category, friend, RedStudio, RedUser,newMessStudio,OnlineStudio,OnlineUser) => {
     const db = firebase.database();
     const NotificationKey = db.ref().push().key;
-    console.log("helloPhuc", Category);
-    console.log("RedStudio", RedStudio);
-    console.log("RedUser", RedUser);
+    // console.log("helloPhuc", Category);
+    // console.log("RedStudio", RedStudio);
+    // console.log("RedUser", RedUser);
+    console.log("Online",OnlineStudio);
+    console.log("OnlineUser",OnlineUser);
     const updateUser = {};
     if (Category != "1" || Category != 1) {
       /**Update Room */
       updateUser[`rooms/${roomKey}/messagesUser`] = text;
       updateUser[`rooms/${roomKey}/name`] = user.name;
       updateUser[`rooms/${roomKey}/avatar`] = user.avatar;
-      updateUser[`rooms/${roomKey}/newMess`] = DEFAULT_PARAMS.USER;
+      updateUser[`rooms/${roomKey}/newCategory`] = DEFAULT_PARAMS.USER;
+      if(newMessStudio===DEFAULT_PARAMS.NO||newMessStudio===DEFAULT_PARAMS.UNDEFINED){
+        updateUser[`rooms/${roomKey}/newMessUser`] = DEFAULT_PARAMS.YES;
+      }
     //  ` updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.NO;`
     if (RedStudio === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED) {
       updateUser[`rooms/${roomKey}/RedStudio`] = DEFAULT_PARAMS.NO;
     }
       updateUser[`rooms/${roomKey}/RedUser`] = DEFAULT_PARAMS.YES;
       /** Update Notification */
-      if (RedStudio === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED) {
+      if (OnlineStudio === DEFAULT_PARAMS.NO) {
       updateUser[`Notification/${NotificationKey}/NameUser`] = user.name;
       // updateUser[`Notification/${NotificatoinKey}/IdUser`] = user._id;
       updateUser[`Notification/${NotificationKey}/IdStudio`] = friend._id;
@@ -95,7 +100,8 @@ class FirebaseSvc {
     }
     if (Category === "1" || Category === 1) {
       /**Update Room */
-      updateUser[`rooms/${roomKey}/newMess`] = DEFAULT_PARAMS.STUDIO;
+      updateUser[`rooms/${roomKey}/newCategory`] = DEFAULT_PARAMS.STUDIO;
+      updateUser[`rooms/${roomKey}/newMessStudio`] = DEFAULT_PARAMS.YES;
       updateUser[`rooms/${roomKey}/messagesStudio`] = text;
       // updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.YES;
       if (RedUser === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED){
@@ -103,7 +109,7 @@ class FirebaseSvc {
       }
       updateUser[`rooms/${roomKey}/RedStudio`] = DEFAULT_PARAMS.YES;
       /** Update Notification */
-      if (RedUser === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED) {
+      if (OnlineUser === DEFAULT_PARAMS.NO) {
       updateUser[`Notification/${NotificationKey}/NameUser`] = user.name;
       updateUser[`Notification/${NotificationKey}/IdUser`] = friend;
       updateUser[`Notification/${NotificationKey}/key`] = NotificationKey;

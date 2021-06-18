@@ -3,7 +3,7 @@ import { Text, SafeAreaView, StyleSheet, TextInput, Platform, View, Button, Acti
 import { Header } from "react-native-elements";
 import NavigationUtil from '../../navigation/NavigationUtil'
 import { colors } from '../../constants/Theme';
-import { ASYNC_STORAGE } from '../../constants/Constant';
+import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
 import R from '../../assets/R'
 import Reactotron from 'reactotron-react-native'
 import image from '../../assets/imagesAsset';
@@ -13,7 +13,7 @@ import { hasWhiteSpace, validateEmail } from '../../utils/FuncHelper';
 import { showMessages } from '../../utils/AlertHelper'
 import AsyncStorage from '@react-native-community/async-storage';
 // import auth from '@react-native-firebase/auth'
-import { firebase, Auth } from '../../firebase/firebaseSvc'
+import { firebase, Auth,database } from '../../firebase/firebaseSvc'
 const { height, width } = Dimensions.get("window");
 const Infor = (style, placeholder, onChangeText, value, secureTextEntry) => {
   return (
@@ -84,6 +84,7 @@ const LoginScreen = ({ navigation }) => {
   const [confirm, setConfirm] = useState(null);
   const [token, setToken] = useState(null);
   const [code, setCode] = useState('');
+  const Data = database();
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
   const [payload, setPayload] = useState({
     Username: '',
@@ -109,6 +110,28 @@ const LoginScreen = ({ navigation }) => {
     });
     return unsubscribe;
   }, [navigation]);
+  const UpdateOnlineUser =(token)=>{
+    try {
+      Data
+      .ref(`/Online/${token}/`)
+      .update({
+        OnlineUser:DEFAULT_PARAMS.YES
+      })
+    } catch (error) {
+      
+    }
+  }
+  const UpdateOnlineStudio =(token)=>{
+    try {
+      Data
+      .ref(`/Online/${token}/`)
+      .update({
+        OnlineStudio:DEFAULT_PARAMS.YES
+      })
+    } catch (error) {
+      
+    }
+  }
   const signInWithEmail = async () => {
     setLoading(true)
 
@@ -120,6 +143,8 @@ const LoginScreen = ({ navigation }) => {
           ASYNC_STORAGE.TOKEN,
           res.user.uid.toString(),
         );
+
+        // UpdateOnline(res.user.uid.toString())
       showMessages(R.string.notification, 'Đăng nhập thành công!');
       category.id==="0"?
       setTimeout(() => {
@@ -128,14 +153,17 @@ const LoginScreen = ({ navigation }) => {
             screen: SCREEN_ROUTER_APP.HOME,
           })
           : alert(R.string.pleaseLogin);
-      }, 500) :
+      }, 500)&&UpdateOnlineUser(res.user.uid.toString()) :
       setTimeout(() => {
         !token
           ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN, {
             screen: SCREEN_ROUTER_APP_ADD.MANYUSER,
           })
           : alert(R.string.pleaseLogin);
-      }, 500)
+      }, 500)&&UpdateOnlineStudio(res.user.uid.toString())
+
+
+      
       Reactotron.log('res', res.user.uid)
 
     } catch (error) {

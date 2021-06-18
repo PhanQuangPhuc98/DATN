@@ -13,7 +13,7 @@ import R from '../../assets/R'
 import { colors } from '../../constants/Theme'
 import Fire from '../../firebase/firebaseSvc';
 import { firebase, database, Auth } from '../../firebase/firebaseSvc';
-import { ASYNC_STORAGE } from '../../constants/Constant';
+import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
 import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
 import images from '../../assets/imagesAsset';
@@ -52,6 +52,7 @@ const personal = (Users, onPress, name, phone) => {
     </View>
   );
 };
+
 const Logout = async () => {
   const res = await Auth().signOut();
   try {
@@ -108,8 +109,20 @@ const UserScreen = () => {
     District: '',
     Address: ''
   });
+  const DB =database();
   const toggleModal = () => {
     setModalVisible(!isModalVisible);
+  }
+  const UpdateOnline =(token)=>{
+    try {
+      DB
+      .ref(`/Online/${token}/`)
+      .update({
+        OnlineUser:DEFAULT_PARAMS.NO
+      })
+    } catch (error) {
+      
+    }
   }
   useEffect(() => {
     Auth().onAuthStateChanged(user => {
@@ -199,6 +212,7 @@ const UserScreen = () => {
               isModalVisible={isModalVisible}
               onPress={() => {
                 toggleModal();
+                UpdateOnline(Fire.uid)
                 Logout();
                 NavigationUtil.navigate(SCREEN_ROUTER.SPLASH)
               }

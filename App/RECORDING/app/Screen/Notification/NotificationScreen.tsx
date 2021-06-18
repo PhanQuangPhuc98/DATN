@@ -115,7 +115,7 @@ const NotificationScreen = () => {
                     />
                 </View>
                 <View>
-                    <Text style={styles.TextName}>
+                    <Text style={[styles.TextName,{height:45}]}>
                         {item.Messages===DEFAULT_PARAMS.YES?R.string.NotificationMessStudio+" "+item.NameUser:null}
                     </Text>
                     <Text style={[styles.TextName, { color: R.color.colors.focus }]}>
@@ -159,7 +159,7 @@ const NotificationScreen = () => {
                 containerStyle={styles.ContainerHeader}
                 statusBarProps={styles.ContainerHeader}
                 children={
-                    <SafeAreaView style={styles.Container}>
+                    <SafeAreaView style={[styles.Container,{paddingHorizontal:15}]}>
                         {RenderNotifi(newlist, handleLoadMore, onMomentumScrollBegin,()=>{CallNotification()})}
                     </SafeAreaView>
                 }

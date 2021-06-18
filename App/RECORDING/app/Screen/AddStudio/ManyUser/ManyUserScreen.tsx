@@ -84,7 +84,7 @@ const ManyUserScreen = () => {
         Auth().onAuthStateChanged(user => {
             if (user) {
                 const onValueChange = database()
-                    .ref('/ListCustomer/')
+                    .ref(`/ListCustomer/${Fire.uid}/List/`)
                     .on('child_added', (snapshot) => {
                         const {Name, IdStudio,IdUser, Image, Phone, Email, City, District, Address } = snapshot.val()
                          if (IdStudio=== Fire.uid) {

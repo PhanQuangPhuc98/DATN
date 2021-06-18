@@ -110,7 +110,8 @@ const ListChatScreen = () => {
             DB
                 .ref(`rooms/${roomKey}/`)
                 .update({
-                    RedStudio: DEFAULT_PARAMS.YES
+                    RedStudio: DEFAULT_PARAMS.YES,
+                    newMessUser:DEFAULT_PARAMS.NO
                 })
         } catch (error) {
             console.log(error);
@@ -119,7 +120,7 @@ const ListChatScreen = () => {
     const checkRoomsStudio = () => {
         const check = DB.ref("rooms").on('value', (snal) => {
             snal.forEach(keyroom => {
-                const { friend, key, me, avatar, messagesUser, name, messagesStudio, newMess, RedStudio,RedUser } = keyroom.val();
+                const { friend, key, me, avatar, messagesUser, name,newMessStudio,newMessUser, messagesStudio, newCategory, RedStudio,RedUser } = keyroom.val();
                 if (friend === Fire.uid) {
                     Zoomkey.push({
                         friend: friend,
@@ -129,9 +130,11 @@ const ListChatScreen = () => {
                         messagesUser: messagesUser,
                         name: name,
                         messagesStudio: messagesStudio,
-                        newMess: newMess,
+                        newCategory: newCategory,
                         RedStudio: RedStudio,
-                        RedUser:RedUser
+                        RedUser:RedUser,
+                        newMessUser:newMessUser,
+                        newMessStudio:newMessStudio
                     })
                     setKey({
                         ...Zoom,
@@ -249,10 +252,14 @@ const ListChatScreen = () => {
                     <Text style={styles.TextName}>
                         {item.name ? item.name : "Khách hàng đang tạo phòng"}
                     </Text>
-                    <Text style={[styles.TextName, { fontSize: 14, color: item.RedStudio === "No" ? colors.black : colors.focus, marginVertical: 10 }]}>
-                        {item.newMess === "0" ? item.messagesUser : "Bạn :" + " " + item.messagesStudio}
-                    </Text>
-
+                    {item.newCategory === "0" ?
+                    <Text style={[styles.TextName, { fontSize: 14, color: item.RedStudio === DEFAULT_PARAMS.NO &&item.newMessUser===DEFAULT_PARAMS.YES? colors.black : colors.focus, marginVertical: 10 }]}>
+                        { item.messagesUser}
+                    </Text>:
+                    <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
+                    {"Bạn :" + " " + item.messagesStudio}
+                </Text>
+                    }
                 </View>
             </TouchableOpacity>
         );

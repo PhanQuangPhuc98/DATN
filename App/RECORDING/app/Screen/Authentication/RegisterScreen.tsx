@@ -6,7 +6,7 @@ import R from '../../assets/R';
 import { DataCity } from '../../constants/Mockup';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { ASYNC_STORAGE } from '../../constants/Constant';
+import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { hasWhiteSpace, validateEmail, validatePhoneNumber } from '../../utils/FuncHelper';
 import { showMessages } from '../../utils/AlertHelper'
@@ -94,6 +94,7 @@ const RegisterScreen = ({route,navigation,...props}) => {
   const [confirm_password, setconfirm_password] = useState(true);
   const [token, setToken] = useState(null);
   const [isLoading, setLoading] = useState(false);
+  const Database = database();
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
   const iconConfirm = confirm_password ? R.images.ic_visibility : R.images.ic_invisible;
   const DB = async()=>{
@@ -152,6 +153,17 @@ const RegisterScreen = ({route,navigation,...props}) => {
       console.log(error);
     }
   }
+  const UpdateOnline =(token)=>{
+    try {
+      Database
+      .ref(`/Online/${token}/`)
+      .update({
+        Online:DEFAULT_PARAMS.YES
+      })
+    } catch (error) {
+      
+    }
+  }
   const CreatAcout = async () => {
     setLoading(true)
     try {
@@ -168,6 +180,7 @@ const RegisterScreen = ({route,navigation,...props}) => {
           CreatIntro()
           CreatPrice()
         }
+      UpdateOnline(res.user.uid.toString())
       setLoading(false),
         setToken(res),
         await AsyncStorage.setItem(

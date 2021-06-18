@@ -23,6 +23,7 @@ import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
 import { colors } from '../../constants/Theme';
 import NavigationUtil from '../../navigation/NavigationUtil';
+import { log } from 'react-native-reanimated';
 const { height, width } = Dimensions.get('window');
 const Back = (onPress, lable) => {
   return (
@@ -68,12 +69,14 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const [key, setKey] = useState(null)
   const [ZoomId, setZoomId] = useState(null)
   const [readStudio,setReadStudio]=useState(DEFAULT_PARAMS.NO)
+  const [newMessStudio,setnewMessStudio]=useState(DEFAULT_PARAMS.NO)
   const [image, setImage] = useState(null);
   const [imageMessages, setImageMessages] = useState(null);
   const [isLoading, setLoading] = useState(false);
   let MessagesUser = [];
   let MessagesStudio = [];
   const roomKey = database().ref().push().key;
+  const [OnlineStudio,setOnlineStudio]=useState(DEFAULT_PARAMS.NO)
   const [messagesUser, setMessagesUser] = useState([]);
   const [messagesStudio, setMessagesStudio] = useState([]);
   const checkRoomsUSer = async () => {
@@ -85,6 +88,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
           if (keyroom.val().me === params.user._id) {
             setKey(keyroom.val().key)
             setReadStudio(keyroom.val().RedStudio)
+            setnewMessStudio(keyroom.val().newMessStudio)
           }
         }
       }) : setReadStudio(DEFAULT_PARAMS.NO)
@@ -178,8 +182,20 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         });
     }, 200);
   }
+  const CheckOnlineStudio =(token)=>{
+    try {
+      Data
+      .ref(`/Online/${token}/`)
+      .on("value",snapot=>{
+        const {OnlineStudio} = snapot.val();
+        setOnlineStudio(OnlineStudio)
+      })
+    } catch (error) {
+      
+    }
+  }
   const Send = (Messages = []) => {
-    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key, null, null, data,readStudio,null)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key, null, null, data,readStudio,null,newMessStudio,OnlineStudio)
     setLoadata(true)
   }
   const UpdateRead = (roomKey) => {
@@ -195,11 +211,14 @@ const ChatScreen = ({ route, navigation, ...props }) => {
 }
   useEffect(() => {
     FirtMess()
+    CheckOnlineStudio(data._id)
     checkRoomsUSer()
     setTimeout(() => {
       loaData === false ? CallBackMess(key) : null
     }, 500);
   }, [key]);
+  console.log("OnlineStudio",OnlineStudio);
+  
   const renderActions = () => {
     return (
       <TouchableOpacity
