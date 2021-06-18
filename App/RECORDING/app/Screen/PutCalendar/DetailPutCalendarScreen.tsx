@@ -311,7 +311,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     const PutActiveUser =()=>{
         try {
             DB
-            .ref(`/ListCustomer/${putKey}`)
+            .ref(`/ListCustomer/${data._id}`)
             .update({
                  Name:params.user.Name,
                  IdUser:params.user._id,
@@ -333,7 +333,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
             .ref(`/Notification/${putKey}`)
             .update({
                 NameUser:params.user.Name,
-                IdUser:params.user._id,
+                // IdUser:params.user._id,
                 IdStudio:data._id,
                 Red:DEFAULT_PARAMS.NO,
                 Date:getCurrentDate(),

@@ -9,6 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar, ListItem } from 'react-native-elements'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import DatePicker from 'react-native-datepicker';
+import {DEFAULT_PARAMS} from '../../../constants/Constant';
 import { CheckBox } from "react-native-elements";
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER, SCREEN_ROUTER_APP_ADD } from '../../../utils/Constant';
 import { showMessages } from '../../../utils/AlertHelper'
@@ -109,7 +110,7 @@ const ListChatScreen = () => {
             DB
                 .ref(`rooms/${roomKey}/`)
                 .update({
-                    Read: "Yes"
+                    RedStudio: DEFAULT_PARAMS.YES
                 })
         } catch (error) {
             console.log(error);
@@ -118,7 +119,7 @@ const ListChatScreen = () => {
     const checkRoomsStudio = () => {
         const check = DB.ref("rooms").on('value', (snal) => {
             snal.forEach(keyroom => {
-                const { friend, key, me, avatar, messagesUser, name, messagesStudio, newMess, Read } = keyroom.val();
+                const { friend, key, me, avatar, messagesUser, name, messagesStudio, newMess, RedStudio,RedUser } = keyroom.val();
                 if (friend === Fire.uid) {
                     Zoomkey.push({
                         friend: friend,
@@ -129,7 +130,8 @@ const ListChatScreen = () => {
                         name: name,
                         messagesStudio: messagesStudio,
                         newMess: newMess,
-                        Read: Read
+                        RedStudio: RedStudio,
+                        RedUser:RedUser
                     })
                     setKey({
                         ...Zoom,
@@ -218,7 +220,8 @@ const ListChatScreen = () => {
         CallAcout()
     }, [])
     const RenderItem = ({ index, item }) => {
-
+        // console.log("RedStudio",item.RedUser);
+        
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -246,7 +249,7 @@ const ListChatScreen = () => {
                     <Text style={styles.TextName}>
                         {item.name ? item.name : "Khách hàng đang tạo phòng"}
                     </Text>
-                    <Text style={[styles.TextName, { fontSize: 14, color: item.Read === "No" ? colors.black : colors.focus, marginVertical: 10 }]}>
+                    <Text style={[styles.TextName, { fontSize: 14, color: item.RedStudio === "No" ? colors.black : colors.focus, marginVertical: 10 }]}>
                         {item.newMess === "0" ? item.messagesUser : "Bạn :" + " " + item.messagesStudio}
                     </Text>
 

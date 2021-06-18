@@ -62,10 +62,12 @@ class FirebaseSvc {
   get timestamp() {
     return firebase.database.ServerValue.TIMESTAMP;
   }
-  OnSend = (_id, text, user, roomKey, image, Category, friend) => {
+  OnSend = (_id, text, user, roomKey, image, Category, friend, RedStudio, RedUser) => {
     const db = firebase.database();
-    const NotificatoinKey = db.ref().push().key;
-    console.log("helloPhuc",Category);
+    const NotificationKey = db.ref().push().key;
+    console.log("helloPhuc", Category);
+    console.log("RedStudio", RedStudio);
+    console.log("RedUser", RedUser);
     const updateUser = {};
     if (Category != "1" || Category != 1) {
       /**Update Room */
@@ -73,31 +75,46 @@ class FirebaseSvc {
       updateUser[`rooms/${roomKey}/name`] = user.name;
       updateUser[`rooms/${roomKey}/avatar`] = user.avatar;
       updateUser[`rooms/${roomKey}/newMess`] = DEFAULT_PARAMS.USER;
-      updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.NO;
+    //  ` updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.NO;`
+    if (RedStudio === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED) {
+      updateUser[`rooms/${roomKey}/RedStudio`] = DEFAULT_PARAMS.NO;
+    }
+      updateUser[`rooms/${roomKey}/RedUser`] = DEFAULT_PARAMS.YES;
       /** Update Notification */
-      updateUser[`Notification/${NotificatoinKey}/NameUser`] = user.name;
+      if (RedStudio === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED) {
+      updateUser[`Notification/${NotificationKey}/NameUser`] = user.name;
       // updateUser[`Notification/${NotificatoinKey}/IdUser`] = user._id;
-      updateUser[`Notification/${NotificatoinKey}/IdStudio`] = friend._id;
-      updateUser[`Notification/${NotificatoinKey}/Red`] = DEFAULT_PARAMS.NO;
-      updateUser[`Notification/${NotificatoinKey}/key`] = NotificatoinKey;
-      updateUser[`Notification/${NotificatoinKey}/Date`] = getCurrentDate();
-      updateUser[`Notification/${NotificatoinKey}/Put`] = DEFAULT_PARAMS.NO;
-      updateUser[`Notification/${NotificatoinKey}/Messages`] = DEFAULT_PARAMS.YES;
+      updateUser[`Notification/${NotificationKey}/IdStudio`] = friend._id;
+      updateUser[`Notification/${NotificationKey}/RedStudio`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificationKey}/RedUser`] = DEFAULT_PARAMS.YES;
+      updateUser[`Notification/${NotificationKey}/key`] = NotificationKey;
+      updateUser[`Notification/${NotificationKey}/Date`] = getCurrentDate();
+      updateUser[`Notification/${NotificationKey}/Put`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificationKey}/Messages`] = DEFAULT_PARAMS.YES;
+      }
     }
     if (Category === "1" || Category === 1) {
       /**Update Room */
       updateUser[`rooms/${roomKey}/newMess`] = DEFAULT_PARAMS.STUDIO;
       updateUser[`rooms/${roomKey}/messagesStudio`] = text;
-      updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.YES;
+      // updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.YES;
+      if (RedUser === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED){
+        updateUser[`rooms/${roomKey}/RedUser`] = DEFAULT_PARAMS.NO;
+      }
+      updateUser[`rooms/${roomKey}/RedStudio`] = DEFAULT_PARAMS.YES;
       /** Update Notification */
-      updateUser[`Notification/${NotificatoinKey}/NameUser`] = user.name;
-      updateUser[`Notification/${NotificatoinKey}/IdUser`] = friend;
-      updateUser[`Notification/${NotificatoinKey}/key`] = NotificatoinKey;
+      if (RedUser === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED) {
+      updateUser[`Notification/${NotificationKey}/NameUser`] = user.name;
+      updateUser[`Notification/${NotificationKey}/IdUser`] = friend;
+      updateUser[`Notification/${NotificationKey}/key`] = NotificationKey;
       // updateUser[`Notification/${NotificatoinKey}/IdStudio`] =user._id ;
-      updateUser[`Notification/${NotificatoinKey}/Red`] = DEFAULT_PARAMS.NO;
-      updateUser[`Notification/${NotificatoinKey}/Date`] = getCurrentDate(); 
-      updateUser[`Notification/${NotificatoinKey}/Put`] = DEFAULT_PARAMS.NO;
-      updateUser[`Notification/${NotificatoinKey}/Messages`] = DEFAULT_PARAMS.YES;
+      // updateUser[`Notification/${NotificationKey}/Red`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificationKey}/Date`] = getCurrentDate();
+      updateUser[`Notification/${NotificationKey}/Put`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificationKey}/RedStudio`] = DEFAULT_PARAMS.YES;
+      updateUser[`Notification/${NotificationKey}/RedUser`] = DEFAULT_PARAMS.NO;
+      updateUser[`Notification/${NotificationKey}/Messages`] = DEFAULT_PARAMS.YES;
+      }
     }
     db.ref().update(updateUser).catch(error => console.log('registerRoomError', error));
     db.ref(`messages/${roomKey}/`).push({

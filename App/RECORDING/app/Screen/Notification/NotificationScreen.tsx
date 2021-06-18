@@ -82,6 +82,9 @@ const NotificationScreen = () => {
                         })
                         setListNotification(List.reverse())
                     }
+                    else if(IdUser!=Fire.uid){
+                        // setListNotification([])
+                    }
                 })
             })
         } catch (error) {

@@ -62,6 +62,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const [loaData, setLoadata] = useState(false)
   const [uploading, setUploading] = useState(false);
   const [image, setImage] = useState(null);
+  const Data = database()
   const [imageMessages,setImageMessages]=useState(null);
   const [isLoading, setLoading] = useState(false);
   let MessagesStudio=[];
@@ -139,11 +140,20 @@ const ChatScreen = ({ route, navigation, ...props }) => {
     }, 200);
   }
   const Send = (Messages = []) => {
-    
-    // CallBackMess(data.key)
-    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id,data.me)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id,data.me,null,data.RedUser)
     setLoadata(true)
   }
+  const UpdateRead = (roomKey) => {
+    try {
+      Data
+            .ref(`rooms/${roomKey}/`)
+            .update({
+                RedStudio: DEFAULT_PARAMS.NO
+            })
+    } catch (error) {
+        console.log(error);
+    }
+}
   useEffect(() => {
     DB()
     setTimeout(() => {
@@ -181,15 +191,15 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       />
     );
   };
-  console.log("Acout",data) 
-  Reactotron.log("Me",params.user.Image)
-  console.log("Category",category.id);
+  console.log("Acout",data.RedUser) 
+  // Reactotron.log("Me",params.user.Image)
+  // console.log("Category",category.id);
   
 //   console.log('key2', Key.key);
   // console.log("key1", key);
   // console.log("Zooomid", ZoomId);
   // console.log("messseuser", messagesUser);
-  Reactotron.log("messseStudio", messagesStudio);
+  // Reactotron.log("messseStudio", messagesStudio);
   // console.log("image",image);
   // console.log("imageMess",imageMessages);
   return (
@@ -199,6 +209,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         statusBarProps={styles.ContainerHeader}
         leftComponent={Back(() => {
           NavigationUtil.goBack();
+          UpdateRead(data.key)
         },data.name)}
         leftContainerStyle={{ width: 200 }}
         children={

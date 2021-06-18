@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import R from '../../assets/R';
 import { firebase } from '../../firebase/firebaseSvc'
-import Fire, { Auth, database,storage } from '../../firebase/firebaseSvc'
+import Fire, { Auth, database, storage } from '../../firebase/firebaseSvc'
 import ImagePicker from 'react-native-image-crop-picker'
 import image from '../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
@@ -24,7 +24,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { colors } from '../../constants/Theme';
 import NavigationUtil from '../../navigation/NavigationUtil';
 const { height, width } = Dimensions.get('window');
-const Back = (onPress,lable) => {
+const Back = (onPress, lable) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.HeaderBack}>
       <FastImage
@@ -64,13 +64,15 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const { data, params, Key } = route.params;
   const [loaData, setLoadata] = useState(false)
   const [uploading, setUploading] = useState(false);
+  const Data = database()
   const [key, setKey] = useState(null)
   const [ZoomId, setZoomId] = useState(null)
+  const [readStudio,setReadStudio]=useState(DEFAULT_PARAMS.NO)
   const [image, setImage] = useState(null);
-  const [imageMessages,setImageMessages]=useState(null);
+  const [imageMessages, setImageMessages] = useState(null);
   const [isLoading, setLoading] = useState(false);
   let MessagesUser = [];
-  let MessagesStudio=[];
+  let MessagesStudio = [];
   const roomKey = database().ref().push().key;
   const [messagesUser, setMessagesUser] = useState([]);
   const [messagesStudio, setMessagesStudio] = useState([]);
@@ -82,10 +84,10 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         if (params.user.Category === "0" && keyroom.val().friend === data._id) {
           if (keyroom.val().me === params.user._id) {
             setKey(keyroom.val().key)
-            // setZoomId(keyroom.val().key)
+            setReadStudio(keyroom.val().RedStudio)
           }
         }
-      }) : null
+      }) : setReadStudio(DEFAULT_PARAMS.NO)
     })
   }
   const uploadImage = async (image) => {
@@ -104,10 +106,10 @@ const ChatScreen = ({ route, navigation, ...props }) => {
           .getDownloadURL()
           .then((downloadURL) => {
             setImageMessages(downloadURL)
-            Fire.OnSend(roomKey, "","", key,downloadURL)
+            Fire.OnSend(roomKey, "", "", key, downloadURL)
           })
       })
-   
+
   };
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
@@ -120,7 +122,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       setImage(imageUri);
       uploadImage(imageUri)
     });
-    
+
   };
   const checkRoomsStudio = async () => {
     setLoading(true)
@@ -130,7 +132,6 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         if (params.user.Category === "1" && keyroom.val().me === data._id) {
           if (keyroom.val().friend === params.user._id) {
             setKey(keyroom.val().key)
-            // setZoomId(keyroom.val().key)
           }
         }
       }) : null
@@ -145,7 +146,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const CallBackMess = (key) => {
     setLoading(true)
     setTimeout(async () => {
-      const db =  database().ref(`messages/${key}/`)
+      const db = database().ref(`messages/${key}/`)
       if (!db) {
         console.log("not network");
         alert("not network")
@@ -153,49 +154,57 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       db.limitToLast(100)
         .on('child_added', snapshot => {
           setLoading(false)
-          const { _id, createdAt: numberStamp, text, user,image } = snapshot.val()
+          const { _id, createdAt: numberStamp, text, user, image } = snapshot.val()
           const createdAt = new Date(numberStamp);
-          const message = { _id, createdAt, text, user,image };
-          if(data.Category == DEFAULT_PARAMS.USER&&_id!=1){
+          const message = { _id, createdAt, text, user, image };
+          if (data.Category == DEFAULT_PARAMS.USER && _id != 1) {
             MessagesStudio.push(message)
-            
+
             MessagesStudio.sort((a, b) => {
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-          });
-          setMessagesStudio(MessagesStudio)
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+            setMessagesStudio(MessagesStudio)
           }
-         else  if(data.Category == DEFAULT_PARAMS.STUDIO){
-           MessagesUser.push(message)
-           MessagesUser.sort((a, b) => {
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-          });
-          setMessagesUser(()=>{
-            return GiftedChat.append(messagesUser,MessagesUser)
-          })
-        }
+          else if (data.Category == DEFAULT_PARAMS.STUDIO) {
+            MessagesUser.push(message)
+            MessagesUser.sort((a, b) => {
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+            setMessagesUser(() => {
+              return GiftedChat.append(messagesUser, MessagesUser)
+            })
+          }
           setLoading(false)
         });
     }, 200);
   }
   const Send = (Messages = []) => {
-    
-    // CallBackMess(key)
-    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key,null,null,data)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key, null, null, data,readStudio,null)
     setLoadata(true)
   }
+  const UpdateRead = (roomKey) => {
+    try {
+      Data
+            .ref(`rooms/${roomKey}/`)
+            .update({
+                Red: DEFAULT_PARAMS.NO
+            })
+    } catch (error) {
+        console.log(error);
+    }
+}
   useEffect(() => {
     FirtMess()
-    params.user.Category === "0" ? checkRoomsUSer() : params.user.Category === "1" ? checkRoomsStudio() : null
-    // getZooomID()
+    checkRoomsUSer()
     setTimeout(() => {
       loaData === false ? CallBackMess(key) : null
     }, 500);
   }, [key]);
   const renderActions = () => {
     return (
-      <TouchableOpacity 
-      onPress={()=>{takePhotoFromCamera()}}
-      style={styles.Action}>
+      <TouchableOpacity
+        onPress={() => { takePhotoFromCamera() }}
+        style={styles.Action}>
         <FastImage
           style={styles.ImgAction}
           source={R.images.ic_ios_camera}
@@ -222,14 +231,16 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       />
     );
   };
-  console.log('key2', Key.key);
-  console.log("key1", key);
-  console.log("Zooomid", ZoomId);
-  console.log("messseuser", messagesUser);
-  console.log("messseStudio", messagesStudio);
-  console.log("image",image);
-  console.log("imageMess",imageMessages);
-  console.log("Category",params.user.Category);
+  // console.log('key2', Key.key);
+  // console.log("key1", key);
+  // console.log("Zooomid", ZoomId);
+  // console.log("messseuser", messagesUser);
+  // console.log("messseStudio", messagesStudio);
+  // console.log("image", image);
+  // console.log("imageMess", imageMessages);
+  // console.log("Category", params.user.Category);
+  // console.log("ReadStudio",readStudio);
+  
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
@@ -237,7 +248,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         statusBarProps={styles.ContainerHeader}
         leftComponent={Back(() => {
           NavigationUtil.goBack();
-        },R.string.ChatWith+' '+data.Name)}
+        }, R.string.ChatWith + ' ' + data.Name)}
         leftContainerStyle={{ width: 200 }}
         children={
           isLoading === true ? renderIsloading() :
@@ -249,7 +260,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
                 avatar: params.user.Image,
                 createdAt: new Date().getTime()
               },
-              params.user.Category===DEFAULT_PARAMS.USER?messagesUser:messagesStudio
+              params.user.Category === DEFAULT_PARAMS.USER ? messagesUser : messagesStudio
             )}
       />
     </SafeAreaView>

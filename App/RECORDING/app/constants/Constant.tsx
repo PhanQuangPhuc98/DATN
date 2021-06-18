@@ -3,7 +3,8 @@ export const DEFAULT_PARAMS = {
   USER:'0',
   STUDIO:'1',
   YES:"Yes",
-  NO:"No"
+  NO:"No",
+  UNDEFINED:undefined
 };
 export const ASYNC_STORAGE = {
   TOKEN: 'TOKEN',
