@@ -44,6 +44,7 @@ const SearchUser = (lable, onChangeText) => {
 
 const ListChatScreen = () => {
     let studio = [];
+    let Data ={};
     let users = [];
     // const [Studio, setStudio] = useState(null);
     const [User, setUser] = useState({
@@ -79,8 +80,8 @@ const ListChatScreen = () => {
     const Zoomkey = []
     const [active, setActive] = useState(false)
     const [Zoom, setKey] = useState({
-        fullZoom: Zoomkey,
-        dataZoom: Zoomkey
+        fullZoom: [],
+        dataZoom: []
     })
     const [page, setPage] = useState({
         currentPage: 0,
@@ -118,32 +119,40 @@ const ListChatScreen = () => {
         }
     }
     const checkRoomsStudio = () => {
-        const check = DB.ref("rooms").on('value', (snal) => {
-            snal.forEach(keyroom => {
-                const { friend, key, me, avatar, messagesUser, name,newMessStudio,newMessUser, messagesStudio, newCategory, RedStudio,RedUser } = keyroom.val();
-                if (friend === Fire.uid) {
-                    Zoomkey.push({
-                        friend: friend,
-                        key: key,
-                        me: me,
-                        avatar: avatar,
-                        messagesUser: messagesUser,
-                        name: name,
-                        messagesStudio: messagesStudio,
-                        newCategory: newCategory,
-                        RedStudio: RedStudio,
-                        RedUser:RedUser,
-                        newMessUser:newMessUser,
-                        newMessStudio:newMessStudio
-                    })
-                    setKey({
-                        ...Zoom,
-                        fullZoom: Zoomkey,
-                        dataZoom: Zoomkey
-                    })
-                }
+        setTimeout(()=>{
+            const check =  DB.ref("rooms")
+            .on('value', (snal) => {
+                snal.forEach(keyroom => {
+                    const { friend, key, me, avatar, messagesUser, name,newMessStudio,newMessUser, messagesStudio, newCategory, RedStudio,RedUser } = keyroom.val();
+                    
+                    Data=keyroom.val();
+                    setMessages([keyroom.val()])
+                    // console.log("data",keyroom.val())
+                    if (friend === Fire.uid) {
+                        Zoomkey.push({
+                            friend: friend,
+                            key: key,
+                            me: me,
+                            avatar: avatar,
+                            messagesUser: messagesUser,
+                            name: name,
+                            messagesStudio: messagesStudio,
+                            newCategory: newCategory,
+                            RedStudio: RedStudio,
+                            RedUser:RedUser,
+                            newMessUser:newMessUser,
+                            newMessStudio:newMessStudio
+                        })
+
+                    }
+                })
+                setKey({
+                    ...Zoom,
+                    fullZoom: Zoomkey,
+                    dataZoom: Zoomkey
+                })
             })
-        })
+        },500)
 
     }
     const CallAcout = () => {
@@ -242,7 +251,7 @@ const ListChatScreen = () => {
                     // item?setActive(!active):setActive(active)
                     // alert(item.name);
                 }}
-                style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 20, width: width - 40, }]}>
+                style={[styles.HeaderPerson, { borderBottomWidth: 0.5, width: width - 40,height:80 , marginHorizontal:20}]}>
                 <Avatar
                     size={56}
                     avatarStyle={styles.AvatarStyle}
@@ -253,10 +262,16 @@ const ListChatScreen = () => {
                         {item.name ? item.name : "Khách hàng đang tạo phòng"}
                     </Text>
                     {item.newCategory === "0" ?
-                    <Text style={[styles.TextName, { fontSize: 14, color: item.RedStudio === DEFAULT_PARAMS.NO &&item.newMessUser===DEFAULT_PARAMS.YES? colors.black : colors.focus, marginVertical: 10 }]}>
+                    <Text 
+                    numberOfLines={5}
+                    ellipsizeMode={"tail"}
+                    style={[styles.TextName, { fontSize: 14, color: item.RedStudio === DEFAULT_PARAMS.NO &&item.newMessUser===DEFAULT_PARAMS.YES? colors.black : colors.focus, marginVertical: 10,height:60 }]}>
                         { item.messagesUser}
                     </Text>:
-                    <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
+                    <Text 
+                    numberOfLines={5}
+                    ellipsizeMode={"tail"}
+                    style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10,height:60 }]}>
                     {"Bạn :" + " " + item.messagesStudio}
                 </Text>
                     }
@@ -283,10 +298,10 @@ const ListChatScreen = () => {
             </SafeAreaView>
         )
     }
-    Reactotron.log("key", Zoom);
-    Reactotron.log("User", User)
-    Reactotron.log("Studio", Studio)
-    // console.log("active",active);
+    // console.log("Zoom", Zoom.dataZoom);
+    // Reactotron.log("User", User)
+    // Reactotron.log("Studio", Studio)
+      Reactotron.log("Mess",messages);
 
     return (
         <SafeAreaView style={styles.Container}>

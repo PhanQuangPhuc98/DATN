@@ -18,6 +18,7 @@ import image from '../../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
 import { GiftedChat, Send, Actions } from 'react-native-gifted-chat';
 import FastImage from 'react-native-fast-image';
+import OneSignal from 'react-native-onesignal';
 import { ASYNC_STORAGE, DEFAULT_PARAMS } from '../../../constants/Constant'
 import ScreenComponent from '../../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
@@ -61,6 +62,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const { data, params } = route.params;
   const [loaData, setLoadata] = useState(false)
   const [uploading, setUploading] = useState(false);
+  const [userOnesignal,setUserOnesignal]=useState(null)
   const [image, setImage] = useState(null);
   const Data = database()
   const [imageMessages,setImageMessages]=useState(null);
@@ -72,6 +74,33 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const [category,setCategory]=useState({
     id:''
   })
+  const callUserOnesignal =()=>{
+    try {
+      Data
+      .ref(`/UserIdOneSignal/${data.me}`)
+      .on("value",snapot=>{
+        const {userId}=snapot.val()
+        setUserOnesignal(userId)
+      })
+    } catch (error) {
+      
+    }
+  }
+  const Notification =async()=>{
+    // const { userId,pushToken } = await OneSignal.getDeviceState();
+    // console.log("userId",userId);
+
+    const notificationObj = {
+      contents: {en: R.string.NotificationMessStudio+" "+params.user.Name},
+      include_player_ids: [userOnesignal]
+    };
+    const jsonString = JSON.stringify(notificationObj);
+    OneSignal.postNotification(jsonString, (success) => {
+      console.log("Success:", success);
+    }, (error) => {
+      console.log("Error:", error );
+    });
+  }
   const DB = async()=>{
     let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
     setCategory({
@@ -116,7 +145,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const CallBackMess = (key) => {
     setLoading(true)
     setTimeout(async () => {
-      const db =  database().ref(`messages/${key}/`)
+      const db =  await database().ref(`messages/${key}/`)
       if (!db) {
         console.log("not network");
         alert("not network")
@@ -141,6 +170,9 @@ const ChatScreen = ({ route, navigation, ...props }) => {
     }, 200);
   }
   const Send = (Messages = []) => {
+    if(OnlineUser===DEFAULT_PARAMS.NO){
+      Notification()
+    }
     Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id,data.me,null,data.RedUser,null,null,OnlineUser)
     setLoadata(true)
   }
@@ -169,6 +201,7 @@ const CheckOnlineUser =(token)=>{
   }
 }
   useEffect(() => {
+    callUserOnesignal()
     DB()
     CheckOnlineUser(data.me)
     setTimeout(() => {

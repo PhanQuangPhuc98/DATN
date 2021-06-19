@@ -12,6 +12,7 @@ import { hasWhiteSpace, validateEmail, validatePhoneNumber } from '../../utils/F
 import { showMessages } from '../../utils/AlertHelper'
 import Reactotron from 'reactotron-react-native';
 import Fire from '../../firebase/firebaseSvc'
+import OneSignal from 'react-native-onesignal';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import AsyncStorage from '@react-native-community/async-storage';
 import { Auth, database } from '../../firebase/firebaseSvc'
@@ -106,6 +107,18 @@ const RegisterScreen = ({route,navigation,...props}) => {
     console.log("Category",Category);
    
   }
+  const UpdateUserOneSignal =async(token)=>{
+    const { userId, } = await OneSignal.getDeviceState();
+    try {
+      Database
+      .ref(`/UserIdOneSignal/${token}`)
+      .update({
+        userId:userId
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
   const CallCity = () => {
     setTimeout(async () => {
       const city = await database()
@@ -181,6 +194,7 @@ const RegisterScreen = ({route,navigation,...props}) => {
           CreatPrice()
         }
       UpdateOnline(res.user.uid.toString())
+      UpdateUserOneSignal(res.user.uid.toString())
       setLoading(false),
         setToken(res),
         await AsyncStorage.setItem(

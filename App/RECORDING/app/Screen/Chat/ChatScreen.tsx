@@ -21,6 +21,7 @@ import FastImage from 'react-native-fast-image';
 import { ASYNC_STORAGE, DEFAULT_PARAMS } from '../../constants/Constant'
 import ScreenComponent from '../../components/ScreenComponent';
 import AsyncStorage from '@react-native-community/async-storage';
+import OneSignal from 'react-native-onesignal';
 import { colors } from '../../constants/Theme';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import { log } from 'react-native-reanimated';
@@ -64,10 +65,27 @@ const renderIsloading = () => {
 const ChatScreen = ({ route, navigation, ...props }) => {
   const { data, params, Key } = route.params;
   const [loaData, setLoadata] = useState(false)
+  const [studioOnesignal,setStudioOnesignal]=useState(null)
   const [uploading, setUploading] = useState(false);
   const Data = database()
   const [key, setKey] = useState(null)
   const [ZoomId, setZoomId] = useState(null)
+ 
+  const Notification =async()=>{
+    // const StudioID= "120e7925-2c79-4343-a42b-4b717d371ae5"
+    // const { userId,pushToken } = await OneSignal.getDeviceState();
+    // console.log("userId",userId);
+    const notificationObj = {
+      contents: {en:  R.string.NotificationMess+" "+params.user.Name},
+      include_player_ids: [studioOnesignal]
+    };
+    const jsonString = JSON.stringify(notificationObj);
+    OneSignal.postNotification(jsonString, (success) => {
+      console.log("Success:", success);
+    }, (error) => {
+      console.log("Error:", error );
+    });
+  }
   const [readStudio,setReadStudio]=useState(DEFAULT_PARAMS.NO)
   const [newMessStudio,setnewMessStudio]=useState(DEFAULT_PARAMS.NO)
   const [image, setImage] = useState(null);
@@ -79,6 +97,18 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const [OnlineStudio,setOnlineStudio]=useState(DEFAULT_PARAMS.NO)
   const [messagesUser, setMessagesUser] = useState([]);
   const [messagesStudio, setMessagesStudio] = useState([]);
+  const callUserOnesignal =()=>{
+    try {
+      Data
+      .ref(`/UserIdOneSignal/${data._id}`)
+      .on("value",snapot=>{
+        const {userId}=snapot.val()
+        setStudioOnesignal(userId)
+      })
+    } catch (error) {
+      
+    }
+  }
   const checkRoomsUSer = async () => {
     setLoading(true)
     const check = await database().ref("rooms").on('value', (snal) => {
@@ -195,6 +225,9 @@ const ChatScreen = ({ route, navigation, ...props }) => {
     }
   }
   const Send = (Messages = []) => {
+    if(OnlineStudio===DEFAULT_PARAMS.NO){
+      Notification()
+    }
     Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key, null, null, data,readStudio,null,newMessStudio,OnlineStudio)
     setLoadata(true)
   }
@@ -210,6 +243,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
     }
 }
   useEffect(() => {
+    callUserOnesignal()
     FirtMess()
     CheckOnlineStudio(data._id)
     checkRoomsUSer()
@@ -258,7 +292,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   // console.log("image", image);
   // console.log("imageMess", imageMessages);
   // console.log("Category", params.user.Category);
-  // console.log("ReadStudio",readStudio);
+  console.log("studioOnesignal",studioOnesignal);
   
   return (
     <SafeAreaView style={styles.Container}>

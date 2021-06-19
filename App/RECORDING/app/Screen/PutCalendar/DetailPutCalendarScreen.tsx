@@ -17,6 +17,7 @@ import FastImage from 'react-native-fast-image';
 import {getCurrentDate,getCurrentDay,getCurrentMonth,getCurrentYear} from '../../utils/FuncHelper';
 import {showMessages} from '../../utils/AlertHelper';
 import { callNumber } from '../../utils/CallPhone'
+import OneSignal from 'react-native-onesignal';
 import Fire from '../../firebase/firebaseSvc';
 import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
 import Reactotron from 'reactotron-react-native';
@@ -174,6 +175,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     const { data,params } = route.params;
     const Content =[];
     const DB = database();
+    const [studioOnesignal,setStudioOnesignal]=useState(null)
     const putKey = database().ref().push().key;
     const [intro, setIntro] = useState([])
     const [Users, setUsers] = useState({
@@ -278,10 +280,35 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
             }
         })
     }
+    const callUserOnesignal =()=>{
+        try {
+            DB
+          .ref(`/UserIdOneSignal/${data._id}`)
+          .on("value",snapot=>{
+            const {userId}=snapot.val()
+            setStudioOnesignal(userId)
+          })
+        } catch (error) {
+          
+        }
+      }
     useEffect(() => {
+        callUserOnesignal()
         CallUser()
         CallIntro()
     }, [])
+    const Notification =async()=>{
+        const notificationObj = {
+          contents: {en:  R.string.NotificationPut+" "+params.user.Name},
+          include_player_ids: [studioOnesignal]
+        };
+        const jsonString = JSON.stringify(notificationObj);
+        OneSignal.postNotification(jsonString, (success) => {
+          console.log("Success:", success);
+        }, (error) => {
+          console.log("Error:", error );
+        });
+      }
     const checkRoomsUSer = async () => {
         const check = await database().ref("rooms").on('value', (snal) => {
             snal ? snal.forEach(keyroom => {
@@ -383,7 +410,8 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                         toggleModalPut(),
                         PutCalendar(),
                         PutActiveUser(),
-                        PutNotification()
+                        PutNotification(),
+                        Notification()
                     }}
                 />
             </View>
