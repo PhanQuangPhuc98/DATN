@@ -43,10 +43,7 @@ const SearchUser = (lable, onChangeText) => {
 }
 
 const ListChatScreen = () => {
-    let studio = [];
-    let Data ={};
     let users = [];
-    // const [Studio, setStudio] = useState(null);
     const [User, setUser] = useState({
         FulldataUsers: users,
         DataUsers: users
@@ -78,7 +75,6 @@ const ListChatScreen = () => {
         }, 500);
     }
     const Zoomkey = []
-    const [active, setActive] = useState(false)
     const [Zoom, setKey] = useState({
         fullZoom: [],
         dataZoom: []
@@ -88,15 +84,10 @@ const ListChatScreen = () => {
         newPage: 9
     })
     const DB = database()
-    const pushMessal = [];
-    const [messages, setMessages] = useState([])
-    const [allmessages, setAllMessages] = useState([])
     var onEndReachedCalledDuringMomentum = true;
     const onMomentumScrollBegin = () => {
         onEndReachedCalledDuringMomentum = false;
     };
-    const [currentList, setCurrentList] = useState(DataHistory)
-    const [newtList, setNewList] = useState([])
     const newlist = Zoom.dataZoom.slice(page.currentPage, page.newPage)
     const handleLoadMore = () => {
         setPage({
@@ -121,13 +112,9 @@ const ListChatScreen = () => {
     const checkRoomsStudio = () => {
         setTimeout(()=>{
             const check =  DB.ref("rooms")
-            .on('value', (snal) => {
+            .once('value', (snal) => {
                 snal.forEach(keyroom => {
                     const { friend, key, me, avatar, messagesUser, name,newMessStudio,newMessUser, messagesStudio, newCategory, RedStudio,RedUser } = keyroom.val();
-                    
-                    Data=keyroom.val();
-                    setMessages([keyroom.val()])
-                    // console.log("data",keyroom.val())
                     if (friend === Fire.uid) {
                         Zoomkey.push({
                             friend: friend,
@@ -148,11 +135,11 @@ const ListChatScreen = () => {
                 })
                 setKey({
                     ...Zoom,
-                    fullZoom: Zoomkey,
-                    dataZoom: Zoomkey
+                    fullZoom: Zoomkey.reverse(),
+                    dataZoom: Zoomkey.reverse()
                 })
             })
-        },500)
+        },1500)
 
     }
     const CallAcout = () => {
@@ -229,11 +216,11 @@ const ListChatScreen = () => {
     }
     useEffect(() => {
         checkRoomsStudio()
-        CallAcout()
     }, [])
+    useEffect(() => {
+        CallAcout()
+    }, [Zoom.fullZoom])
     const RenderItem = ({ index, item }) => {
-        // console.log("RedStudio",item.RedUser);
-        
         return (
             <TouchableOpacity
                 onPress={() => {
@@ -246,10 +233,6 @@ const ListChatScreen = () => {
                         }
                     })
                     UpdateRead(item.key)
-                    // alert(index)
-                    // item.key ===item.key?alert("yes"):alert("no")
-                    // item?setActive(!active):setActive(active)
-                    // alert(item.name);
                 }}
                 style={[styles.HeaderPerson, { borderBottomWidth: 0.5, width: width - 40,height:80 , marginHorizontal:20}]}>
                 <Avatar
@@ -298,10 +281,10 @@ const ListChatScreen = () => {
             </SafeAreaView>
         )
     }
-    // console.log("Zoom", Zoom.dataZoom);
+    console.log("Zoom", Zoom.dataZoom);
     // Reactotron.log("User", User)
     // Reactotron.log("Studio", Studio)
-      Reactotron.log("Mess",messages);
+      //console.log("Mess",messages);
 
     return (
         <SafeAreaView style={styles.Container}>

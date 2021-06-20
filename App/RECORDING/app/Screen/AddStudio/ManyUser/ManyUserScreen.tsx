@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator,RefreshControl, Dimensions, TextInput, Platform, FlatList } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, TouchableOpacity, ScrollView, ActivityIndicator, RefreshControl, Dimensions, TextInput, Platform, FlatList } from 'react-native'
 import FastImage from 'react-native-fast-image';
 import images from '../../../assets/imagesAsset';
 import R from '../../../assets/R';
@@ -7,16 +7,12 @@ import { colors } from '../../../constants/Theme';
 import NavigationUtil from '../../../navigation/NavigationUtil';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar, ListItem } from 'react-native-elements'
-import SectionedMultiSelect from "react-native-sectioned-multi-select";
-import DatePicker from 'react-native-datepicker';
-import { CheckBox } from "react-native-elements";
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER, SCREEN_ROUTER_APP_ADD } from '../../../utils/Constant';
 import { showMessages } from '../../../utils/AlertHelper'
 import Fire, { database, Auth } from '../../../firebase/firebaseSvc';
 import Reactotron from 'reactotron-react-native';
 import { DataHistory } from '../../../constants/Mockup';
 import ScreenComponent from '../../../components/ScreenComponent'
-import { useFocusEffect } from '@react-navigation/native';
 const { height, width } = Dimensions.get('window');
 const Back = (onPress) => {
     return (
@@ -57,40 +53,22 @@ const ManyUserScreen = () => {
     const [Count, setCount] = useState({
         result: count
     })
-    let studio = [];
-    let users = [];
-    const [Studio, setStudio] = useState({
-        fulldata: studio,
-        data: studio
-    });
-    const [User, setUser] = useState({
-        FulldataUsers: users,
+    const DB = database()
+    const users = [];
+    const [listUser, setListUser] = useState({
+        FulldataUsers: [],
         DataUsers: []
     })
-    const [Categoty, setCategory] = useState({
-        _id: '',
-        Image: '',
-        Name: '',
-        Category: '',
-        Email: '',
-        Phone: '',
-        Sex: '',
-        Birth_Day: '',
-        City: '',
-        District: '',
-        Address: '',
-    })
     const CallUser = () => {
-        Auth().onAuthStateChanged(user => {
-            if (user) {
-                const onValueChange = database()
-                    .ref(`/ListCustomer/${Fire.uid}/List/`)
-                    .on('child_added', (snapshot) => {
-                        const {Name, IdStudio,IdUser, Image, Phone, Email, City, District, Address } = snapshot.val()
-                         if (IdStudio=== Fire.uid) {
+        setTimeout(() => {
+            const onValueChange = DB.ref(`/ListCustomer/${Fire.uid}/List/`)
+                .once('value', (snapshot) => {
+                    snapshot.forEach((snap) => {
+                        const { Name, IdStudio, IdUser, Image, Phone, Email, City, District, Address } = snap.val();
+                        if (IdStudio === Fire.uid) {
                             users.push({
                                 IdStudio: IdStudio,
-                                IdUser:IdUser,
+                                IdUser: IdUser,
                                 Image: Image,
                                 Name: Name,
                                 Email: Email,
@@ -99,49 +77,27 @@ const ManyUserScreen = () => {
                                 District: District,
                                 Address: Address,
                             })
-                        } 
-                        console.log("users",users);
-                        setUser({
-                            ...User,
-                            FulldataUsers: users,
-                        })
-                    });
-            }
-        })
+                        }
+                    })
+                    setListUser({
+                        ...listUser,
+                        FulldataUsers: users.reverse(),
+                        DataUsers: users.reverse()
+                    })
+                })
+        }, 1000)
     }
     const handleSearch = (search) => {
         const formatText = search.toLowerCase();
-        console.log('search', search);
         console.log('formatText', formatText);
         setTimeout(() => {
-            setUser({
-                FulldataUsers: User.FulldataUsers,
-                DataUsers: formatText.length > 0 ? User.FulldataUsers.filter(item =>
-                    item ? item.Name.toLowerCase().includes(formatText) : []
-                ) : []
+            setListUser({
+                ...listUser,
+                DataUsers: listUser.FulldataUsers.filter(item =>
+                    item ? item.Name.toLowerCase().includes(formatText) : item
+                )
             }
             )
-            if (User.DataUsers.length > 0) {
-                for (let i = 0; i < User.DataUsers.length; i++) {
-                    count++;
-                    console.log("For1", count);
-
-                    setCount({
-                        ...Count,
-                        result: count
-                    })
-
-                }
-            }
-            if (User.DataUsers.length < 0) {
-                for (let i = 0; i < User.DataUsers.length; i++) {
-                    count -2;
-                    console.log("For2", count);
-                    setCount({
-                        result: 0
-                    })
-                }
-            }
         }, 500);
     }
     const [page, setPage] = useState({
@@ -152,9 +108,7 @@ const ManyUserScreen = () => {
     const onMomentumScrollBegin = () => {
         onEndReachedCalledDuringMomentum = false;
     };
-    const [currentList, setCurrentList] = useState(DataHistory)
-    const [newtList, setNewList] = useState([])
-    const newlist = User.DataUsers.length <= 0 ? User.FulldataUsers.slice(page.currentPage, page.newPage) : User.DataUsers.slice(page.currentPage, page.newPage)
+    const newlist = listUser.DataUsers.slice(page.currentPage, page.newPage)
     const handleLoadMore = () => {
         setPage({
             ...page,
@@ -167,12 +121,13 @@ const ManyUserScreen = () => {
     }
     useEffect(() => {
         CallUser()
-    }, [])
+    }, [listUser.FulldataUsers])
+    // console.log("UserData", listUser.FulldataUsers);
     const RenderItem = ({ index, item }) => {
 
         return (
             <TouchableOpacity
-                onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER.APPADD, { screen: SCREEN_ROUTER_APP_ADD.DETAILUSER,params:{data:item} }) }}
+                onPress={() => { NavigationUtil.navigate(SCREEN_ROUTER.APPADD, { screen: SCREEN_ROUTER_APP_ADD.DETAILUSER, params: { data: item } }) }}
                 style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 20, width: width - 40, }]}>
                 <Avatar
                     size={56}
@@ -186,14 +141,12 @@ const ManyUserScreen = () => {
                     <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
                         {item.Phone}
                     </Text>
-    
+
                 </View>
             </TouchableOpacity>
         );
     }
-    
-    
-    const RenderListUser = (DataHistory, handleLoadMore, onMomentumScrollBegin, cout) => {
+    const RenderListUser = (DataHistory, handleLoadMore, onMomentumScrollBegin, onRefresh) => {
         return (
             <SafeAreaView style={{ borderTopWidth: 0.5, flex: 1 }}>
                 {/* {RenderResultSearch(cout)} */}
@@ -205,18 +158,14 @@ const ManyUserScreen = () => {
                     onEndReachedThreshold={0.1}
                     refreshControl={<RefreshControl
                         refreshing={false}
-                        onRefresh={()=>{CallUser()}}
+                        onRefresh={onRefresh}
                     />}
                     onEndReached={handleLoadMore}
                     onMomentumScrollBegin={onMomentumScrollBegin}
-                // onRefresh={Refes}
                 />
             </SafeAreaView>
         )
     }
-    console.log("UserData", User.FulldataUsers);
-    console.log("coutTT", Count.result);
-    console.log("coutDD", 1+9);
 
     return (
         <SafeAreaView style={styles.Container}>
@@ -230,7 +179,7 @@ const ManyUserScreen = () => {
                 children={
                     <SafeAreaView style={styles.Container}>
                         {SearchUser(R.string.Search_User, handleSearch)}
-                        {RenderListUser(newlist, handleLoadMore, onMomentumScrollBegin, Count.result)}
+                        {RenderListUser(newlist, handleLoadMore, onMomentumScrollBegin, () => { CallUser() })}
                     </SafeAreaView>
                 }
             />

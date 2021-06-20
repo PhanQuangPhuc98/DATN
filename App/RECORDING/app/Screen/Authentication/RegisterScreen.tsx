@@ -166,12 +166,23 @@ const RegisterScreen = ({route,navigation,...props}) => {
       console.log(error);
     }
   }
-  const UpdateOnline =(token)=>{
+  const UpdateOnlineUser =(token)=>{
     try {
       Database
       .ref(`/Online/${token}/`)
       .update({
-        Online:DEFAULT_PARAMS.YES
+        OnlineUser:DEFAULT_PARAMS.YES
+      })
+    } catch (error) {
+      
+    }
+  }
+  const UpdateOnlineStudio =(token)=>{
+    try {
+      Database
+      .ref(`/Online/${token}/`)
+      .update({
+        OnlineStudio:DEFAULT_PARAMS.YES
       })
     } catch (error) {
       
@@ -193,7 +204,6 @@ const RegisterScreen = ({route,navigation,...props}) => {
           CreatIntro()
           CreatPrice()
         }
-      UpdateOnline(res.user.uid.toString())
       UpdateUserOneSignal(res.user.uid.toString())
       setLoading(false),
         setToken(res),
@@ -208,14 +218,14 @@ const RegisterScreen = ({route,navigation,...props}) => {
             screen: SCREEN_ROUTER_APP_ADD.MANYUSER,
           })
           : alert(R.string.pleaseRegister);
-      }, 500):
+      }, 500)&&UpdateOnlineUser(res.user.uid.toString()):
       setTimeout(() => {
         !token
           ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN, {
             screen: SCREEN_ROUTER_APP.HOME,
           })
           : alert(R.string.pleaseRegister);
-      }, 500)
+      }, 500)&&UpdateOnlineStudio(res.user.uid.toString())
       showMessages(R.string.notification, 'Đăng ký thành công!');
     } catch (error) {
       setLoading(false), Reactotron.log('error', error);

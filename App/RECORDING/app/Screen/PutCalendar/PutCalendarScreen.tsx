@@ -94,7 +94,7 @@ const PutCalendarScreen = () => {
                 // console.log("state = definitely signed in")
                 const onValueChange = database()
                     .ref('/users/')
-                    .on('value', (snapshot) => {
+                    .once('value', (snapshot) => {
                         snapshot.forEach((snap)=>{
                             const {_id,Image,Name,Category,email,Phone,Sex,Birth_Day,City,District,Address,newPrice,oldPrice}= snap.val()
                             if (Category == "1" && _id != Fire.uid) {
@@ -163,7 +163,7 @@ const PutCalendarScreen = () => {
     }
     useEffect(() => {
         CallUser()
-    }, [])
+    }, [Studio])
     const handleSearch = (search) => {
         const formatText = search.toLowerCase();
         console.log(formatText);

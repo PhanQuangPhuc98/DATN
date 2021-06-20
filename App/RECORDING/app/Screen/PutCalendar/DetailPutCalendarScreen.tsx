@@ -375,7 +375,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     // Reactotron.log("data", data)
     // Reactotron.log("user", Users)
     // Reactotron.log("key", key)
-    // console.log("Key",key);
+    console.log("studioOnesignal",studioOnesignal);
     var x = parseInt('1000',10);
     var y = parseInt('1000',10);
     console.log("Number",x+y);

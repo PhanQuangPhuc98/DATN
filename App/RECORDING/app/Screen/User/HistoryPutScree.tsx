@@ -39,23 +39,30 @@ const Back = (onPress) => {
 const RenderItem = ({ index, item }) => {
 
     return (
-        <SafeAreaView
-            style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 20, width: width - 40, }]}>
-            <Avatar
-                size={56}
-                avatarStyle={styles.AvatarStyle}
-                source={item.ImageStudio ? { uri: item.ImageStudio } : images.ic_User}>
-            </Avatar>
-            <View style={{ paddingHorizontal: 10 }}>
-                <Text style={styles.TextName}>
-                    {item.NameStudio}
-                </Text>
-                <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
-                    {item.PhoneStudio}
-                </Text>
+        <View style={[styles.HeaderPerson, { borderBottomWidth: 0.5, marginHorizontal: 35, width: width - 80, flex: 1 }]}>
+            <View style={{width:width/2,flexDirection: 'row'}}>
+                <Avatar
+                    size={56}
+                    avatarStyle={styles.AvatarStyle}
+                    source={item.ImageUser?{uri:item.ImageUser}:images.ic_User}>
+                </Avatar>
+                <View style={{ paddingHorizontal: 10 }}>
+                    <Text style={styles.TextName}>
+                        {item.NameUser}
+                    </Text>
+                    <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
+                        {item.PhoneUser}
+                    </Text>
 
+                </View>
             </View>
-        </SafeAreaView>
+
+            <View style={{width:width/2, paddingVertical:32,paddingHorizontal:35 }}>
+                <Text style={{fontSize: 14, color: colors.focus, }}>
+                    {item.Date}
+                </Text>
+            </View>
+        </View>
     );
 }
 
@@ -172,7 +179,7 @@ const styles = StyleSheet.create({
         backgroundColor: colors.white,
         height: height / 10,
         paddingVertical: 10,
-        paddingHorizontal: 24,
+        // paddingHorizontal: 10,
         marginBottom: 5,
     },
     TextName: { fontSize: 16, fontFamily: R.fonts.bold },
