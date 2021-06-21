@@ -115,7 +115,7 @@ const NotificationScreen = () => {
         try {
             DB
             .ref('Notification')
-            .on("value",snapot=>{
+            .once("value",snapot=>{
                 snapot.forEach((snap)=>{
                     setisLoading(false)
                     const {NameUser,IdUser,IdStudio,Red,Date,Put,Messages,key}=snap.val()
@@ -149,11 +149,11 @@ const NotificationScreen = () => {
             console.log(error);
         }
     }
-    console.log("list",ListNotification);
+    //console.log("list",ListNotification);
     
     useEffect(() => {
         CallNotification()
-    }, [])
+    }, [ListNotification])
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent

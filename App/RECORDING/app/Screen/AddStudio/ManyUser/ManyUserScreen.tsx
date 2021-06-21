@@ -53,20 +53,21 @@ const ManyUserScreen = () => {
     const [Count, setCount] = useState({
         result: count
     })
+    const [Search, setSearch] = useState(false)
     const DB = database()
-    const users = [];
+    const User = [];
     const [listUser, setListUser] = useState({
         FulldataUsers: [],
         DataUsers: []
     })
     const CallUser = () => {
         setTimeout(() => {
-            const onValueChange = DB.ref(`/ListCustomer/${Fire.uid}/List/`)
+            const onValueChange = DB.ref('/Customer/'+Fire.uid)
                 .once('value', (snapshot) => {
                     snapshot.forEach((snap) => {
                         const { Name, IdStudio, IdUser, Image, Phone, Email, City, District, Address } = snap.val();
                         if (IdStudio === Fire.uid) {
-                            users.push({
+                            User.push({
                                 IdStudio: IdStudio,
                                 IdUser: IdUser,
                                 Image: Image,
@@ -81,14 +82,25 @@ const ManyUserScreen = () => {
                     })
                     setListUser({
                         ...listUser,
-                        FulldataUsers: users.reverse(),
-                        DataUsers: users.reverse()
+                        FulldataUsers: User.reverse(),
+                        DataUsers: User.reverse()
                     })
                 })
         }, 1000)
     }
+    useEffect(() => {
+        if(Search===false){
+            return CallUser()
+        }
+    }, [listUser.FulldataUsers,Search])
     const handleSearch = (search) => {
         const formatText = search.toLowerCase();
+        if (formatText != '') {
+            setSearch(true)
+        }
+        else {
+            setSearch(false)
+        }
         console.log('formatText', formatText);
         setTimeout(() => {
             setListUser({
@@ -119,10 +131,8 @@ const ManyUserScreen = () => {
 
         // setNewList(DataHistory.slice(page.currentPage,page.newPage))
     }
-    useEffect(() => {
-        CallUser()
-    }, [listUser.FulldataUsers])
     // console.log("UserData", listUser.FulldataUsers);
+    ///alert(JSON.stringify(listUser.FulldataUsers))
     const RenderItem = ({ index, item }) => {
 
         return (

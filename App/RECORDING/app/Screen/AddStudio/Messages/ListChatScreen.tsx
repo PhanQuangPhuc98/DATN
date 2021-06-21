@@ -9,7 +9,7 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 import { Avatar, ListItem } from 'react-native-elements'
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import DatePicker from 'react-native-datepicker';
-import {DEFAULT_PARAMS} from '../../../constants/Constant';
+import { DEFAULT_PARAMS } from '../../../constants/Constant';
 import { CheckBox } from "react-native-elements";
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER, SCREEN_ROUTER_APP_ADD } from '../../../utils/Constant';
 import { showMessages } from '../../../utils/AlertHelper'
@@ -44,6 +44,7 @@ const SearchUser = (lable, onChangeText) => {
 
 const ListChatScreen = () => {
     let users = [];
+    const [Search, setSearch] = useState(false)
     const [User, setUser] = useState({
         FulldataUsers: users,
         DataUsers: users
@@ -62,8 +63,15 @@ const ListChatScreen = () => {
         Address: '',
     })
     const handleSearch = (search) => {
+        console.log("text", search);
         const formatText = search.toLowerCase();
-        console.log(formatText);
+        if (formatText != '') {
+            setSearch(true)
+        }
+        else {
+            setSearch(false)
+        }
+        console.log("formatText",formatText);
         setTimeout(() => {
             setKey({
                 ...Zoom,
@@ -72,7 +80,7 @@ const ListChatScreen = () => {
                 )
             }
             )
-        }, 500);
+        }, 100);
     }
     const Zoomkey = []
     const [Zoom, setKey] = useState({
@@ -103,43 +111,43 @@ const ListChatScreen = () => {
                 .ref(`rooms/${roomKey}/`)
                 .update({
                     RedStudio: DEFAULT_PARAMS.YES,
-                    newMessUser:DEFAULT_PARAMS.NO
+                    newMessUser: DEFAULT_PARAMS.NO
                 })
         } catch (error) {
             console.log(error);
         }
     }
     const checkRoomsStudio = () => {
-        setTimeout(()=>{
-            const check =  DB.ref("rooms")
-            .once('value', (snal) => {
-                snal.forEach(keyroom => {
-                    const { friend, key, me, avatar, messagesUser, name,newMessStudio,newMessUser, messagesStudio, newCategory, RedStudio,RedUser } = keyroom.val();
-                    if (friend === Fire.uid) {
-                        Zoomkey.push({
-                            friend: friend,
-                            key: key,
-                            me: me,
-                            avatar: avatar,
-                            messagesUser: messagesUser,
-                            name: name,
-                            messagesStudio: messagesStudio,
-                            newCategory: newCategory,
-                            RedStudio: RedStudio,
-                            RedUser:RedUser,
-                            newMessUser:newMessUser,
-                            newMessStudio:newMessStudio
-                        })
+        setTimeout(() => {
+            const check = DB.ref("rooms")
+                .once('value', (snal) => {
+                    snal.forEach(keyroom => {
+                        const { friend, key, me, avatar, messagesUser, name, newMessStudio, newMessUser, messagesStudio, newCategory, RedStudio, RedUser } = keyroom.val();
+                        if (friend === Fire.uid) {
+                            Zoomkey.push({
+                                friend: friend,
+                                key: key,
+                                me: me,
+                                avatar: avatar,
+                                messagesUser: messagesUser,
+                                name: name,
+                                messagesStudio: messagesStudio,
+                                newCategory: newCategory,
+                                RedStudio: RedStudio,
+                                RedUser: RedUser,
+                                newMessUser: newMessUser,
+                                newMessStudio: newMessStudio
+                            })
 
-                    }
+                        }
+                    })
+                    setKey({
+                        ...Zoom,
+                        fullZoom: Zoomkey.reverse(),
+                        dataZoom: Zoomkey.reverse()
+                    })
                 })
-                setKey({
-                    ...Zoom,
-                    fullZoom: Zoomkey.reverse(),
-                    dataZoom: Zoomkey.reverse()
-                })
-            })
-        },1500)
+        }, 1000)
 
     }
     const CallAcout = () => {
@@ -215,11 +223,13 @@ const ListChatScreen = () => {
         })
     }
     useEffect(() => {
-        checkRoomsStudio()
-    }, [])
+        if(Search===false){
+            return checkRoomsStudio()
+        }
+    }, [Zoom.fullZoom,Search])
     useEffect(() => {
         CallAcout()
-    }, [Zoom.fullZoom])
+    }, [])
     const RenderItem = ({ index, item }) => {
         return (
             <TouchableOpacity
@@ -234,7 +244,7 @@ const ListChatScreen = () => {
                     })
                     UpdateRead(item.key)
                 }}
-                style={[styles.HeaderPerson, { borderBottomWidth: 0.5, width: width - 40,height:80 , marginHorizontal:20}]}>
+                style={[styles.HeaderPerson, { borderBottomWidth: 0.5, width: width - 40, height: 80, marginHorizontal: 20 }]}>
                 <Avatar
                     size={56}
                     avatarStyle={styles.AvatarStyle}
@@ -245,18 +255,18 @@ const ListChatScreen = () => {
                         {item.name ? item.name : "Khách hàng đang tạo phòng"}
                     </Text>
                     {item.newCategory === "0" ?
-                    <Text 
-                    numberOfLines={5}
-                    ellipsizeMode={"tail"}
-                    style={[styles.TextName, { fontSize: 14, color: item.RedStudio === DEFAULT_PARAMS.NO &&item.newMessUser===DEFAULT_PARAMS.YES? colors.black : colors.focus, marginVertical: 10,height:60 }]}>
-                        { item.messagesUser}
-                    </Text>:
-                    <Text 
-                    numberOfLines={5}
-                    ellipsizeMode={"tail"}
-                    style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10,height:60 }]}>
-                    {"Bạn :" + " " + item.messagesStudio}
-                </Text>
+                        <Text
+                            numberOfLines={5}
+                            ellipsizeMode={"tail"}
+                            style={[styles.TextName, { fontSize: 14, color: item.RedStudio === DEFAULT_PARAMS.NO && item.newMessUser === DEFAULT_PARAMS.YES ? colors.black : colors.focus, marginVertical: 10, height: 60 }]}>
+                            {item.messagesUser}
+                        </Text> :
+                        <Text
+                            numberOfLines={5}
+                            ellipsizeMode={"tail"}
+                            style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10, height: 60 }]}>
+                            {"Bạn :" + " " + item.messagesStudio}
+                        </Text>
                     }
                 </View>
             </TouchableOpacity>
@@ -281,10 +291,10 @@ const ListChatScreen = () => {
             </SafeAreaView>
         )
     }
-    console.log("Zoom", Zoom.dataZoom);
+    // console.log("Zoom", Zoom.dataZoom);
     // Reactotron.log("User", User)
     // Reactotron.log("Studio", Studio)
-      //console.log("Mess",messages);
+    console.log("search", Search);
 
     return (
         <SafeAreaView style={styles.Container}>

@@ -51,6 +51,7 @@ const Search = (onChangeText, placeholder) => {
 const PutCalendarScreen = () => {
     let studio = [];
     let users = [];
+    const [searchStudio, setSearchStudio] = useState(false)
     const [Studio, setStudio] = useState({
         fulldata: studio,
         data: studio
@@ -162,10 +163,18 @@ const PutCalendarScreen = () => {
         })
     }
     useEffect(() => {
-        CallUser()
-    }, [Studio])
+        if(searchStudio===false){
+            return CallUser()
+        }
+    }, [Studio.fulldata,setSearchStudio])
     const handleSearch = (search) => {
         const formatText = search.toLowerCase();
+        if (formatText != '') {
+            setSearchStudio(true)
+        }
+        else {
+            setSearchStudio(false)
+        }
         console.log(formatText);
         setTimeout(() => {
             setStudio({
@@ -323,8 +332,9 @@ const styles = StyleSheet.create({
         width: 165,
         borderRadius: 10,
         marginVertical: 5,
-        marginRight:10
-        // marginHorizontal: 10
+        //paddingHorizontal:5,
+        marginRight:30,
+        marginHorizontal: 5
     },
     ImgItem: { height: 146, width: 165 },
     StyleTextItem: { fontSize: 16, fontFamily: R.fonts.bold, color: colors.black },

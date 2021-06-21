@@ -338,7 +338,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     const PutActiveUser =()=>{
         try {
             DB
-            .ref(`/ListCustomer/${data._id}/List/${Fire.uid}`)
+            .ref(`/Customer/${data._id}/${Fire.uid}`)
             .update({
                  Name:params.user.Name,
                  IdUser:params.user._id,

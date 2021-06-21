@@ -289,7 +289,8 @@ const ButtonTab = () => {
                 }
               />
             )
-          }
+          },
+          tabBarBadge: 3
         }}
       />
       <Tab.Screen
@@ -450,6 +451,7 @@ const ButtonTabAdd =()=>{
               />
             )
           },
+          tabBarBadge: 3
         }}
       />
       <TabAdd.Screen

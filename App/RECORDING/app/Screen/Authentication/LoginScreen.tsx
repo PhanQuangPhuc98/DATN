@@ -143,7 +143,8 @@ const LoginScreen = ({ navigation }) => {
           ASYNC_STORAGE.TOKEN,
           res.user.uid.toString(),
         );
-
+        console.log("token",res.user.uid.toString());
+        
         // UpdateOnline(res.user.uid.toString())
       showMessages(R.string.notification, 'Đăng nhập thành công!');
       category.id==="0"?
