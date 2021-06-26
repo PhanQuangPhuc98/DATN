@@ -79,6 +79,7 @@ const RegisterScreen = ({route,navigation,...props}) => {
     District: '',
     Address: '',
   })
+  const putKey = database().ref().push().key;
   const onSelectedItemsChange = (selectedItems) => {
     setPayload({
       ...payload,
@@ -106,6 +107,11 @@ const RegisterScreen = ({route,navigation,...props}) => {
     })
     console.log("Category",Category);
    
+  }
+  const getUser =async ()=>{
+    const { userId, } = await OneSignal.getDeviceState();
+    console.log("userId",userId);
+    
   }
   const UpdateUserOneSignal =async(token)=>{
     const { userId, } = await OneSignal.getDeviceState();
@@ -140,9 +146,33 @@ const RegisterScreen = ({route,navigation,...props}) => {
         });
     }, 2000);
   }
+  const ChangeUserIdOnesignal =(token)=>{
+    // Setting External User Id with Callback Available in SDK Version 3.7.0+
+  OneSignal.setExternalUserId(token, (results) => {
+  // The results will contain push and email success statuses
+  console.log('Results of setting external user id');
+  console.log(results);
+  
+  // // Push can be expected in almost every situation with a success status, but
+  // // as a pre-caution its good to verify it exists
+  // if (results.push && results.push.success) {
+  //   console.log('Results of setting external user id push status:');
+  //   console.log(results.push.success);
+  // }
+  
+  // // Verify the email is set or check that the results have an email success status
+  // if (results.email && results.email.success) {
+  //   console.log('Results of setting external user id email status:');
+  //   console.log(results.email.success);
+  // }
+});
+
+  }
   useEffect(() => {
     CallCity()
     DB()
+    // ChangeUserIdOnesignal()
+    getUser()
   }, [])
   const CreatIntro =()=>{
     const db = database()
@@ -168,6 +198,7 @@ const RegisterScreen = ({route,navigation,...props}) => {
   }
   const UpdateOnlineUser =(token)=>{
     try {
+      //ChangeUserIdOnesignal(token)
       Database
       .ref(`/Online/${token}/`)
       .update({
@@ -179,6 +210,7 @@ const RegisterScreen = ({route,navigation,...props}) => {
   }
   const UpdateOnlineStudio =(token)=>{
     try {
+      //ChangeUserIdOnesignal(token)
       Database
       .ref(`/Online/${token}/`)
       .update({
@@ -204,6 +236,7 @@ const RegisterScreen = ({route,navigation,...props}) => {
           CreatIntro()
           CreatPrice()
         }
+      //ChangeUserIdOnesignal(res.user.uid.toString())
       UpdateUserOneSignal(res.user.uid.toString())
       setLoading(false),
         setToken(res),

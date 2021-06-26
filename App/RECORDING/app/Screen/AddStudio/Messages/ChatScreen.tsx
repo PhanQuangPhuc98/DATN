@@ -12,7 +12,7 @@ import {
 } from 'react-native';
 import R from '../../../assets/R';
 import { firebase } from '../../../firebase/firebaseSvc'
-import Fire, { Auth, database,storage } from '../../../firebase/firebaseSvc'
+import Fire, { Auth, database, storage } from '../../../firebase/firebaseSvc'
 import ImagePicker from 'react-native-image-crop-picker'
 import image from '../../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
@@ -25,14 +25,14 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { colors } from '../../../constants/Theme';
 import NavigationUtil from '../../../navigation/NavigationUtil';
 const { height, width } = Dimensions.get('window');
-const Back = (onPress,lable) => {
+const Back = (onPress, lable) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.HeaderBack}>
       <FastImage
         style={styles.ic_Back}
         source={image.ic_back}
         resizeMode={FastImage.resizeMode.contain}></FastImage>
-      <Text style={styles.TextHeader}>{R.string.ChatWithUser+" "+lable}</Text>
+      <Text style={styles.TextHeader}>{R.string.ChatWithUser + " " + lable}</Text>
     </TouchableOpacity>
   );
 };
@@ -61,51 +61,64 @@ const renderIsloading = () => {
 const ChatScreen = ({ route, navigation, ...props }) => {
   const { data, params } = route.params;
   const [loaData, setLoadata] = useState(false)
+  const [customer, setCustomer] = useState({
+    _id: '',
+    Image: '',
+    Name: '',
+    Category: '',
+    Email: '',
+    Phone: '',
+    Sex: '',
+    Birth_Day: '',
+    City: '',
+    District: '',
+    Address: '',
+  });
   const [uploading, setUploading] = useState(false);
-  const [userOnesignal,setUserOnesignal]=useState(null)
+  const [userOnesignal, setUserOnesignal] = useState(null)
   const [image, setImage] = useState(null);
   const Data = database()
-  const [imageMessages,setImageMessages]=useState(null);
-  const [OnlineUser,setOnlineUser]=useState(DEFAULT_PARAMS.NO)
+  const [imageMessages, setImageMessages] = useState(null);
+  const [OnlineUser, setOnlineUser] = useState(DEFAULT_PARAMS.NO)
   const [isLoading, setLoading] = useState(false);
-  let MessagesStudio=[];
+  let MessagesStudio = [];
   const roomKey = database().ref().push().key;
   const [messagesStudio, setMessagesStudio] = useState([]);
-  const [category,setCategory]=useState({
-    id:''
+  const [category, setCategory] = useState({
+    id: ''
   })
-  const callUserOnesignal =()=>{
+  const callUserOnesignal = () => {
     try {
       Data
-      .ref(`/UserIdOneSignal/${data.me}`)
-      .on("value",snapot=>{
-        const {userId}=snapot.val()
-        setUserOnesignal(userId)
-      })
+        .ref(`/UserIdOneSignal/${data.me}`)
+        .on("value", snapot => {
+          const { userId } = snapot.val()
+          setUserOnesignal(userId)
+        })
     } catch (error) {
-      
+
     }
   }
-  const Notification =async()=>{
+  const Notification = async () => {
     // const { userId,pushToken } = await OneSignal.getDeviceState();
     // console.log("userId",userId);
 
     const notificationObj = {
-      contents: {en: R.string.NotificationMessStudio+" "+params.user.Name},
+      contents: { en: R.string.NotificationMessStudio + " " + params.user.Name },
       include_player_ids: [userOnesignal]
     };
     const jsonString = JSON.stringify(notificationObj);
     OneSignal.postNotification(jsonString, (success) => {
       console.log("Success:", success);
     }, (error) => {
-      console.log("Error:", error );
+      console.log("Error:", error);
     });
   }
-  const DB = async()=>{
-    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+  const DB = async () => {
+    let Category = await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
     setCategory({
       ...category,
-      id:Category
+      id: Category
     })
   }
   const uploadImage = async (image) => {
@@ -124,10 +137,10 @@ const ChatScreen = ({ route, navigation, ...props }) => {
           .getDownloadURL()
           .then((downloadURL) => {
             setImageMessages(downloadURL)
-            Fire.OnSend(roomKey, "","", data.key,downloadURL)
+            Fire.OnSend(roomKey, "", "", data.key, downloadURL)
           })
       })
-   
+
   };
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
@@ -140,12 +153,12 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       setImage(imageUri);
       uploadImage(imageUri)
     });
-    
+
   };
   const CallBackMess = (key) => {
     setLoading(true)
     setTimeout(async () => {
-      const db =  await database().ref(`messages/${key}/`)
+      const db = await database().ref(`messages/${key}/`)
       if (!db) {
         console.log("not network");
         alert("not network")
@@ -153,68 +166,95 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       db.limitToLast(100)
         .on('child_added', snapshot => {
           setLoading(false)
-          const { _id, createdAt: numberStamp, text, user,image } = snapshot.val()
+          const { _id, createdAt: numberStamp, text, user, image } = snapshot.val()
           const createdAt = new Date(numberStamp);
-          const message = { _id, createdAt, text, user,image };
-          if(_id!=1){
+          const message = { _id, createdAt, text, user, image };
+          if (_id != 1) {
             MessagesStudio.push(message)
-            
+
             MessagesStudio.sort((a, b) => {
-            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-          });
-          setMessagesStudio(()=>{
-            return GiftedChat.append(messagesStudio,MessagesStudio)
-          })
+              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+            });
+            setMessagesStudio(() => {
+              return GiftedChat.append(messagesStudio, MessagesStudio)
+            })
           }
         });
     }, 200);
   }
   const Send = (Messages = []) => {
-    if(OnlineUser===DEFAULT_PARAMS.NO){
+    if (OnlineUser === DEFAULT_PARAMS.NO) {
       Notification()
     }
-    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key,null,category.id,data.me,null,data.RedUser,null,null,OnlineUser)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, data.key, null, category.id, data.me, null, data.RedUser, null, null, OnlineUser, params.user,customer)
     setLoadata(true)
   }
   const UpdateRead = (roomKey) => {
     try {
       Data
-            .ref(`rooms/${roomKey}/`)
-            .update({
-                RedStudio: DEFAULT_PARAMS.NO,
-                newMessStudio:DEFAULT_PARAMS.NO
-            })
+        .ref(`rooms/${roomKey}/`)
+        .update({
+          RedStudio: DEFAULT_PARAMS.NO,
+          newMessStudio: DEFAULT_PARAMS.NO
+        })
     } catch (error) {
-        console.log(error);
+      console.log(error);
     }
-}
-const CheckOnlineUser =(token)=>{
-  try {
-    Data
-    .ref(`/Online/${token}/`)
-    .on("value",snapot=>{
-      const {OnlineUser} = snapot.val();
-      setOnlineUser(OnlineUser)
-    })
-  } catch (error) {
-    
   }
-}
+  const CheckOnlineUser = (token) => {
+    try {
+      Data
+        .ref(`/Online/${token}/`)
+        .on("value", snapot => {
+          const { OnlineUser } = snapot.val();
+          setOnlineUser(OnlineUser)
+        })
+    } catch (error) {
+
+    }
+  }
+  const CallCustomer = () => {
+    setTimeout(() => {
+      try {
+        Data
+          .ref(`/users/${data.me}`)
+          .once("value", snaphot => {
+            setCustomer({
+              ...customer,
+              _id: snaphot.val()._id,
+              Image: snaphot.val().Image,
+              Name: snaphot.val().Name,
+              Category: snaphot.val().Category,
+              Email: snaphot.val().email,
+              Phone: snaphot.val().Phone,
+              Sex: snaphot.val().Sex,
+              Birth_Day: snaphot.val().Birth_Day,
+              City: snaphot.val().City,
+              District: snaphot.val().District,
+              Address: snaphot.val().Address,
+            })
+          })
+      } catch (error) {
+        console.log(error);
+      }
+    },1000)
+  }
   useEffect(() => {
     callUserOnesignal()
     DB()
+    CallCustomer()
     CheckOnlineUser(data.me)
     setTimeout(() => {
-       CallBackMess(data.key)
+      CallBackMess(data.key)
     }, 500);
   }, []);
-  // console.log("OnlineUser",OnlineUser);
+  console.log("customer",customer); 
   // console.log("Data",data);
   const renderActions = () => {
     return (
-      <TouchableOpacity 
-      onPress={()=>{takePhotoFromCamera()}}
-      style={styles.Action}>
+      <TouchableOpacity
+        onPress={() => { takePhotoFromCamera() }}
+        style={styles.Action}>
         <FastImage
           style={styles.ImgAction}
           source={R.images.ic_ios_camera}
@@ -241,11 +281,11 @@ const CheckOnlineUser =(token)=>{
       />
     );
   };
-  console.log("Acout",data.RedUser) 
+  console.log("Acout", data.RedUser)
   // Reactotron.log("Me",params.user.Image)
   // console.log("Category",category.id);
-  
-//   console.log('key2', Key.key);
+
+  //   console.log('key2', Key.key);
   // console.log("key1", key);
   // console.log("Zooomid", ZoomId);
   // console.log("messseuser", messagesUser);
@@ -260,7 +300,7 @@ const CheckOnlineUser =(token)=>{
         leftComponent={Back(() => {
           NavigationUtil.goBack();
           UpdateRead(data.key)
-        },data.name)}
+        }, data.name)}
         leftContainerStyle={{ width: 200 }}
         children={
           isLoading === true ? renderIsloading() :

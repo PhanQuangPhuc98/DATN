@@ -300,7 +300,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     const Notification =async()=>{
         const notificationObj = {
           contents: {en:  R.string.NotificationPut+" "+params.user.Name},
-          include_player_ids: [studioOnesignal]
+          include_player_ids: [studioOnesignal],
         };
         const jsonString = JSON.stringify(notificationObj);
         OneSignal.postNotification(jsonString, (success) => {
@@ -379,7 +379,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     var x = parseInt('1000',10);
     var y = parseInt('1000',10);
     console.log("Number",x+y);
-    Reactotron.log("params",params.user)
+    console.log("params",data._id)
     // Reactotron.log("content",intro) 
     return (
         <SafeAreaView style={styles.Container}>
@@ -438,6 +438,9 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                         },
                         Key:{
                             key:key
+                        },
+                        navi:{
+                            Put:DEFAULT_PARAMS.YES
                         }
                     }
                 })

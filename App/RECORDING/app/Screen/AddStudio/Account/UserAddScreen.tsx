@@ -10,6 +10,7 @@ import {
 } from '../../../utils/Constant';
 import { DataUser } from '../../../constants/Mockup'
 import { Avatar } from 'react-native-elements'
+import OneSignal from 'react-native-onesignal';
 import R from '../../../assets/R'
 import { colors } from '../../../constants/Theme'
 import Fire from '../../../firebase/firebaseSvc';
@@ -124,6 +125,25 @@ const UserAddScreen = () => {
         
       }
     }
+    const LogUserId =()=>{
+      OneSignal.removeExternalUserId((results) => {
+        // The results will contain push and email success statuses
+        console.log('Results of removing external user id');
+        console.log(results);
+        // Push can be expected in almost every situation with a success status, but
+        // as a pre-caution its good to verify it exists
+        // if (results.push && results.push.success) {
+        //   console.log('Results of removing external user id push status:');
+        //   console.log(results.push.success);
+        // }
+        
+        // // Verify the email is set or check that the results have an email success status
+        // if (results.email && results.email.success) {
+        //   console.log('Results of removoing external user id email status:');
+        //   console.log(results.email.success);
+        // }
+      });
+    }
     useEffect(() => {
         Auth().onAuthStateChanged(user => {
             if (user) {
@@ -233,6 +253,7 @@ const UserAddScreen = () => {
                   toggleModal();
                   UpdateOnline(Fire.uid)
                   Logout();
+                  //LogUserId();
                   NavigationUtil.navigate(SCREEN_ROUTER.SPLASH)
                 }
                 }

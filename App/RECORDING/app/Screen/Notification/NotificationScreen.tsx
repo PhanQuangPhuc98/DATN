@@ -26,6 +26,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { colors } from '../../constants/Theme';
 import { DataNotification } from '../../constants/Mockup';
 import NavigationUtil from '../../navigation/NavigationUtil';
+import { SCREEN_ROUTER, SCREEN_ROUTER_APP } from '../../utils/Constant';
 const { height, width } = Dimensions.get('window');
 const left = () => {
     return (
@@ -41,16 +42,19 @@ const NotificationScreen = () => {
         newPage: 9
     })
     const DB = database();
-    const List =[];
+    const List = [];
     var onEndReachedCalledDuringMomentum = true;
     const onMomentumScrollBegin = () => {
         onEndReachedCalledDuringMomentum = false;
     };
-    const [ListNotification, setListNotification] = useState([])
-    const [isLoading,setisLoading]= useState(false);
+    const [ListNotification, setListNotification] = useState({
+        fullList: [],
+        List: []
+    })
+    const [isLoading, setisLoading] = useState(false);
     const [currentList, setCurrentList] = useState(DataNotification)
     const [newtList, setNewList] = useState([])
-    const newlist = ListNotification.slice(page.currentPage, page.newPage)
+    const newlist = ListNotification.List.slice(page.currentPage, page.newPage)
     const handleLoadMore = () => {
         setPage({
             ...page,
@@ -61,32 +65,41 @@ const NotificationScreen = () => {
 
         // setNewList(DataHistory.slice(page.currentPage,page.newPage))
     }
-    const CallNotification =()=>{
+    const CallNotification = () => {
         setisLoading(true)
         try {
-            DB
-            .ref('Notification')
-            .once("value",snapot=>{
-                snapot.forEach((snap)=>{
-                    setisLoading(false)
-                    const {NameUser,IdUser,Red,Date,Put,Messages,key}=snap.val()
-                    if(IdUser===Fire.uid){
-                        List.push({
-                            NameUser:NameUser,
-                            IdUser:IdUser,
-                            Red:Red,
-                            Date:Date,
-                            Put:Put,
-                            Messages:Messages,
-                            key:key
+            setTimeout(() => {
+                DB
+                    .ref('Notification')
+                    .once("value", snapot => {
+                        snapot.forEach((snap) => {
+                            setisLoading(false)
+                            const { NameUser, IdUser, Red, Date, Put, Messages, key, Data, Params,roomKey } = snap.val()
+                            if (IdUser === Fire.uid) {
+                                List.push({
+                                    NameUser: NameUser,
+                                    IdUser: IdUser,
+                                    Red: Red,
+                                    Date: Date,
+                                    Put: Put,
+                                    Messages: Messages,
+                                    key: key,
+                                    Data: Data,
+                                    Params: Params,
+                                    roomKey:roomKey
+                                })
+                                setListNotification({
+                                    ...ListNotification,
+                                    fullList: List.reverse(),
+                                    List: List.reverse()
+                                })
+                            }
+                            else if (IdUser != Fire.uid) {
+                                // setListNotification([])
+                            }
                         })
-                        setListNotification(List.reverse())
-                    }
-                    else if(IdUser!=Fire.uid){
-                        // setListNotification([])
-                    }
-                })
-            })
+                    })
+            }, 500)
         } catch (error) {
             setisLoading(false)
             console.log(error);
@@ -105,8 +118,27 @@ const NotificationScreen = () => {
     }
     const RenderItem = ({ index, item }) => {
         return (
-            <SafeAreaView style={{ flexDirection: 'row', borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5,backgroundColor:R.color.colors.white }}>
-                <View style={{marginRight:10}}>
+            <TouchableOpacity
+                onPress={() => {
+                    NavigationUtil.navigate(SCREEN_ROUTER.APP, {
+                        screen: SCREEN_ROUTER_APP.CHAT,
+                        params: {
+                            data: item.Data,
+                            params: {
+                                user: item.Params
+                            },
+                            Key:{
+                                key:item.roomKey
+                            },
+                            navi:{
+                                Put:DEFAULT_PARAMS.NO
+                            }
+                        }
+                    }
+                    )
+                }}
+                style={{ flexDirection: 'row', borderBottomWidth: 0.5, paddingHorizontal: 10, paddingVertical: 5, backgroundColor: R.color.colors.white }}>
+                <View style={{ marginRight: 10 }}>
                     <FastImage
                         source={R.images.ic_Notification}
                         style={styles.ImgScreen}
@@ -115,17 +147,17 @@ const NotificationScreen = () => {
                     />
                 </View>
                 <View>
-                    <Text style={[styles.TextName,{height:45}]}>
-                        {item.Messages===DEFAULT_PARAMS.YES?R.string.NotificationMessStudio+" "+item.NameUser:null}
+                    <Text style={[styles.TextName, { height: 45 }]}>
+                        {item.Messages === DEFAULT_PARAMS.YES ? R.string.NotificationMessStudio + " " + item.NameUser : null}
                     </Text>
                     <Text style={[styles.TextName, { color: R.color.colors.focus }]}>
                         {item.Date}
                     </Text>
                 </View>
-            </SafeAreaView>
+            </TouchableOpacity>
         )
     }
-    const RenderNotifi = (data, handleLoadMore, onMomentumScrollBegin,onRefresh) => {
+    const RenderNotifi = (data, handleLoadMore, onMomentumScrollBegin, onRefresh) => {
         return (
             <SafeAreaView>
                 <FlatList
@@ -142,16 +174,16 @@ const NotificationScreen = () => {
                     />}
                     onMomentumScrollBegin={onMomentumScrollBegin}
                 >
-    
+
                 </FlatList>
             </SafeAreaView>
         )
     }
-    console.log("list",ListNotification);
-    
+   // console.log("list", ListNotification.List);
+
     useEffect(() => {
         CallNotification()
-    }, [ListNotification])
+    }, [])
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -159,8 +191,8 @@ const NotificationScreen = () => {
                 containerStyle={styles.ContainerHeader}
                 statusBarProps={styles.ContainerHeader}
                 children={
-                    <SafeAreaView style={[styles.Container,{paddingHorizontal:15}]}>
-                        {RenderNotifi(newlist, handleLoadMore, onMomentumScrollBegin,()=>{CallNotification()})}
+                    <SafeAreaView style={[styles.Container, { paddingHorizontal: 15 }]}>
+                        {RenderNotifi(newlist, handleLoadMore, onMomentumScrollBegin, () => { CallNotification() })}
                     </SafeAreaView>
                 }
             />

@@ -62,7 +62,7 @@ class FirebaseSvc {
   get timestamp() {
     return firebase.database.ServerValue.TIMESTAMP;
   }
-  OnSend = (_id, text, user, roomKey, image, Category, friend, RedStudio, RedUser,newMessStudio,OnlineStudio,OnlineUser) => {
+  OnSend = (_id, text, user, roomKey, image, Category, friend, RedStudio, RedUser,newMessStudio,OnlineStudio,OnlineUser,data,params) => {
     const db = firebase.database();
     const NotificationKey = db.ref().push().key;
     // console.log("helloPhuc", Category);
@@ -96,6 +96,9 @@ class FirebaseSvc {
       updateUser[`Notification/${NotificationKey}/Date`] = getCurrentDate();
       updateUser[`Notification/${NotificationKey}/Put`] = DEFAULT_PARAMS.NO;
       updateUser[`Notification/${NotificationKey}/Messages`] = DEFAULT_PARAMS.YES;
+      updateUser[`Notification/${NotificationKey}/Data`] = data;
+      updateUser[`Notification/${NotificationKey}/Params`] = params;
+      updateUser[`Notification/${NotificationKey}/roomKey`] = roomKey;
       }
     }
     if (Category === "1" || Category === 1) {
@@ -120,6 +123,9 @@ class FirebaseSvc {
       updateUser[`Notification/${NotificationKey}/RedStudio`] = DEFAULT_PARAMS.YES;
       updateUser[`Notification/${NotificationKey}/RedUser`] = DEFAULT_PARAMS.NO;
       updateUser[`Notification/${NotificationKey}/Messages`] = DEFAULT_PARAMS.YES;
+      updateUser[`Notification/${NotificationKey}/Data`] = data;
+      updateUser[`Notification/${NotificationKey}/Params`] = params;
+      updateUser[`Notification/${NotificationKey}/roomKey`] = roomKey;
       }
     }
     db.ref().update(updateUser).catch(error => console.log('registerRoomError', error));

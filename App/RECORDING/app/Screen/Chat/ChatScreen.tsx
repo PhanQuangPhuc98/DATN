@@ -25,6 +25,7 @@ import OneSignal from 'react-native-onesignal';
 import { colors } from '../../constants/Theme';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import { log } from 'react-native-reanimated';
+import { SCREEN_ROUTER, SCREEN_ROUTER_APP } from '../../utils/Constant';
 const { height, width } = Dimensions.get('window');
 const Back = (onPress, lable) => {
   return (
@@ -63,54 +64,51 @@ const renderIsloading = () => {
   )
 }
 const ChatScreen = ({ route, navigation, ...props }) => {
-  const { data, params, Key } = route.params;
+  const { data, params,Key,navi } = route.params;
   const [loaData, setLoadata] = useState(false)
-  const [studioOnesignal,setStudioOnesignal]=useState(null)
+  const [studioOnesignal, setStudioOnesignal] = useState(null)
   const [uploading, setUploading] = useState(false);
   const Data = database()
   const [key, setKey] = useState(null)
-  const [ZoomId, setZoomId] = useState(null)
- 
-  const Notification =async()=>{
-    // const StudioID= "120e7925-2c79-4343-a42b-4b717d371ae5"
-    // const { userId,pushToken } = await OneSignal.getDeviceState();
-    // console.log("userId",userId);
+  
+  const Notification = async () => {
     const notificationObj = {
-      contents: {en:  R.string.NotificationMess+" "+params.user.Name},
+      contents: { en: R.string.NotificationMess + " " + params.user.Name },
       include_player_ids: [studioOnesignal]
     };
     const jsonString = JSON.stringify(notificationObj);
     OneSignal.postNotification(jsonString, (success) => {
       console.log("Success:", success);
     }, (error) => {
-      console.log("Error:", error );
+      console.log("Error:", error);
     });
   }
-  const [readStudio,setReadStudio]=useState(DEFAULT_PARAMS.NO)
-  const [newMessStudio,setnewMessStudio]=useState(DEFAULT_PARAMS.NO)
+  const [readStudio, setReadStudio] = useState(DEFAULT_PARAMS.NO)
+  const [newMessStudio, setnewMessStudio] = useState(DEFAULT_PARAMS.NO)
   const [image, setImage] = useState(null);
+  const [ischeck,setIsCheck] =useState(true)
   const [imageMessages, setImageMessages] = useState(null);
   const [isLoading, setLoading] = useState(false);
   let MessagesUser = [];
-  let MessagesStudio = [];
   const roomKey = database().ref().push().key;
-  const [OnlineStudio,setOnlineStudio]=useState(DEFAULT_PARAMS.NO)
+  const [OnlineStudio, setOnlineStudio] = useState(DEFAULT_PARAMS.NO)
   const [messagesUser, setMessagesUser] = useState([]);
   const [messagesStudio, setMessagesStudio] = useState([]);
-  const callUserOnesignal =()=>{
+  const callUserOnesignal = () => {
     try {
       Data
-      .ref(`/UserIdOneSignal/${data._id}`)
-      .on("value",snapot=>{
-        const {userId}=snapot.val()
-        setStudioOnesignal(userId)
-      })
+        .ref(`/UserIdOneSignal/${data._id}`)
+        .on("value", snapot => {
+          const { userId } = snapot.val()
+          setStudioOnesignal(userId)
+        })
     } catch (error) {
-      
+
     }
   }
   const checkRoomsUSer = async () => {
     setLoading(true)
+    setIsCheck(true)
     const check = await database().ref("rooms").on('value', (snal) => {
       setLoading(false)
       snal ? snal.forEach(keyroom => {
@@ -118,6 +116,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
           if (keyroom.val().me === params.user._id) {
             setKey(keyroom.val().key)
             setReadStudio(keyroom.val().RedStudio)
+            setIsCheck(false)
             setnewMessStudio(keyroom.val().newMessStudio)
           }
         }
@@ -158,21 +157,8 @@ const ChatScreen = ({ route, navigation, ...props }) => {
     });
 
   };
-  const checkRoomsStudio = async () => {
-    setLoading(true)
-    const check = await database().ref("rooms").on('value', (snal) => {
-      setLoading(false)
-      snal ? snal.forEach(keyroom => {
-        if (params.user.Category === "1" && keyroom.val().me === data._id) {
-          if (keyroom.val().friend === params.user._id) {
-            setKey(keyroom.val().key)
-          }
-        }
-      }) : null
-    })
-  }
   const FirtMess = () => {
-    if (key === null && Key.key === null) {
+    if (key === null&&Key.key===null) {
       return Fire.creatZoom(params.user, data, data)
     }
 
@@ -191,15 +177,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
           const { _id, createdAt: numberStamp, text, user, image } = snapshot.val()
           const createdAt = new Date(numberStamp);
           const message = { _id, createdAt, text, user, image };
-          if (data.Category == DEFAULT_PARAMS.USER && _id != 1) {
-            MessagesStudio.push(message)
-
-            MessagesStudio.sort((a, b) => {
-              return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-            });
-            setMessagesStudio(MessagesStudio)
-          }
-          else if (data.Category == DEFAULT_PARAMS.STUDIO) {
+          if (data.Category == DEFAULT_PARAMS.STUDIO) {
             MessagesUser.push(message)
             MessagesUser.sort((a, b) => {
               return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -212,36 +190,25 @@ const ChatScreen = ({ route, navigation, ...props }) => {
         });
     }, 200);
   }
-  const CheckOnlineStudio =(token)=>{
+  const CheckOnlineStudio = (token) => {
     try {
       Data
-      .ref(`/Online/${token}/`)
-      .on("value",snapot=>{
-        const {OnlineStudio} = snapot.val();
-        setOnlineStudio(OnlineStudio)
-      })
+        .ref(`/Online/${token}/`)
+        .on("value", snapot => {
+          const { OnlineStudio } = snapot.val();
+          setOnlineStudio(OnlineStudio)
+        })
     } catch (error) {
-      
+
     }
   }
   const Send = (Messages = []) => {
-    if(OnlineStudio===DEFAULT_PARAMS.NO){
+    if (OnlineStudio === DEFAULT_PARAMS.NO) {
       Notification()
     }
-    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key, null, null, data,readStudio,null,newMessStudio,OnlineStudio)
+    Fire.OnSend(roomKey, Messages[0].text, Messages[0].user, key, null, null, data, readStudio, null, newMessStudio, OnlineStudio, null,params.user, data)
     setLoadata(true)
   }
-  const UpdateRead = (roomKey) => {
-    try {
-      Data
-            .ref(`rooms/${roomKey}/`)
-            .update({
-                Red: DEFAULT_PARAMS.NO
-            })
-    } catch (error) {
-        console.log(error);
-    }
-}
   useEffect(() => {
     callUserOnesignal()
     FirtMess()
@@ -251,8 +218,8 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       loaData === false ? CallBackMess(key) : null
     }, 500);
   }, [key]);
-  console.log("OnlineStudio",OnlineStudio);
-  
+  console.log("key", key);
+
   const renderActions = () => {
     return (
       <TouchableOpacity
@@ -284,24 +251,19 @@ const ChatScreen = ({ route, navigation, ...props }) => {
       />
     );
   };
-  // console.log('key2', Key.key);
-  // console.log("key1", key);
-  // console.log("Zooomid", ZoomId);
-  // console.log("messseuser", messagesUser);
-  // console.log("messseStudio", messagesStudio);
-  // console.log("image", image);
-  // console.log("imageMess", imageMessages);
-  // console.log("Category", params.user.Category);
-  console.log("studioOnesignal",studioOnesignal);
-  
+
+  console.log("data", data._id);
+  console.log("params", params.user._id);
   return (
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
         containerStyle={styles.ContainerHeader}
         statusBarProps={styles.ContainerHeader}
-        leftComponent={Back(() => {
-          NavigationUtil.goBack();
-        }, R.string.ChatWith + ' ' + data.Name)}
+        leftComponent={Back(() =>
+          {
+            navi.Put===DEFAULT_PARAMS.YES?NavigationUtil.navigate(SCREEN_ROUTER_APP.DETAILPUTCALENDAR):NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.NOTIFY})
+          } 
+        , R.string.ChatWith + ' ' + data.Name)}
         leftContainerStyle={{ width: 200 }}
         children={
           isLoading === true ? renderIsloading() :

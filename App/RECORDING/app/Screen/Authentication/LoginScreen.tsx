@@ -4,7 +4,8 @@ import { Header } from "react-native-elements";
 import NavigationUtil from '../../navigation/NavigationUtil'
 import { colors } from '../../constants/Theme';
 import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
-import R from '../../assets/R'
+import R from '../../assets/R';
+import OneSignal from 'react-native-onesignal';
 import Reactotron from 'reactotron-react-native'
 import image from '../../assets/imagesAsset';
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../../utils/Constant'
@@ -112,6 +113,7 @@ const LoginScreen = ({ navigation }) => {
   }, [navigation]);
   const UpdateOnlineUser =(token)=>{
     try {
+      //ChangeUserIdOnesignal(token)
       Data
       .ref(`/Online/${token}/`)
       .update({
@@ -123,6 +125,7 @@ const LoginScreen = ({ navigation }) => {
   }
   const UpdateOnlineStudio =(token)=>{
     try {
+      //ChangeUserIdOnesignal(token)
       Data
       .ref(`/Online/${token}/`)
       .update({
@@ -144,8 +147,8 @@ const LoginScreen = ({ navigation }) => {
           res.user.uid.toString(),
         );
         console.log("token",res.user.uid.toString());
-        
-        // UpdateOnline(res.user.uid.toString())
+        UpdateUserOneSignal(res.user.uid.toString())
+     // ChangeUserIdOnesignal(res.user.uid.toString())  
       showMessages(R.string.notification, 'Đăng nhập thành công!');
       category.id==="0"?
       setTimeout(() => {
@@ -173,6 +176,26 @@ const LoginScreen = ({ navigation }) => {
     };
 
 
+  }
+  const UpdateUserOneSignal =async(token)=>{
+    const { userId, } = await OneSignal.getDeviceState();
+    try {
+      Data
+      .ref(`/UserIdOneSignal/${token}`)
+      .update({
+        userId:userId
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const ChangeUserIdOnesignal =(token)=>{
+    // Setting External User Id with Callback Available in SDK Version 3.7.0+
+  OneSignal.setExternalUserId(token, (results) => {
+  console.log('Results of setting external user id');
+  console.log(results);
+
+   });
   }
   Reactotron.log('payload', payload);
   console.log("Categorylogin",category.id);
