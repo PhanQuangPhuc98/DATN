@@ -82,6 +82,7 @@ const string = {
   ChatWithUser:'Chat với khách hàng',
   NotificationMess:"Bạn có tin nhắn từ khách hàng",
   NotificationMessStudio:"Bạn có tin nhắn từ phòng thu",
-  NotificationPut:"Bạn có đơn đặt lịch mới từ khách hàng"
+  NotificationPut:"Bạn có đơn đặt lịch mới từ khách hàng",
+  nameStudio:"Tên phòng thu"
 };
 export default string;

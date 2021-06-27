@@ -13,6 +13,8 @@ import { showConfirm } from '../utils/AlertHelper'
 import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../constants/Constant'
 import Reactotron from 'reactotron-react-native';
 import StackApp from './stack/StackApp';
+import NotificationTabBarIcon from './NotificationTabBarIcon';
+import NotificationTabBarIconAdd from './NotificationTabBarIconAdd';
 import StackAdd from './stack/StackAdd';
 import SplashScreen from '../Screen/Authentication/SplashScreen';
 import { SCREEN_ROUTER_AUTH, SCREEN_ROUTER_APP, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../utils/Constant';
@@ -62,6 +64,9 @@ const TabAdd=createBottomTabNavigator();
 const ButtonTab = () => {
   const [category,setCategory]=useState({
     id:''
+  })
+  const [activeBar,setActiveBar]=useState({
+    Active:"Home"
   })
   const DB = async()=>{
     let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
@@ -115,6 +120,23 @@ const ButtonTab = () => {
                 children={R.string.home}
                 style={[styles.LableTabButon, { color: tintColor }]}
               />
+            )
+          },
+          tabBarButton:buttonProps=>{
+            return(
+              <TouchableOpacity
+              {...buttonProps}
+              onPress={async e=>{
+                setActiveBar({
+                  ...activeBar,
+                  Active:"Home"
+                })
+                buttonProps.onPress(e);
+              }}
+              style={activeBar.Active==="Home"?styles.StyleCustomer:null}
+              >
+                
+              </TouchableOpacity>
             )
           }
 
@@ -176,9 +198,15 @@ const ButtonTab = () => {
                     );
                     return;
                   }
+                  setActiveBar({
+                    ...activeBar,
+                    Active:"Product"
+                  })
                   buttonProps.onPress(e);
                 }
+                
                 }
+                style={activeBar.Active==="Product"?styles.StyleCustomer:null}
               />
             )
           }
@@ -230,9 +258,14 @@ const ButtonTab = () => {
                     return;
                    
                   }
+                  setActiveBar({
+                    ...activeBar,
+                    Active:"PutCalendar"
+                  })
                   buttonProps.onPress(e);
                 }
                 }
+                style={activeBar.Active==="PutCalendar"?styles.StyleCustomer:null}
               />
             )
           }
@@ -252,6 +285,7 @@ const ButtonTab = () => {
                   style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
                 >
                 </Image>
+               <NotificationTabBarIcon/>
               </View>
             )
           },
@@ -269,6 +303,7 @@ const ButtonTab = () => {
               <TouchableOpacity
                 {...buttonProps}
                 onPress={async e => {
+                  
                   const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
                   if (!token) {
                     showConfirm(
@@ -284,13 +319,18 @@ const ButtonTab = () => {
                     return;
                    
                   }
+                  setActiveBar({
+                    ...activeBar,
+                    Active:"Notification"
+                  })
                   buttonProps.onPress(e);
                 }
                 }
+                style={activeBar.Active==="Notification"?styles.StyleCustomer:null}
               />
             )
           },
-          tabBarBadge: 3
+          // tabBarBadge: 3
         }}
       />
       <Tab.Screen
@@ -324,6 +364,7 @@ const ButtonTab = () => {
               <TouchableOpacity
                 {...buttonProps}
                 onPress={async e => {
+                  
                   const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
                   if (!token) {
                     showConfirm(
@@ -339,9 +380,14 @@ const ButtonTab = () => {
                     return;
                    
                   }
+                  setActiveBar({
+                    ...activeBar,
+                    Active:"Customer"
+                  })
                   buttonProps.onPress(e);
                 }
                 }
+                style={activeBar.Active==="Customer"?styles.StyleCustomer:null}
               />
             )
           }
@@ -351,20 +397,24 @@ const ButtonTab = () => {
   )
 }
 const ButtonTabAdd =()=>{
- 
+ const [active,setActive]=useState({
+   Active:"Many"
+ })
   return (
     <TabAdd.Navigator
+      //barStyle={{ backgroundColor: 'green' }}
       tabBar={props => (
         <BottomTabBar
           {...props}
           style={{
             ...props.style,
-            height: Platform.OS != 'ios' ? height * 0.08 : height * 0.1
+            height: Platform.OS != 'ios' ? height * 0.08 : height * 0.1,
           }}
         />
       )}
       tabBarOptions={{
-        tabStyle: { paddingHorizontal: 10, height: 50 }
+        tabStyle: { paddingHorizontal: 10, height: 50 },
+        //labelStyle:{backgroundColor:"green"}
       }}
     >
       <TabAdd.Screen
@@ -392,8 +442,24 @@ const ButtonTabAdd =()=>{
                 style={[styles.LableTabButon, { color: tintColor }]}
               />
             )
+          },
+          tabBarButton:buttonProps=>{
+            return(
+              <TouchableOpacity
+              {...buttonProps}
+              onPress={async e=>{
+                setActive({
+                  ...active,
+                  Active:"Many"
+                })
+                buttonProps.onPress(e);
+              }}
+              style={active.Active==="Many"?styles.StyleBar:styles.BarCurrent}
+              >
+                
+              </TouchableOpacity>
+            )
           }
-
         }}
 
       />
@@ -423,6 +489,23 @@ const ButtonTabAdd =()=>{
               />
             )
           },
+          tabBarButton:buttonProps=>{
+            return(
+              <TouchableOpacity
+              {...buttonProps}
+              onPress={async e=>{
+                setActive({
+                  ...active,
+                  Active:"Mess"
+                })
+                buttonProps.onPress(e);
+              }}
+              style={active.Active==="Mess"?styles.StyleBar:styles.BarCurrent}
+              >
+                
+              </TouchableOpacity>
+            )
+          }
         }}
       />
       <TabAdd.Screen
@@ -439,6 +522,7 @@ const ButtonTabAdd =()=>{
                   style={{ width: sizeIcon, height: sizeIcon, tintColor: tintColor, resizeMode: "contain" }}
                 >
                 </Image>
+                <NotificationTabBarIconAdd/>
               </View>
             )
           },
@@ -451,7 +535,24 @@ const ButtonTabAdd =()=>{
               />
             )
           },
-          tabBarBadge: 3
+          tabBarButton:buttonProps=>{
+            return(
+              <TouchableOpacity
+              {...buttonProps}
+              onPress={async e=>{
+                setActive({
+                  ...active,
+                  Active:"Notifi"
+                })
+                buttonProps.onPress(e);
+              }}
+              style={active.Active==="Notifi"?styles.StyleBar:styles.BarCurrent}
+              >
+                
+              </TouchableOpacity>
+            )
+          }
+          // tabBarBadge: 3
         }}
       />
       <TabAdd.Screen
@@ -480,6 +581,23 @@ const ButtonTabAdd =()=>{
               />
             )
           },
+          tabBarButton:buttonProps=>{
+            return(
+              <TouchableOpacity
+              {...buttonProps}
+              onPress={async e=>{
+                setActive({
+                  ...active,
+                  Active:"User"
+                })
+                buttonProps.onPress(e);
+              }}
+              style={active.Active==="User"?styles.StyleBar:styles.BarCurrent}
+              >
+                
+              </TouchableOpacity>
+            )
+          }
         }}
       />
     </TabAdd.Navigator>
@@ -654,6 +772,25 @@ const MainTab = () => {
   );
 }
 const styles = StyleSheet.create({
-  LableTabButon: { fontSize: 11, fontFamily: R.fonts.bold, width:80,textAlign:'center' }
+  LableTabButon: { fontSize: 11, fontFamily: R.fonts.bold, width:80,textAlign:'center' },
+  StyleBar:{
+    marginRight:20,
+    borderTopWidth:2.5,
+    borderTopStartRadius:10,
+    borderTopEndRadius:10,
+    borderColor:R.color.colors.Sienna1
+  },
+  StyleCustomer:{
+    borderTopWidth:2.5,
+    borderTopStartRadius:10,
+    borderTopEndRadius:10,
+    borderColor:R.color.colors.Sienna1
+  },
+  BarCurrent:{
+    marginRight:25
+  },
+  BarCustomer:{
+    // marginRight:5
+  }
 })
 export default MainTab;

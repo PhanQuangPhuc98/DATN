@@ -19,7 +19,7 @@ import ScreenComponent from '../../components/ScreenComponent';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import R from '../../assets/R';
 import { useEffect } from 'react';
-import { SCREEN_ROUTER_APP } from '../../utils/Constant';
+import { SCREEN_ROUTER_APP,SCREEN_ROUTER } from '../../utils/Constant';
 const { height, width } = Dimensions.get('window');
 const Back = (onPress) => {
   return (
@@ -79,7 +79,7 @@ const InforUserScreen = ({route, navigation }) => {
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
         leftComponent={Back(() => {
-          NavigationUtil.goBack();
+          NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.USER});
         })}
         rightComponent={ChangeUser(()=>{
           NavigationUtil.navigate(SCREEN_ROUTER_APP.UPDATEUSER,{data:user})

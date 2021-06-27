@@ -25,14 +25,14 @@ import { DataMoney } from '../../constants/Mockup'
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../utils/Constant';
 import { error } from 'react-native-gifted-chat/lib/utils';
 const { height, width } = Dimensions.get('window');
-const Back = (onPress) => {
+const Back = (onPress,Name) => {
     return (
         <TouchableOpacity onPress={onPress} style={styles.HeaderBack}>
             <FastImage
                 style={styles.ic_Back}
                 source={images.ic_back}
                 resizeMode={FastImage.resizeMode.contain}></FastImage>
-            <Text style={styles.TextHeader}>{R.string.map}</Text>
+            <Text style={styles.TextHeader}>{R.string.map+Name}</Text>
         </TouchableOpacity>
     );
 };
@@ -44,13 +44,13 @@ const MapScreen = ({ route, navigation }) => {
             <ScreenComponent
                 leftComponent={Back(() => {
                     NavigationUtil.goBack();
-                })}
+                },data.Name)}
                 containerStyle={styles.ContainerHeader}
                 statusBarProps={styles.ContainerHeader}
                 children={
                     <SafeAreaView style={{ flex: 1 }}>
                         <MapComponent
-                            name={data.Name}
+                            Studio={data}
                         />
                     </SafeAreaView>
                 }

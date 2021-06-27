@@ -18,7 +18,7 @@ const Confirm = (onPress) => {
   return (
     <View>
       <TouchableOpacity onPress={onPress} style={styles.ContainerConfirm}>
-        <Text style={styles.TextConfirm}>{R.string.registration}</Text>
+        <Text style={styles.TextConfirm}>{R.string.confirm}</Text>
       </TouchableOpacity>
     </View>
   );

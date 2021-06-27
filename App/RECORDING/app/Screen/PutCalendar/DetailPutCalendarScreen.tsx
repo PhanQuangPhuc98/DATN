@@ -362,7 +362,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                 NameUser:params.user.Name,
                 // IdUser:params.user._id,
                 IdStudio:data._id,
-                Red:DEFAULT_PARAMS.NO,
+                RedStudio:DEFAULT_PARAMS.NO,
                 Date:getCurrentDate(),
                 Put:DEFAULT_PARAMS.YES,
                 Messages:DEFAULT_PARAMS.NO,
@@ -372,7 +372,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
             
         }
     }
-    // Reactotron.log("data", data)
+    console.log("data", data)
     // Reactotron.log("user", Users)
     // Reactotron.log("key", key)
     console.log("studioOnesignal",studioOnesignal);

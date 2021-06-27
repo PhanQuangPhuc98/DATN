@@ -1,33 +1,26 @@
-import { GET_USER, GET_USER_SUCCESS, GET_USER_FAIL } from "../actions/types";
+import { NOTIFICATION_CUSTOMER,NOTIFICATION_STUDIO } from "../actions/types";
 
 const initialState = {
-  data: {},
+  data: 0,
+  dataAdd:0,
   isLoading: false,
   error: null
 };
 
 export default function (state = initialState, action) {
-  switch (action.type) {
-    case GET_USER:
-      return {
-        ...state,
-        isLoading: true,
-      };
-    case GET_USER_SUCCESS:
-      return {
-        ...state,
-        isLoading: false,
-        data: action.payload.data
-      };
-    case GET_USER_FAIL:
-      return {
-        ...state,
-        isLoading: false,
-        data: null,
-        error: action.payload.error
-      };
-    default:
-      break;
+  if (action.type ==  NOTIFICATION_CUSTOMER) {
+    // let data =state.data+1;
+    return {
+      ...state,
+      data: action.payload
+    };
+  }
+  if (action.type ==NOTIFICATION_STUDIO  ) {
+    // let data =state.data-1;
+    return {
+      ...state,
+      dataAdd: action.payload
+    };
   }
   return state;
 }

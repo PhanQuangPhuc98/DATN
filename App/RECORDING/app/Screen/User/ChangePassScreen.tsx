@@ -21,6 +21,7 @@ import {showMessages} from '../../utils/AlertHelper'
 import NavigationUtil from '../../navigation/NavigationUtil';
 import R from '../../assets/R';
 import { Input } from 'react-native-elements';
+import { SCREEN_ROUTER, SCREEN_ROUTER_APP } from '../../utils/Constant';
 const {height, width} = Dimensions.get('window');
 const Back = (onPress) => {
   return (
@@ -109,7 +110,7 @@ const ChangePassScreen = () => {
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
         leftComponent={Back(() => {
-          NavigationUtil.goBack();
+          NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.USER});
         })}
         containerStyle={styles.ContainerHeader}
         statusBarProps={styles.ContainerHeader}

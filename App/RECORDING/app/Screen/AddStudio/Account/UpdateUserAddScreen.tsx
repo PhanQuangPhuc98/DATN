@@ -183,7 +183,7 @@ const UpdateUserAddScreen = ({ route, ...props }) => {
                         <ScrollView
                             showsVerticalScrollIndicator={false}
                         >
-                            {RenderInput(R.string.name, payload.Name, name => { setPayload({ ...payload, Name: name }) })}
+                            {RenderInput(R.string.nameStudio, payload.Name, name => { setPayload({ ...payload, Name: name }) })}
                             {RenderInput(R.string.phone, payload.Phone, phone => { setPayload({ ...payload, Phone: phone }) })}
                             {RenderInput(R.string.email, payload.Email, enail => { setPayload({ ...payload, Email: enail }) })}
                             {RenderAdress(R.string.city, city, onSelectedCity, payload.City, payload.City == '' ? R.string.select_province : payload.City)}

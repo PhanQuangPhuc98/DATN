@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import {
     Text,
     View,
@@ -22,6 +24,7 @@ import { GiftedChat, Send, Actions } from 'react-native-gifted-chat';
 import FastImage from 'react-native-fast-image';
 import { ASYNC_STORAGE, DEFAULT_PARAMS } from '../../constants/Constant'
 import ScreenComponent from '../../components/ScreenComponent';
+import {NotificationCustomer} from '../../redux/actions/index';
 import AsyncStorage from '@react-native-community/async-storage';
 import { colors } from '../../constants/Theme';
 import { DataNotification } from '../../constants/Mockup';
@@ -36,7 +39,8 @@ const left = () => {
     );
 };
 
-const NotificationScreen = () => {
+const NotificationScreen = ({...props}) => {
+    //const {data, isLoading, error}=props.NotifiState;
     const [page, setPage] = useState({
         currentPage: 0,
         newPage: 9
@@ -51,10 +55,19 @@ const NotificationScreen = () => {
         fullList: [],
         List: []
     })
-    const [isLoading, setisLoading] = useState(false);
+    const [Loading, setisLoading] = useState(false);
     const [currentList, setCurrentList] = useState(DataNotification)
     const [newtList, setNewList] = useState([])
     const newlist = ListNotification.List.slice(page.currentPage, page.newPage)
+    const CoutNotifi =()=>{
+        let cout=0;
+        ListNotification.List.map((item)=>{
+            if(item.RedUser===DEFAULT_PARAMS.NO){
+                cout++
+            }
+            props.NotificationCustomer(cout)
+        })
+    } 
     const handleLoadMore = () => {
         setPage({
             ...page,
@@ -65,6 +78,17 @@ const NotificationScreen = () => {
 
         // setNewList(DataHistory.slice(page.currentPage,page.newPage))
     }
+    const UpdateRead = (roomKey) => {
+        try {
+            DB
+                .ref(`Notification/${roomKey}/`)
+                .update({
+                    RedUser: DEFAULT_PARAMS.YES
+                })
+        } catch (error) {
+            console.log(error);
+        }
+    }
     const CallNotification = () => {
         setisLoading(true)
         try {
@@ -74,12 +98,13 @@ const NotificationScreen = () => {
                     .once("value", snapot => {
                         snapot.forEach((snap) => {
                             setisLoading(false)
-                            const { NameUser, IdUser, Red, Date, Put, Messages, key, Data, Params,roomKey } = snap.val()
+                            const { NameUser, IdUser, RedStudio, Date, Put, Messages, key, Data, Params,roomKey,RedUser } = snap.val()
                             if (IdUser === Fire.uid) {
                                 List.push({
                                     NameUser: NameUser,
                                     IdUser: IdUser,
-                                    Red: Red,
+                                    RedStudio: RedStudio,
+                                    RedUser:RedUser,
                                     Date: Date,
                                     Put: Put,
                                     Messages: Messages,
@@ -105,21 +130,13 @@ const NotificationScreen = () => {
             console.log(error);
         }
     }
-    const UpdateRead = (roomKey) => {
-        try {
-            DB
-                .ref(`Notification/${roomKey}/`)
-                .update({
-                    Read: DEFAULT_PARAMS.YES
-                })
-        } catch (error) {
-            console.log(error);
-        }
-    }
     const RenderItem = ({ index, item }) => {
+
         return (
+            
             <TouchableOpacity
                 onPress={() => {
+                    UpdateRead(item.key)
                     NavigationUtil.navigate(SCREEN_ROUTER.APP, {
                         screen: SCREEN_ROUTER_APP.CHAT,
                         params: {
@@ -179,11 +196,13 @@ const NotificationScreen = () => {
             </SafeAreaView>
         )
     }
-   // console.log("list", ListNotification.List);
 
     useEffect(() => {
+        CoutNotifi()
+    }, [ListNotification])
+    useEffect(() => {
         CallNotification()
-    }, [])
+    }, [ListNotification.List])
     return (
         <SafeAreaView style={styles.Container}>
             <ScreenComponent
@@ -210,7 +229,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontFamily: R.fonts.bold,
         color: colors.white,
-        width: 100,
+        width: 200,
     },
     AvatarStyle: { borderRadius: 40 },
     HeaderPerson: {
@@ -232,4 +251,14 @@ const styles = StyleSheet.create({
     },
     ContainerLine: { borderWidth: 0.65, marginHorizontal: 24, borderColor: colors.line }
 });
-export default NotificationScreen
+
+
+const mapStateToProps = (state) => ({
+    NotifiState: state.notificationReducer
+})
+
+const mapDispatchToProps = {
+    NotificationCustomer
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NotificationScreen)

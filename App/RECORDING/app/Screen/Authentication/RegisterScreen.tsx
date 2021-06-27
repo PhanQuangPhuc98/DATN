@@ -15,6 +15,7 @@ import Fire from '../../firebase/firebaseSvc'
 import OneSignal from 'react-native-onesignal';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import AsyncStorage from '@react-native-community/async-storage';
+import Geolocation from 'react-native-geolocation-service';
 import { Auth, database } from '../../firebase/firebaseSvc'
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
@@ -93,6 +94,10 @@ const RegisterScreen = ({route,navigation,...props}) => {
   const [category,setCategory]=useState({
     id:''
   })
+  const [current_position, setcurrent_position] = useState({
+    latitude: null,
+    longitude: null
+  })
   const [confirm_password, setconfirm_password] = useState(true);
   const [token, setToken] = useState(null);
   const [isLoading, setLoading] = useState(false);
@@ -112,6 +117,23 @@ const RegisterScreen = ({route,navigation,...props}) => {
     const { userId, } = await OneSignal.getDeviceState();
     console.log("userId",userId);
     
+  }
+  const location = () => {
+
+    try {
+      Geolocation.getCurrentPosition(data => {
+        setcurrent_position({
+          ...current_position,
+          latitude: data ? data.coords.latitude : 21.0031167,
+          longitude: data ? data.coords.longitude : 105.82014
+        })
+       
+        Reactotron.log(data)
+      })
+    } catch (error) {
+    
+      Reactotron.log(error)
+    }
   }
   const UpdateUserOneSignal =async(token)=>{
     const { userId, } = await OneSignal.getDeviceState();
@@ -167,13 +189,16 @@ const RegisterScreen = ({route,navigation,...props}) => {
   // }
 });
 
-  }
+  } 
   useEffect(() => {
     CallCity()
     DB()
+    location()
     // ChangeUserIdOnesignal()
     getUser()
   }, [])
+  console.log("lucation",current_position);
+  
   const CreatIntro =()=>{
     const db = database()
     try {
@@ -231,7 +256,19 @@ const RegisterScreen = ({route,navigation,...props}) => {
       userf.updateProfile({ displayName: payload.Name })
       database()
         .ref(`/users/${Fire.uid}`)
-        .set({ Name: payload.Name, _id: Fire.uid, Category: data, email: payload.Username, Image: "", Phone: payload.Phone, Address: payload.Address, City: payload.City[0], Sex: payload.Sex, District: payload.District, Birth_Day: payload.Birth_Day })
+        .set({ 
+          Name: payload.Name,
+           _id: Fire.uid, Category: data,
+            email: payload.Username, Image: "",
+             Phone: payload.Phone,
+              Address: payload.Address,
+               City: payload.City[0],
+                Sex: payload.Sex,
+                 District: payload.District,
+                  Birth_Day: payload.Birth_Day,
+                  latitude:data==="1"?current_position.latitude:null,
+                  longitude:data==="1"?current_position.longitude:null,
+                })
         if(category.id==="1"){
           CreatIntro()
           CreatPrice()

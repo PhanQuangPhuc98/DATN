@@ -8,10 +8,10 @@ import Geolocation from 'react-native-geolocation-service';
 const MapComponent = (props) => {
   const GOOGLE_MAPS_APIKEY = 'AIzaSyCZ9tRoSUG6V05BUlBCOOQR8UG9EqVqoiw';
   const [isLoading, setLoading] = useState(false);
-  const { name } = props
+  const { Studio } = props
   const adress = {
-    latitude: 21.00899,
-    longitude: 105.79693
+    latitude: Studio.latitude,
+    longitude: Studio.longitude
   }
   const [current_position, setcurrent_position] = useState({
     latitude: null,
@@ -55,7 +55,7 @@ const MapComponent = (props) => {
         >
           <Marker
             coordinate={adress}
-            title={name}
+            title={Studio.Name}
           >
           </Marker>
           <MapViewDirections

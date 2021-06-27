@@ -13,12 +13,14 @@ import {
     RefreshControl
 } from 'react-native';
 import R from '../../../assets/R';
+import PropTypes from 'prop-types'
+import { connect } from 'react-redux'
 import { firebase } from '../../../firebase/firebaseSvc'
 import Fire, { Auth, database, storage } from '../../../firebase/firebaseSvc'
 import ImagePicker from 'react-native-image-crop-picker'
 import image from '../../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
-import { GiftedChat, Send, Actions } from 'react-native-gifted-chat';
+import {NotificationStudio} from '../../../redux/actions/index';
 import FastImage from 'react-native-fast-image';
 import { ASYNC_STORAGE, DEFAULT_PARAMS } from '../../../constants/Constant'
 import ScreenComponent from '../../../components/ScreenComponent';
@@ -36,23 +38,34 @@ const left = () => {
     );
 };
 
-const NotificationScreen = () => {
+const NotificationScreen = ({...props}) => {
     const [page, setPage] = useState({
         currentPage: 0,
         newPage: 9
     })
-    var onEndReachedCalledDuringMomentum = true;
-    const onMomentumScrollBegin = () => {
-        onEndReachedCalledDuringMomentum = false;
-    };
-    const DB = database();
-    const List = [];
     const [ListNotification, setListNotification] = useState({
         fullList:[],
         List:[]
     })
     const [isLoading, setisLoading] = useState(false);
     const [newtList, setNewList] = useState([])
+    var onEndReachedCalledDuringMomentum = true;
+    const onMomentumScrollBegin = () => {
+        onEndReachedCalledDuringMomentum = false;
+    };
+    const DB = database();
+    const List = [];
+    const CoutNotifi =()=>{
+        let cout=0;
+        ListNotification.List.map((item)=>{
+            if(item.RedStudio===DEFAULT_PARAMS.NO){
+                cout++
+            }
+            props.NotificationStudio(cout)
+            
+        })
+    } 
+
     const newlist = ListNotification.List.slice(page.currentPage, page.newPage)
     const handleLoadMore = () => {
         setPage({
@@ -114,6 +127,7 @@ const NotificationScreen = () => {
         )
     }
     const CallNotification = () => {
+ 
         setisLoading(true)
         try {
             setTimeout(() => {
@@ -122,23 +136,29 @@ const NotificationScreen = () => {
                     .once("value", snapot => {
                         snapot.forEach((snap) => {
                             setisLoading(false)
-                            const { NameUser, IdUser, IdStudio, Red, Date, Put, Messages, key } = snap.val()
+                            const {  NameUser, IdStudio, RedStudio, Date, Put, Messages, key, Data, Params,roomKey,RedUser } = snap.val()
                             if (IdStudio === Fire.uid) {
-                                List.push({
+                                List.reverse().push({
                                     NameUser: NameUser,
                                     IdStudio: IdStudio,
-                                    Red: Red,
+                                    RedStudio: RedStudio,
+                                    RedUser:RedUser,
                                     Date: Date,
                                     Put: Put,
                                     Messages: Messages,
-                                    key: key
-                                })
-                                setListNotification({
-                                    ...ListNotification,
-                                    fullList:List.reverse(),
-                                    List:List.reverse()
+                                    key: key,
+                                    Data: Data,
+                                    Params: Params,
+                                    roomKey:roomKey
                                 })
                             }
+                        })
+                        //console.log("List",List);
+                        
+                        setListNotification({
+                            ...ListNotification,
+                            fullList:List,
+                            List:List
                         })
                     })
             },500)
@@ -152,14 +172,19 @@ const NotificationScreen = () => {
             DB
                 .ref(`Notification/${roomKey}/`)
                 .update({
-                    Read: DEFAULT_PARAMS.YES
+                    RedStudio: DEFAULT_PARAMS.YES
                 })
         } catch (error) {
             console.log(error);
         }
     }
+    const arra =[{id:"1"},{id:"2"}]
+    //const array2=ListNotification.List.reverse();
+    //console.log("arrr",array2);
     //console.log("list", ListNotification);
-
+    useEffect(() => {
+        CoutNotifi()
+    }, [ListNotification])
     useEffect(() => {
         CallNotification()
     }, [ListNotification.fullList])
@@ -189,7 +214,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontFamily: R.fonts.bold,
         color: colors.white,
-        width: 100,
+        width: 200,
     },
     AvatarStyle: { borderRadius: 40 },
     HeaderPerson: {
@@ -211,4 +236,12 @@ const styles = StyleSheet.create({
     },
     ContainerLine: { borderWidth: 0.65, marginHorizontal: 24, borderColor: colors.line }
 });
-export default NotificationScreen
+const mapStateToProps = (state) => ({
+    NotifiState: state.notificationReducer
+})
+
+const mapDispatchToProps = {
+    NotificationStudio
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(NotificationScreen)

@@ -7,6 +7,7 @@ import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
 import R from '../../assets/R';
 import OneSignal from 'react-native-onesignal';
 import Reactotron from 'reactotron-react-native'
+import Geolocation from 'react-native-geolocation-service';
 import image from '../../assets/imagesAsset';
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';

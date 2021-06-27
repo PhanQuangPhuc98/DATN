@@ -97,7 +97,7 @@ const PutCalendarScreen = () => {
                     .ref('/users/')
                     .once('value', (snapshot) => {
                         snapshot.forEach((snap)=>{
-                            const {_id,Image,Name,Category,email,Phone,Sex,Birth_Day,City,District,Address,newPrice,oldPrice}= snap.val()
+                            const {_id,Image,Name,Category,email,Phone,Sex,Birth_Day,City,District,Address,newPrice,oldPrice,latitude,longitude}= snap.val()
                             if (Category == "1" && _id != Fire.uid) {
                                 studio.push({
                                     _id: _id,
@@ -112,7 +112,9 @@ const PutCalendarScreen = () => {
                                     District: District,
                                     Address: Address,
                                     newPrice:newPrice,
-                                    oldPrice:oldPrice
+                                    oldPrice:oldPrice,
+                                    latitude:latitude,
+                                    longitude:longitude
                                 })
                             } else if (Category != "1" && _id != Fire.uid) {
                                 users.push({
@@ -237,7 +239,7 @@ const PutCalendarScreen = () => {
             </View>
         )
     }
-    Reactotron.log('studio', Studio.data)
+    console.log('studio', Studio.data)
     // Reactotron.log('user', User.DataUsers)
     // Reactotron.log('Categoty', Categoty)
     return (
@@ -311,7 +313,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         marginHorizontal: 15
     },
-    TextSearch: { height: 35, width: width - 120 },
+    TextSearch: { height: 40, width: width - 120 },
     HeaderSearch: {
         height: '100%',
         width: 30,
