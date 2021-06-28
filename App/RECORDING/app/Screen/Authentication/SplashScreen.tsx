@@ -18,10 +18,10 @@ const SplashScreen = ({ navigation }) => {
             console.log("Category",Category)
             if (!token) {
               await AsyncStorage.setItem(ASYNC_STORAGE.TOKEN, '');
-              NavigationUtil.navigate(SCREEN_ROUTER.APP,{screen:SCREEN_ROUTER_APP.INTRO});
+              NavigationUtil.navigate(SCREEN_ROUTER.INTRO);
             }
             else {
-                Category==="0"?NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.HOME}): NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN,{screen:SCREEN_ROUTER_APP_ADD.MANYUSER});
+                Category==="0"?NavigationUtil.navigate(SCREEN_ROUTER.MAIN): NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN,{screen:SCREEN_ROUTER_APP_ADD.MANYUSER});
             }
           }, 2000);
     }

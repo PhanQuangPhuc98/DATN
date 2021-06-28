@@ -79,7 +79,7 @@ const InforUserScreen = ({route, navigation }) => {
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
         leftComponent={Back(() => {
-          NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.USER});
+          NavigationUtil.goBack();
         })}
         rightComponent={ChangeUser(()=>{
           NavigationUtil.navigate(SCREEN_ROUTER_APP.UPDATEUSER,{data:user})

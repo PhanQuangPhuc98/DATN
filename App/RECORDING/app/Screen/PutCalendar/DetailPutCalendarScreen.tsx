@@ -386,7 +386,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
             {
                 <ScreenComponent
                     leftComponent={Back(() => {
-                        NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.PUTCALENDAR});
+                        NavigationUtil.goBack();
                     })}
                     containerStyle={styles.ContainerHeader}
                     statusBarProps={styles.ContainerHeader}

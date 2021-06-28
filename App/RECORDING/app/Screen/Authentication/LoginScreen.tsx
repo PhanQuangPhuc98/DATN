@@ -280,8 +280,8 @@ const LoginScreen = ({ navigation }) => {
             },
             category.id
             )}
-          {Line()}
-          {Logo()}
+          {/* {Line()} */}
+          {/* {Logo()} */}
         </View>
       </ScrollView>
     </SafeAreaView>

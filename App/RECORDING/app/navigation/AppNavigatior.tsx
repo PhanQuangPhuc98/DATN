@@ -14,6 +14,7 @@ import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../constants/Constant'
 import Reactotron from 'reactotron-react-native';
 import StackApp from './stack/StackApp';
 import NotificationTabBarIcon from './NotificationTabBarIcon';
+import SelectionScreen from '../Screen/Authentication/SelectionScreen';
 import NotificationTabBarIconAdd from './NotificationTabBarIconAdd';
 import StackAdd from './stack/StackAdd';
 import SplashScreen from '../Screen/Authentication/SplashScreen';
@@ -68,6 +69,8 @@ const ButtonTab = () => {
   const [activeBar,setActiveBar]=useState({
     Active:"Home"
   })
+  console.log("Active",activeBar);
+  
   const DB = async()=>{
     let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
     setCategory({
@@ -680,10 +683,6 @@ const App = () => {
         component={StackApp[MAP]}
       />
       <AppStack.Screen
-        name={SCREEN_ROUTER_APP.INTRO}
-        component={StackApp[INTRO]}
-      />
-      <AppStack.Screen
         name={SCREEN_ROUTER_APP.HISTORYPUT}
         component={StackApp[HISTORYPUT]}
       />
@@ -751,6 +750,9 @@ const MainTab = () => {
       <Stack.Navigator headerMode='none'>
         <Stack.Screen
           name={SCREEN_ROUTER.SPLASH} component={SplashScreen}
+        />
+        <Stack.Screen
+          name={SCREEN_ROUTER.INTRO} component={SelectionScreen}
         />
         <Stack.Screen
           name={SCREEN_ROUTER.MAIN} component={ButtonTab}

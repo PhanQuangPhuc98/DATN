@@ -110,7 +110,7 @@ const ChangePassScreen = () => {
     <SafeAreaView style={styles.Container}>
       <ScreenComponent
         leftComponent={Back(() => {
-          NavigationUtil.navigate(SCREEN_ROUTER.MAIN,{screen:SCREEN_ROUTER_APP.USER});
+          NavigationUtil.goBack();
         })}
         containerStyle={styles.ContainerHeader}
         statusBarProps={styles.ContainerHeader}
