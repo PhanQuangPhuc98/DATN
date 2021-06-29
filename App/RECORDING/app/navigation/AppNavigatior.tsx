@@ -67,7 +67,7 @@ const ButtonTab = () => {
     id:''
   })
   const [activeBar,setActiveBar]=useState({
-    Active:"Home"
+    Active:"PutCalendar"
   })
   console.log("Active",activeBar);
   
@@ -91,7 +91,9 @@ const ButtonTab = () => {
           {...props}
           style={{
             ...props.style,
-            height: Platform.OS != 'ios' ? height * 0.08 : height * 0.1
+            height: Platform.OS != 'ios' ? height * 0.08 : height * 0.1,
+            //backgroundColor:"green", 
+            //paddingHorizontal:70
           }}
         />
       )}
@@ -99,7 +101,7 @@ const ButtonTab = () => {
         tabStyle: { paddingHorizontal: 10, height: 50 }
       }}
     >
-      <Tab.Screen
+      {/* <Tab.Screen
         name={SCREEN_ROUTER_APP.HOME}
         component={StackBottom[HOME]}
         options={{
@@ -214,7 +216,7 @@ const ButtonTab = () => {
             )
           }
         }}
-      />
+      /> */}
       <Tab.Screen
         name={SCREEN_ROUTER_APP.PUTCALENDAR}
         component={StackBottom[PUTCALENDAR]}
@@ -246,29 +248,29 @@ const ButtonTab = () => {
               <TouchableOpacity
                 {...buttonProps}
                 onPress={async e => {
-                  const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
-                  if (!token) {
-                    showConfirm(
-                      R.string.notification,
-                      'Vui lòng đăng nhập để thực hiện chức năng này',
-                      () =>
-                        NavigationUtil.navigate(SCREEN_ROUTER.AUTH, {
-                          screen: SCREEN_ROUTER_AUTH.LOGIN,
-                        }),
-                      null,
-                      'Đăng nhập',
-                    );
-                    return;
-                   
-                  }
                   setActiveBar({
                     ...activeBar,
                     Active:"PutCalendar"
                   })
+                  // const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
+                  // if (!token) {
+                  //   showConfirm(
+                  //     R.string.notification,
+                  //     'Vui lòng đăng nhập để thực hiện chức năng này',
+                  //     () =>
+                  //       NavigationUtil.navigate(SCREEN_ROUTER.AUTH, {
+                  //         screen: SCREEN_ROUTER_AUTH.LOGIN,
+                  //       }),
+                  //     null,
+                  //     'Đăng nhập',
+                  //   );
+                  //   return;
+                   
+                  // }
                   buttonProps.onPress(e);
                 }
                 }
-                style={activeBar.Active==="PutCalendar"?styles.StyleCustomer:null}
+                style={activeBar.Active==="PutCalendar"?styles.StyleCustomer:styles.BarCustomer}
               />
             )
           }
@@ -329,7 +331,7 @@ const ButtonTab = () => {
                   buttonProps.onPress(e);
                 }
                 }
-                style={activeBar.Active==="Notification"?styles.StyleCustomer:null}
+                style={activeBar.Active==="Notification"?styles.StyleCustomer:styles.BarCustomer}
               />
             )
           },
@@ -390,7 +392,7 @@ const ButtonTab = () => {
                   buttonProps.onPress(e);
                 }
                 }
-                style={activeBar.Active==="Customer"?styles.StyleCustomer:null}
+                style={activeBar.Active==="Customer"?styles.StyleCustomer:styles.BarCustomer}
               />
             )
           }
@@ -783,6 +785,7 @@ const styles = StyleSheet.create({
     borderColor:R.color.colors.Sienna1
   },
   StyleCustomer:{
+    marginRight:75,
     borderTopWidth:2.5,
     borderTopStartRadius:10,
     borderTopEndRadius:10,
@@ -792,7 +795,7 @@ const styles = StyleSheet.create({
     marginRight:25
   },
   BarCustomer:{
-    // marginRight:5
+     marginRight:75
   }
 })
 export default MainTab;

@@ -48,7 +48,7 @@ const RenderItem = ({ index, item }) => {
                 </Avatar>
                 <View style={{ paddingHorizontal: 10 }}>
                     <Text style={styles.TextName}>
-                        {item.NameUser}
+                        {item.NameStudio}
                     </Text>
                     <Text style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10 }]}>
                         {item.PhoneUser}

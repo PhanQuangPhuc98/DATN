@@ -17,6 +17,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import { firebase } from '../../../firebase/firebaseSvc'
 import Fire, { Auth, database, storage } from '../../../firebase/firebaseSvc'
+import OneSignal from 'react-native-onesignal';
 import ImagePicker from 'react-native-image-crop-picker'
 import image from '../../../assets/imagesAsset';
 import Reactotron from 'reactotron-react-native';
@@ -78,10 +79,13 @@ const NotificationScreen = ({...props}) => {
         // setNewList(DataHistory.slice(page.currentPage,page.newPage))
     }
     const RenderItem = ({ index, item }) => {
+       // console.log("IdNoti",item.IdNoti);
+        
         return (
             <TouchableOpacity
                 onPress={() => {
                     UpdateRead(item.key)
+                    RemoveNotification()
                     item.Messages === DEFAULT_PARAMS.YES ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN, { screen: SCREEN_ROUTER_APP_ADD.LISTCHATADD }) :
                         NavigationUtil.navigate(SCREEN_ROUTER.APPADD, { screen: SCREEN_ROUTER_APP_ADD.REVENUEADD })
                 }}
@@ -126,17 +130,19 @@ const NotificationScreen = ({...props}) => {
             </SafeAreaView>
         )
     }
+    const RemoveNotification =()=>{
+        OneSignal.clearOneSignalNotifications();
+    }
     const CallNotification = () => {
  
         setisLoading(true)
         try {
-            setTimeout(() => {
                 DB
                     .ref('Notification')
                     .once("value", snapot => {
                         snapot.forEach((snap) => {
                             setisLoading(false)
-                            const {  NameUser, IdStudio, RedStudio, Date, Put, Messages, key, Data, Params,roomKey,RedUser } = snap.val()
+                            const {  NameUser, IdStudio,IdNoti, RedStudio, Date, Put, Messages, key, Data, Params,roomKey,RedUser } = snap.val()
                             if (IdStudio === Fire.uid) {
                                 List.reverse().push({
                                     NameUser: NameUser,
@@ -149,7 +155,8 @@ const NotificationScreen = ({...props}) => {
                                     key: key,
                                     Data: Data,
                                     Params: Params,
-                                    roomKey:roomKey
+                                    roomKey:roomKey,
+                                    IdNoti:IdNoti
                                 })
                             }
                         })
@@ -157,11 +164,10 @@ const NotificationScreen = ({...props}) => {
                         
                         setListNotification({
                             ...ListNotification,
-                            fullList:List,
-                            List:List
+                            fullList:List.reverse(),
+                            List:List.reverse()
                         })
                     })
-            },500)
         } catch (error) {
             setisLoading(false)
             console.log(error);
@@ -178,7 +184,7 @@ const NotificationScreen = ({...props}) => {
             console.log(error);
         }
     }
-    const arra =[{id:"1"},{id:"2"}]
+    // const arra =[{id:"1"},{id:"2"}]
     //const array2=ListNotification.List.reverse();
     //console.log("arrr",array2);
     //console.log("list", ListNotification);

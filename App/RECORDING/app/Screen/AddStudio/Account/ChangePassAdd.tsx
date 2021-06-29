@@ -120,12 +120,15 @@ const ChangePassAdd = () => {
             {renderInput(R.string.confirm_new_password,iconConfirm,()=>{setconfirm_password(!confirm_password)},confirm_password,payLoad.confirm_password,confirm_password=>{setPayLoad({...payLoad,confirm_password:confirm_password});})}
             {loading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
             Confirm(()=>{
+              if( payLoad.NewPassword.trim().length < 6  ||payLoad.confirm_password.trim().length<6){
+                showMessages(R.string.notification, 'Mật khẩu phải dài hơn 6 ký tự');
+                return;
+              }
               if (
-                payLoad.NewPassword.trim().length < 6 ||
                 payLoad.NewPassword != payLoad.confirm_password ||
                 (hasWhiteSpace(payLoad.NewPassword) && hasWhiteSpace(payLoad.confirm_password))
               ) {
-                showMessages(R.string.notification, 'vui lòng nhập đầy đủ thông tin');
+                showMessages(R.string.notification, 'Mật khẩu không chính xác, vui lòng nhập lại');
                 return;
               }
               changePassword(payLoad.Password,payLoad.NewPassword)})}

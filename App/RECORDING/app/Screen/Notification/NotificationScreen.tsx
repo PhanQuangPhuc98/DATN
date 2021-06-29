@@ -30,6 +30,7 @@ import { colors } from '../../constants/Theme';
 import { DataNotification } from '../../constants/Mockup';
 import NavigationUtil from '../../navigation/NavigationUtil';
 import { SCREEN_ROUTER, SCREEN_ROUTER_APP } from '../../utils/Constant';
+import OneSignal from 'react-native-onesignal';
 const { height, width } = Dimensions.get('window');
 const left = () => {
     return (
@@ -89,6 +90,9 @@ const NotificationScreen = ({...props}) => {
             console.log(error);
         }
     }
+    const RemoveNotification =()=>{
+        OneSignal.clearOneSignalNotifications();
+    }
     const CallNotification = () => {
         setisLoading(true)
         try {
@@ -136,6 +140,7 @@ const NotificationScreen = ({...props}) => {
             
             <TouchableOpacity
                 onPress={() => {
+                    RemoveNotification()
                     UpdateRead(item.key)
                     NavigationUtil.navigate(SCREEN_ROUTER.APP, {
                         screen: SCREEN_ROUTER_APP.CHAT,

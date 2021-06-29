@@ -12,7 +12,7 @@ import DatePicker from 'react-native-datepicker';
 import { CheckBox } from "react-native-elements";
 import { SCREEN_ROUTER_APP, SCREEN_ROUTER } from '../../../utils/Constant';
 import { showMessages } from '../../../utils/AlertHelper'
-import { getCurrentDate,getCurrentDay,getCurrentMonth,getCurrentYear,getFullStartDate,getFullEndDate } from '../../../utils/FuncHelper'
+import { getCurrentDate,getCurrentDay,getCurrentMonth,getCurrentYear,getFullStartWeek,getFullEndWeek,setWeek,getFullStartDate,getFullEndDate } from '../../../utils/FuncHelper'
 import Fire, { database } from '../../../firebase/firebaseSvc';
 import Reactotron from 'reactotron-react-native';
 import { DataHistory } from '../../../constants/Mockup';
@@ -84,7 +84,7 @@ const RenderItem = ({ index, item }) => {
         </View>
     );
 }
-const RenderListHistoryDay = (dataDay,onRefresh) => {
+const RenderListHistoryWeek = (dataDay,onRefresh) => {
     return (
         <SafeAreaView style={{ paddingTop: 10, paddingHorizontal: 10, flex: 1 }}>
             <Text style={{ marginHorizontal: 30, fontSize: 15, fontFamily: R.fonts.bold }}>
@@ -124,12 +124,15 @@ const RenderListHistoryMonth = (dataMonth,onRefresh) => {
         </SafeAreaView>
     )
 }
-const RenderDay = (data,onRefresh,total) => {
+const RenderWeek = (data,onRefresh,total) => {
     return (
         <SafeAreaView style={[styles.Container, { paddingVertical: 10 }]}>
             <View style={{ flexDirection: "row", width: width, paddingVertical: 10, justifyContent:'center' }}>
+            <Text style={{ width: width / 2, textAlign: 'center' }}>
+                  {getFullStartWeek(setWeek(parseInt(getCurrentDay(),10)))}
+                </Text>
                 <Text style={{ width: width / 2, textAlign: 'center' }}>
-                   {getCurrentDate()}
+                   {getFullEndWeek(setWeek(parseInt(getCurrentDay(),10)),getCurrentMonth())}
                 </Text>
             </View>
 
@@ -146,12 +149,12 @@ const RenderDay = (data,onRefresh,total) => {
 
                     </FastImage>
                     <Text style={{ fontFamily: R.fonts.bold, fontSize: 22, color: R.color.colors.Sienna1 }}>
-                        {total} VND
+                        {total?total:"0"} VND
                     </Text>
                 </View>
             </View>
             {Line()}
-            {RenderListHistoryDay(data,onRefresh)}
+            {RenderListHistoryWeek(data,onRefresh)}
         </SafeAreaView>
     )
 }
@@ -180,7 +183,7 @@ const RenderMonth = (month,onRefresh,total) => {
 
                     </FastImage>
                     <Text style={{ fontFamily: R.fonts.bold, fontSize: 22, color: R.color.colors.Sienna1 }}>
-                    {total} VND
+                    {total?total:"0"} VND
                     </Text>
                 </View>
             </View>
@@ -192,15 +195,15 @@ const RenderMonth = (month,onRefresh,total) => {
 const RevenueScreen = () => {
     const [convert, setConvert] = useState(false)
     const historyMonth =[];
-    const historyDay =[];
-    const [coutDay,setCountDay]=useState([])
+    const historyWeek =[];
+    const [coutWeek,setCountWeek]=useState([])
     const [coutMonth,setCountMonth]=useState([])
     const reducer = (accumulator, currentValue) => {accumulator + currentValue};
     const Sumday=[];
     const SumMonth=[];
     const date =getCurrentDate()
     const [callHistoryMonth,setHistoryMonth]=useState([])
-    const [callHistoryDay,setHistoryDay]=useState([])
+    const [callHistoryWeek,setHistoryWeek]=useState([])
     const DB =database();
     const [isLoading,setisLoading]=useState(false)
     const CallHistoryPrice =()=>{
@@ -213,7 +216,7 @@ const RevenueScreen = () => {
                     setisLoading(false)
                     snapot.forEach((snap)=>{
                         setisLoading(false)
-                        const {idUser,ImageUser,ImageStudio,NameStudio,NameUser,Price,Date,idStudio,PhoneStudio,PhoneUser,Day,Month,Year}=snap.val()
+                        const {idUser,ImageUser,ImageStudio,NameStudio,NameUser,Price,Date,idStudio,PhoneStudio,PhoneUser,Day,Month,Year,Week}=snap.val()
                         if((idStudio===Fire.uid)&&(Month===`${getCurrentMonth()}`)&&(Year===`${getCurrentYear()}`)){
                             historyMonth.push({
                                 idUser:idUser,
@@ -224,10 +227,11 @@ const RevenueScreen = () => {
                                 Price:Price,
                                 Date:Date,
                                 PhoneStudio:PhoneStudio,
-                                PhoneUser:PhoneUser
+                                PhoneUser:PhoneUser,
+                                Week:Week
                             })
-                            if (Day===`${getCurrentDay()}`){
-                                historyDay.push({
+                            if (Week===setWeek(parseInt(getCurrentDay(),10))){
+                                historyWeek.push({
                                     idUser:idUser,
                                     ImageUser:ImageUser,
                                     ImageStudio:ImageStudio,
@@ -236,22 +240,20 @@ const RevenueScreen = () => {
                                     Price:Price,
                                     Date:Date,
                                     PhoneStudio:PhoneStudio,
-                                    PhoneUser:PhoneUser
+                                    PhoneUser:PhoneUser,
+                                    Week:Week
                                 })
-                                setHistoryDay(historyDay.reverse())
+                               
+                                Sumday.push(parseInt(Price?Price:0,10))
                             }
-                           if(Date===`${getCurrentDate()}`)
-                           {
-                            Sumday.push(parseInt(Price,10))
-                           }
                            if (Month===`${getCurrentMonth()}`){
-                            SumMonth.push(parseInt(Price,10))
+                            SumMonth.push(parseInt(Price?Price:0,10))
                            }
                         }
                     })
                     setCountMonth(SumMonth)
-                    setCountDay(Sumday)
-                   
+                    setCountWeek(Sumday)
+                    setHistoryWeek(historyWeek.reverse())
                     setHistoryMonth(historyMonth.reverse())
                 })
             } catch (error) {
@@ -265,12 +267,12 @@ const RevenueScreen = () => {
     useEffect(() => {
         CallHistoryPrice()
     }, [])
-    console.log("SumDay",coutDay);
-    console.log("SumMonth",coutMonth)
-    Reactotron.log("Day",callHistoryDay)
-    Reactotron.log("Month",callHistoryMonth)
-    console.log("Month",getCurrentMonth());
-    console.log("getStart",getFullStartDate(parseInt(getCurrentMonth(),10)));
+    console.log("SumDay",coutWeek.reduce( (previousValue, currentValue) => previousValue + currentValue, 0));
+    // console.log("SumMonth",coutMonth)
+    // Reactotron.log("Week",callHistoryWeek)
+    // Reactotron.log("Month",callHistoryMonth)
+    // console.log("Month",getCurrentMonth());
+    // console.log("getStart",getFullStartDate(parseInt(getCurrentMonth(),10)));
     
     return (
         <SafeAreaView style={styles.Container}>
@@ -283,9 +285,9 @@ const RevenueScreen = () => {
                 children={
                     <View style={styles.Container}>
                         {RenderMultiScreen(() => { setConvert(!convert) }, () => { setConvert(!convert) }, convert)}
-                        {convert == false ? RenderDay(callHistoryDay,()=>{CallHistoryPrice},
+                        {convert == false ? RenderWeek(callHistoryWeek,()=>{CallHistoryPrice},
                         isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
-                        coutDay.reduce( (previousValue, currentValue) => previousValue + currentValue, 0))
+                        coutWeek.reduce( (previousValue, currentValue) => previousValue + currentValue, 0))
                         : RenderMonth(callHistoryMonth,()=>{CallHistoryPrice},
                         isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} /> :
                         coutMonth.reduce( (previousValue, currentValue) => previousValue + currentValue, 0))}

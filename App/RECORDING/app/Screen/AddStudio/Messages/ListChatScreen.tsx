@@ -265,7 +265,7 @@ const ListChatScreen = () => {
                             numberOfLines={5}
                             ellipsizeMode={"tail"}
                             style={[styles.TextName, { fontSize: 14, color: colors.focus, marginVertical: 10, height: 60 }]}>
-                            {"Bạn :" + " " + item.messagesStudio}
+                            {item.messagesStudio?"Bạn :" + " " + item.messagesStudio:null}
                         </Text>
                     }
                 </View>

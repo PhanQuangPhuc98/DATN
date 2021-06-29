@@ -14,7 +14,7 @@ import {
 } from 'react-native'
 import images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
-import {getCurrentDate,getCurrentDay,getCurrentMonth,getCurrentYear} from '../../utils/FuncHelper';
+import {getCurrentDate,getCurrentDay,getCurrentMonth,getCurrentYear,setWeek} from '../../utils/FuncHelper';
 import {showMessages} from '../../utils/AlertHelper';
 import { callNumber } from '../../utils/CallPhone'
 import OneSignal from 'react-native-onesignal';
@@ -47,7 +47,7 @@ const RenderAvatar = (data) => {
     return (
         <SafeAreaView>
             <FastImage
-                source={{ uri: data.Image }}
+                source={data.Image?{ uri: data.Image }:R.images.ic_IMG}
                 style={styles.ContainerAvatar}
             />
         </SafeAreaView>
@@ -243,7 +243,8 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                         PhoneUser:params.user.Phone,
                         Day:getCurrentDay(),
                         Month:getCurrentMonth(),
-                        Year:getCurrentYear()
+                        Year:getCurrentYear(),
+                        Week:setWeek(parseInt(getCurrentDay(),10))
                     })
                 showMessages(R.string.notification, R.string.Put_Sucess)
             } catch (error) {
@@ -304,6 +305,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
         };
         const jsonString = JSON.stringify(notificationObj);
         OneSignal.postNotification(jsonString, (success) => {
+        PutNotification(success.id)
           console.log("Success:", success);
         }, (error) => {
           console.log("Error:", error );
@@ -354,7 +356,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
             
         }
     }
-    const PutNotification =()=>{
+    const PutNotification =(IdNoti)=>{
         try {
             DB
             .ref(`/Notification/${putKey}`)
@@ -366,20 +368,21 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                 Date:getCurrentDate(),
                 Put:DEFAULT_PARAMS.YES,
                 Messages:DEFAULT_PARAMS.NO,
-                key:putKey
+                key:putKey,
+                IdNoti:IdNoti
             })
         } catch (error) {
             
         }
     }
-    console.log("data", data)
+    //console.log("data", data)
     // Reactotron.log("user", Users)
     // Reactotron.log("key", key)
-    console.log("studioOnesignal",studioOnesignal);
+    //console.log("studioOnesignal",studioOnesignal);
     var x = parseInt('1000',10);
     var y = parseInt('1000',10);
     console.log("Number",x+y);
-    console.log("params",data._id)
+    //console.log("params",data._id)
     // Reactotron.log("content",intro) 
     return (
         <SafeAreaView style={styles.Container}>
@@ -410,7 +413,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                         toggleModalPut(),
                         PutCalendar(),
                         PutActiveUser(),
-                        PutNotification(),
+                        //PutNotification(),
                         Notification()
                     }}
                 />
@@ -536,7 +539,7 @@ const styles = StyleSheet.create({
     ContainerAvatar: {
         height: 221,
         width: width,
-        backgroundColor: "red"
+        backgroundColor: "white"
     }
 });
 

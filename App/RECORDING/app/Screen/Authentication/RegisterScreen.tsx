@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, StyleSheet, SafeAreaView, ActivityIndicator, TextInput, TouchableOpacity, Dimensions, ScrollView,Platform } from 'react-native'
+import { Text, View, StyleSheet, SafeAreaView, ActivityIndicator, TextInput, TouchableOpacity, Dimensions, ScrollView, Platform } from 'react-native'
 import { Header, CheckBox } from "react-native-elements";
 import { colors } from '../../constants/Theme';
 import R from '../../assets/R';
 import { DataCity } from '../../constants/Mockup';
 import image from '../../assets/imagesAsset';
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { ASYNC_STORAGE,DEFAULT_PARAMS } from '../../constants/Constant';
+import { ASYNC_STORAGE, DEFAULT_PARAMS } from '../../constants/Constant';
 import SectionedMultiSelect from "react-native-sectioned-multi-select";
 import { hasWhiteSpace, validateEmail, validatePhoneNumber } from '../../utils/FuncHelper';
 import { showMessages } from '../../utils/AlertHelper'
@@ -17,7 +17,7 @@ import NavigationUtil from '../../navigation/NavigationUtil';
 import AsyncStorage from '@react-native-community/async-storage';
 import Geolocation from 'react-native-geolocation-service';
 import { Auth, database } from '../../firebase/firebaseSvc'
-import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../../utils/Constant'
+import { SCREEN_ROUTER_APP, SCREEN_ROUTER_AUTH, SCREEN_ROUTER, SCREEN_ROUTER_APP_ADD } from '../../utils/Constant'
 import FastImage from 'react-native-fast-image';
 const { height, width } = Dimensions.get("window");
 const Confirm = (onPress) => {
@@ -44,7 +44,7 @@ const RenderInput = (style, label, UserInput, cover) => {
 }
 const RenderCity = (data, onSelectedItemsChange, selectedItems, label) => {
   return (
-    <View style={[styles.TextInputStyle, { paddingTop: 15,height:80 }]}>
+    <View style={[styles.TextInputStyle, { paddingTop: 15, height: 80 }]}>
       <Text style={styles.TextLable}>{label}</Text>
       <SectionedMultiSelect
         items={data}
@@ -66,11 +66,11 @@ const RenderCity = (data, onSelectedItemsChange, selectedItems, label) => {
     </View>
   )
 }
-const RegisterScreen = ({route,navigation,...props}) => {
-  const {data}=route.params
+const RegisterScreen = ({ route, navigation, ...props }) => {
+  const { data } = route.params
   const [payload, setPayload] = useState({
     Name: '',
-    Username: '',
+    Email: '',
     Password: '',
     ConfimPass: '',
     Phone: '',
@@ -87,12 +87,12 @@ const RegisterScreen = ({route,navigation,...props}) => {
       City: selectedItems
     })
   }
-  console.log(payload.City, "city");
+  //console.log(payload.City, "city");
   const [checked, setChecked] = useState(false);
   const [city, setCity] = useState([]);
   const [Password, setPassword] = useState(true);
-  const [category,setCategory]=useState({
-    id:''
+  const [category, setCategory] = useState({
+    id: ''
   })
   const [current_position, setcurrent_position] = useState({
     latitude: null,
@@ -100,23 +100,25 @@ const RegisterScreen = ({route,navigation,...props}) => {
   })
   const [confirm_password, setconfirm_password] = useState(true);
   const [token, setToken] = useState(null);
+  const User = [];
+  const [checkUser, setCheckUser] = useState([])
   const [isLoading, setLoading] = useState(false);
   const Database = database();
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
   const iconConfirm = confirm_password ? R.images.ic_visibility : R.images.ic_invisible;
-  const DB = async()=>{
-    let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
+  const DB = async () => {
+    let Category = await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
     setCategory({
       ...category,
-      id:Category
+      id: Category
     })
-    console.log("Category",Category);
-   
+    console.log("Category", Category);
+
   }
-  const getUser =async ()=>{
+  const getUser = async () => {
     const { userId, } = await OneSignal.getDeviceState();
-    console.log("userId",userId);
-    
+    console.log("userId", userId);
+
   }
   const location = () => {
 
@@ -127,22 +129,22 @@ const RegisterScreen = ({route,navigation,...props}) => {
           latitude: data ? data.coords.latitude : 21.0031167,
           longitude: data ? data.coords.longitude : 105.82014
         })
-       
+
         Reactotron.log(data)
       })
     } catch (error) {
-    
+
       Reactotron.log(error)
     }
   }
-  const UpdateUserOneSignal =async(token)=>{
+  const UpdateUserOneSignal = async (token) => {
     const { userId, } = await OneSignal.getDeviceState();
     try {
       Database
-      .ref(`/UserIdOneSignal/${token}`)
-      .update({
-        userId:userId
-      })
+        .ref(`/UserIdOneSignal/${token}`)
+        .update({
+          userId: userId
+        })
     } catch (error) {
       console.log(error);
     }
@@ -166,114 +168,112 @@ const RegisterScreen = ({route,navigation,...props}) => {
           })
           setCity(Data)
         });
-    }, 2000);
+    }, 500);
   }
-  const ChangeUserIdOnesignal =(token)=>{
-    // Setting External User Id with Callback Available in SDK Version 3.7.0+
-  OneSignal.setExternalUserId(token, (results) => {
-  // The results will contain push and email success statuses
-  console.log('Results of setting external user id');
-  console.log(results);
-  
-  // // Push can be expected in almost every situation with a success status, but
-  // // as a pre-caution its good to verify it exists
-  // if (results.push && results.push.success) {
-  //   console.log('Results of setting external user id push status:');
-  //   console.log(results.push.success);
-  // }
-  
-  // // Verify the email is set or check that the results have an email success status
-  // if (results.email && results.email.success) {
-  //   console.log('Results of setting external user id email status:');
-  //   console.log(results.email.success);
-  // }
-});
-
-  } 
   useEffect(() => {
-    CallCity()
     DB()
+    // CallUser()
     location()
-    // ChangeUserIdOnesignal()
     getUser()
-  }, [])
-  console.log("lucation",current_position);
-  
-  const CreatIntro =()=>{
+    CallUser()
+    CallCity()
+  }, [checkUser, city])
+  // console.log("lucation",current_position);
+
+  const CreatIntro = () => {
     const db = database()
     try {
       db
-      .ref(`/IntroStudio/${Fire.uid}`)
-      .set({content:""})
-      
+        .ref(`/IntroStudio/${Fire.uid}`)
+        .set({ content: "" })
+
     } catch (error) {
       console.log(error);
     }
   }
-  const CreatPrice =()=>{
-    const db = database()
+  const CallUser = () => {
+
     try {
-      db
-      .ref(`/PriceStudio/${Fire.uid}`)
-      .set({oldPrice:'0',newPrice:'0',SalesPromotion:'0'})
-      
+      Database
+        .ref("users")
+        .once("value", Snapshot => {
+          Snapshot.forEach((snap) => {
+            const { email, Phone } = snap.val();
+            User.push({
+              email: email ? email : null,
+              Phone: Phone ? Phone : null
+            })
+          })
+          setCheckUser(User)
+        })
     } catch (error) {
       console.log(error);
     }
   }
-  const UpdateOnlineUser =(token)=>{
+  const CreatPrice = () => {
+    const db = database()
     try {
-      //ChangeUserIdOnesignal(token)
-      Database
-      .ref(`/Online/${token}/`)
-      .update({
-        OnlineUser:DEFAULT_PARAMS.YES
-      })
+      db
+        .ref(`/PriceStudio/${Fire.uid}`)
+        .set({ oldPrice: '0', newPrice: '0', SalesPromotion: '0' })
+
     } catch (error) {
-      
+      console.log(error);
     }
   }
-  const UpdateOnlineStudio =(token)=>{
+  const UpdateOnlineUser = (token) => {
     try {
-      //ChangeUserIdOnesignal(token)
       Database
-      .ref(`/Online/${token}/`)
-      .update({
-        OnlineStudio:DEFAULT_PARAMS.YES
-      })
+        .ref(`/Online/${token}/`)
+        .update({
+          OnlineUser: DEFAULT_PARAMS.YES,
+          Email: payload.Email
+        })
     } catch (error) {
-      
+
+    }
+  }
+  const UpdateOnlineStudio = (token) => {
+    try {
+      Database
+        .ref(`/Online/${token}/`)
+        .update({
+          OnlineStudio: DEFAULT_PARAMS.YES,
+          Email: payload.Email
+        })
+    } catch (error) {
+
     }
   }
   const CreatAcout = async () => {
     setLoading(true)
     try {
       const res = await Auth().createUserWithEmailAndPassword(
-        payload.Username,
+        payload.Email,
         payload.Password,
       );
       var userf = Auth().currentUser;
       userf.updateProfile({ displayName: payload.Name })
       database()
         .ref(`/users/${Fire.uid}`)
-        .set({ 
+        .set({
           Name: payload.Name,
-           _id: Fire.uid, Category: data,
-            email: payload.Username, Image: "",
-             Phone: payload.Phone,
-              Address: payload.Address,
-               City: payload.City[0],
-                Sex: payload.Sex,
-                 District: payload.District,
-                  Birth_Day: payload.Birth_Day,
-                  latitude:data==="1"?current_position.latitude:null,
-                  longitude:data==="1"?current_position.longitude:null,
-                })
-        if(category.id==="1"){
-          CreatIntro()
-          CreatPrice()
-        }
-      //ChangeUserIdOnesignal(res.user.uid.toString())
+          _id: Fire.uid, Category: data,
+          email: payload.Email,
+          Image: "",
+          Phone: payload.Phone,
+          Address: payload.Address,
+          City: payload.City[0],
+          Sex: payload.Sex,
+          District: payload.District,
+          Birth_Day: payload.Birth_Day,
+          latitude: data === "1" ? current_position.latitude : null,
+          longitude: data === "1" ? current_position.longitude : null,
+        })
+      if (category.id === "1") {
+        CreatIntro()
+        CreatPrice()
+      }
       UpdateUserOneSignal(res.user.uid.toString())
       setLoading(false),
         setToken(res),
@@ -281,29 +281,29 @@ const RegisterScreen = ({route,navigation,...props}) => {
           ASYNC_STORAGE.TOKEN,
           res.user.uid.toString(),
         );
-      data==="0"?
-      setTimeout(() => {
-        !token
-          ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
-            screen: SCREEN_ROUTER_APP_ADD.MANYUSER,
-          })
-          : alert(R.string.pleaseRegister);
-      }, 500)&&UpdateOnlineUser(res.user.uid.toString()):
-      setTimeout(() => {
-        !token
-          ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN, {
-            screen: SCREEN_ROUTER_APP.HOME,
-          })
-          : alert(R.string.pleaseRegister);
-      }, 500)&&UpdateOnlineStudio(res.user.uid.toString())
+      data === DEFAULT_PARAMS.USER ?
+        setTimeout(() => {
+          !token
+            ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
+              screen: SCREEN_ROUTER_APP_ADD.MANYUSER,
+            })
+            : alert(R.string.pleaseRegister);
+        }, 500) && UpdateOnlineUser(res.user.uid.toString()) :
+        setTimeout(() => {
+          !token
+            ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN, {
+              screen: SCREEN_ROUTER_APP.HOME,
+            })
+            : alert(R.string.pleaseRegister);
+        }, 500) && UpdateOnlineStudio(res.user.uid.toString())
       showMessages(R.string.notification, 'Đăng ký thành công!');
     } catch (error) {
       setLoading(false), Reactotron.log('error', error);
     }
   };
-  console.log("city", city)
-  console.log("CategoryRegister",data);
-  
+  //console.log("city", city)
+  //console.log("CategoryRegister",data);
+
   return (
     <SafeAreaView style={styles.Container}>
       <Header
@@ -327,17 +327,17 @@ const RegisterScreen = ({route,navigation,...props}) => {
         statusBarProps={styles.ContainerHeader}
       />
       <ScrollView
-       showsVerticalScrollIndicator={false}>
+        showsVerticalScrollIndicator={false}>
         <View style={[styles.Container]}>
-          {RenderInput(styles.TextInputStyle, R.string.name, name => setPayload({ ...payload, Name: name }), false)}
-          {RenderInput(styles.TextInputStyle, R.string.email, user => setPayload({ ...payload, Username: user }), false)}
+          {RenderInput(styles.TextInputStyle, data === "1" ? R.string.nameStudio : R.string.name, name => setPayload({ ...payload, Name: name }), false)}
+          {RenderInput(styles.TextInputStyle, R.string.email, email => setPayload({ ...payload, Email: email }), false)}
           {RenderInput(styles.TextInputStyle, R.string.phone, phone => setPayload({ ...payload, Phone: phone }), false)}
           {RenderCity(city, onSelectedItemsChange, payload.City, R.string.city)}
           <View style={{ flexDirection: 'row' }}>
             {RenderInput([styles.TextInputStyle, { width: width - 70 }], R.string.pass, pass => setPayload({ ...payload, Password: pass }), Password)}
             <TouchableOpacity
               onPress={() => { setPassword(!Password) }}
-              style={{ borderBottomWidth: 0.5, paddingTop: Platform.Version==23?42.5:42 }}>
+              style={{ borderBottomWidth: 0.5, paddingTop: Platform.Version == 23 ? 42.5 : 42 }}>
               <FastImage
                 source={icon}
                 style={styles.imgText}
@@ -364,7 +364,7 @@ const RegisterScreen = ({route,navigation,...props}) => {
               showMessages(R.string.notification, 'Vui lòng nhập họ và tên !');
               return;
             }
-            if (!validateEmail(payload.Username)) {
+            if (!validateEmail(payload.Email)) {
               showMessages(R.string.notification, 'Email không hợp lệ !');
               return;
             }
@@ -386,7 +386,14 @@ const RegisterScreen = ({route,navigation,...props}) => {
               showMessages(R.string.notification, 'Mật khẩu không hợp lệ, vui lòng thử lại !');
               return;
             }
-            CreatAcout()
+            checkUser.forEach((item) => {
+              if (item.email === payload.Email) {
+                showMessages(R.string.notification, R.string.NotificationCheckEmail)
+              }
+              else if (item.email != payload.Email) {
+                CreatAcout()
+              }
+            })
           })
         }
       </ScrollView>
@@ -404,7 +411,7 @@ const styles = StyleSheet.create({
   LeftHeader: { flexDirection: "row", width: 200, height: 40 },
   TextLeft: { marginTop: 3, fontFamily: R.fonts.bold, fontSize: 18, color: colors.white, marginLeft: 5 },
   ImageBack: { height: 14, width: 14, marginTop: 10 },
-  TextInputStyle: { borderBottomWidth: 0.5, width: width-50, borderColor: colors.focus,height:40 },
+  TextInputStyle: { borderBottomWidth: 0.5, width: width - 50, borderColor: colors.focus, height: 40 },
   TextLable: { fontSize: 14, fontFamily: R.fonts.bold, color: colors.focus, },
   imgText: { height: 22, width: 22 }
 })

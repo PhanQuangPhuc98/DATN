@@ -86,6 +86,10 @@ const LoginScreen = ({ navigation }) => {
   const [confirm, setConfirm] = useState(null);
   const [token, setToken] = useState(null);
   const [code, setCode] = useState('');
+  const User =[];
+  const Studio =[];
+  const [checkStudio,setCheckStudio]=useState([])
+  const [checkUser,setCheckUser]=useState([])
   const Data = database();
   const icon = Password ? R.images.ic_visibility : R.images.ic_invisible;
   const [payload, setPayload] = useState({
@@ -95,6 +99,8 @@ const LoginScreen = ({ navigation }) => {
   const [category,setCategory]=useState({
     id:''
   })
+  const [CheckOnline,SetCheckOnline]=useState([])
+  const Onile =[];
   const DB = async()=>{
     let Category =await AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
     setCategory({
@@ -102,8 +108,58 @@ const LoginScreen = ({ navigation }) => {
       id:Category
     })
   }
+  const CallUser =()=>{
+
+    try {
+      Data
+      .ref("users")
+      .once("value",Snapshot=>{
+        Snapshot.forEach((snap)=>{
+          const {email,Phone,Category} =snap.val();
+          if(Category===DEFAULT_PARAMS.USER){
+            User.push({
+              email:email?email:null,
+              Phone:Phone?Phone:null
+            })
+          }
+          if(Category===DEFAULT_PARAMS.STUDIO){
+            Studio.push({
+              email:email?email:null,
+              Phone:Phone?Phone:null
+            })
+          }
+        })
+        setCheckUser(User)
+        setCheckStudio(Studio)
+      })
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  const CallOnlineUser =()=>{
+    try {
+      Data
+      .ref(`/Online/`)
+      .once("value",Snapshot=>{
+        Snapshot.forEach((snap)=>{
+          const {OnlineUser,OnlineStudio,Email}=snap.val()
+          Onile.push({
+            OnlineUser:OnlineUser?OnlineUser:null,
+            OnlineStudio:OnlineStudio?OnlineStudio:null,
+            Email:Email?Email:null
+          })
+
+        })
+        SetCheckOnline(Onile)
+      })
+    } catch (error) {
+      
+    }
+  }
   useEffect(() => {
     DB()
+    CallOnlineUser()
+    CallUser()
     const unsubscribe = navigation.addListener('blur', () => {
       setPayload({
         Username: '',
@@ -111,7 +167,7 @@ const LoginScreen = ({ navigation }) => {
       });
     });
     return unsubscribe;
-  }, [navigation]);
+  }, [navigation,CheckOnline,checkUser,checkStudio]);
   const UpdateOnlineUser =(token)=>{
     try {
       //ChangeUserIdOnesignal(token)
@@ -151,12 +207,10 @@ const LoginScreen = ({ navigation }) => {
         UpdateUserOneSignal(res.user.uid.toString())
      // ChangeUserIdOnesignal(res.user.uid.toString())  
       showMessages(R.string.notification, 'Đăng nhập thành công!');
-      category.id==="0"?
+      category.id===DEFAULT_PARAMS.USER?
       setTimeout(() => {
         !token
-          ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
-            screen: SCREEN_ROUTER_APP.HOME,
-          })
+          ? NavigationUtil.navigate(SCREEN_ROUTER.MAIN)
           : alert(R.string.pleaseLogin);
       }, 500)&&UpdateOnlineUser(res.user.uid.toString()) :
       setTimeout(() => {
@@ -170,10 +224,14 @@ const LoginScreen = ({ navigation }) => {
 
       
       Reactotron.log('res', res.user.uid)
-
+      console.log("hello");
+      
     } catch (error) {
       setLoading(false),
         Reactotron.log('error', error)
+        console.log("error",error);
+        
+        showMessages(R.string.notification, R.string.NotifiNotAceesLogin);
     };
 
 
@@ -199,7 +257,7 @@ const LoginScreen = ({ navigation }) => {
    });
   }
   Reactotron.log('payload', payload);
-  console.log("Categorylogin",category.id);
+  //console.log("checkuser",checkUser);
   
   return (
     <SafeAreaView style={styles.Container}>
@@ -210,9 +268,7 @@ const LoginScreen = ({ navigation }) => {
           <TouchableOpacity
             style={styles.LeftHeader}
             onPress={() => {
-              NavigationUtil.navigate(SCREEN_ROUTER.MAIN, {
-                screen: SCREEN_ROUTER_APP.HOME,
-              })
+              NavigationUtil.navigate(SCREEN_ROUTER.MAIN)
             }}>
             <FastImage
               source={image.ic_back}
@@ -221,7 +277,18 @@ const LoginScreen = ({ navigation }) => {
             />
             <Text style={styles.TextLeft}>{R.string.log_in}</Text>
           </TouchableOpacity>
-          :null
+          :<TouchableOpacity
+          style={styles.LeftHeader}
+          onPress={() => {
+            NavigationUtil.navigate(SCREEN_ROUTER.INTRO)
+          }}>
+          <FastImage
+            source={image.ic_back}
+            style={styles.ImageBack}
+            resizeMode="contain"
+          />
+          <Text style={styles.TextLeft}>{R.string.log_in}</Text>
+        </TouchableOpacity>
         }
         statusBarProps={styles.ContainerHeader}
       />
@@ -276,6 +343,36 @@ const LoginScreen = ({ navigation }) => {
                 showMessages(R.string.notification, 'Mật khẩu không đúng');
                 return;
               }
+              // category.id===DEFAULT_PARAMS.USER?
+              // checkStudio.forEach((item)=>{
+              //   if(item.email===payload.Username){
+              //     showMessages(R.string.notification,R.string.NotificationNotStudio)
+              //   }
+              // }):
+              // checkUser.forEach((item)=>{
+              //   if(item.email===payload.Username){
+              //     showMessages(R.string.notification,R.string.NotificationNotUser)
+              //   }
+              // })
+              // category.id===DEFAULT_PARAMS.USER?
+              // CheckOnline.forEach((item)=>{
+              //   if((item.Email===payload.Username)&&(item.OnlineUser===DEFAULT_PARAMS.NO)){
+              //     signInWithEmail()
+              //     //alert("hello")
+              //   }
+              //   else  if((item.Email===payload.Username)&&(item.OnlineUser===DEFAULT_PARAMS.YES)) {
+              //     //alert("no")
+              //     showMessages(R.string.notification,R.string.NotifiLogin)
+              //   }
+              // }):
+              // CheckOnline.forEach((item)=>{
+              //   if((item.Email===payload.Username)&&(item.OnlineStudio===DEFAULT_PARAMS.NO)){
+              //     signInWithEmail()
+              //   }
+              //   else if((item.Email===payload.Username)&&(item.OnlineStudio===DEFAULT_PARAMS.YES)){
+              //     showMessages(R.string.notification,R.string.NotifiLogin)
+              //   }
+              // })
               signInWithEmail()
             },
             category.id

@@ -202,7 +202,7 @@ const PutCalendarScreen = () => {
                 }}
                 style={styles.ContainerItem}>
                 <FastImage
-                    source={{ uri: item.Image }}
+                    source={item.Image?{ uri: item.Image }:R.images.ic_IMG}
                     style={styles.ImgItem}
                     resizeMode={FastImage.resizeMode.contain}
                 />

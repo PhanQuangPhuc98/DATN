@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react'
-import { Text, View,StyleSheet,SafeAreaView,Image} from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Text, View,StyleSheet,SafeAreaView,ActivityIndicator,Image} from 'react-native'
 import NavigationUtil from '../../navigation/NavigationUtil';
 import { SCREEN_ROUTER_AUTH,SCREEN_ROUTER_APP, SCREEN_ROUTER,SCREEN_ROUTER_APP_ADD } from '../../utils/Constant';
 import {colors} from '../../constants/Theme'
@@ -9,18 +9,23 @@ import {ASYNC_STORAGE} from '../../constants/Constant';
 import AsyncStorage from '@react-native-community/async-storage';
 import Images from '../../assets/imagesAsset';
 import FastImage from 'react-native-fast-image';
+import R from '../../assets/R';
 const SplashScreen = ({ navigation }) => {
+    const [isLoading, setLoading] = useState(false);
     const checkUser =()=>{
+        setLoading(true)
         setTimeout(async () => {
             const token = await AsyncStorage.getItem(ASYNC_STORAGE.TOKEN);
             const Category =await  AsyncStorage.getItem(ASYNC_STORAGE.CATEGORY);
             console.log("token",token);
             console.log("Category",Category)
             if (!token) {
+                setLoading(false)
               await AsyncStorage.setItem(ASYNC_STORAGE.TOKEN, '');
               NavigationUtil.navigate(SCREEN_ROUTER.INTRO);
             }
             else {
+                setLoading(false)
                 Category==="0"?NavigationUtil.navigate(SCREEN_ROUTER.MAIN): NavigationUtil.navigate(SCREEN_ROUTER.MAIN_ADMIN,{screen:SCREEN_ROUTER_APP_ADD.MANYUSER});
             }
           }, 2000);
@@ -48,6 +53,7 @@ const SplashScreen = ({ navigation }) => {
             <View style={styles.BoderText}>
                <Text style={styles.TextSplash}> RECORDING STUDIO </Text>
             </View>
+            {isLoading ? <ActivityIndicator size="small" color={R.color.colors.Sienna1} />:null}
         </SafeAreaView>
     )
 }

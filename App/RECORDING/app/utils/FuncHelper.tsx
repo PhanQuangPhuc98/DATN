@@ -35,63 +35,92 @@ export function getCurrentYear() {
   return `${year}`;
 }
 export function getFullStartDate(date) {
-  var year = new Date().getFullYear();
+      return 1 + '/' + `${date}` + '/' + getCurrentYear()
+} 
+export function getFullEndDate(date) {
   switch (date) {
     case 1:
-      return 1 + '/' + 1 + '/' + year
+      return 31 + '/' + `${date}`+ '/' + getCurrentYear()
     case 2:
-      return 1 + '/' + 2 + '/' + year
+      return 28 + '/' + `${date}` + '/' +  getCurrentYear()
     case 3:
-      return 1 + '/' + 3 + '/' + year
+      return 31 + '/' + `${date}` + '/' +  getCurrentYear()
     case 4:
-      return 1 + '/' + 4 + '/' + year
+      return 30 + '/' + `${date}` + '/' +  getCurrentYear()
     case 5:
-      return 1 + '/' + 5 + '/' + year
+      return 31 + '/' + `${date}` + '/' +  getCurrentYear()
     case 6:
-      return 1 + '/' + 6 + '/' + year
+      return 30 + '/' + `${date}` + '/' +  getCurrentYear()
     case 7:
-      return 1 + '/' + 7 + '/' + year
+      return 31 + '/' + `${date}` + '/' +  getCurrentYear()
     case 8:
-      return 1 + '/' + 8 + '/' + year
+      return 31 + '/' + `${date}` + '/' +  getCurrentYear()
     case 9:
-      return 1 + '/' + 9 + '/' + year
+      return 30 + '/' + `${date}` + '/' +  getCurrentYear()
     case 10:
-      return 1 + '/' + 10 + '/' + year
+      return 31 + '/' + `${date}` + '/' +  getCurrentYear()
     case 11:
-      return 1 + '/' + 11 + '/' + year
+      return 30 + '/' + `${date}` + '/' +  getCurrentYear()
     case 12:
-      return 1 + '/' + 12 + '/' + year
+      return 31 + '/' + `${date}` + '/' +  getCurrentYear()
     default:
       break;
   }
-} export function getFullEndDate(date) {
-  var year = new Date().getFullYear();
-  switch (date) {
+}
+export function getFullStartWeek(week) {
+  switch (week) {
     case 1:
-      return 31 + '/' + 1 + '/' + year
+      return 1 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
     case 2:
-      return 28 + '/' + 2 + '/' + year
+      return 8 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
     case 3:
-      return 31 + '/' + 3 + '/' + year
+      return 15 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
     case 4:
-      return 30 + '/' + 4 + '/' + year
+      return 22 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
     case 5:
-      return 31 + '/' + 5 + '/' + year
-    case 6:
-      return 30 + '/' + 6 + '/' + year
-    case 7:
-      return 31 + '/' + 7 + '/' + year
-    case 8:
-      return 31 + '/' + 8 + '/' + year
-    case 9:
-      return 30 + '/' + 9 + '/' + year
-    case 10:
-      return 31 + '/' + 10 + '/' + year
-    case 11:
-      return 30 + '/' + 11 + '/' + year
-    case 12:
-      return 31 + '/' + 11 + '/' + year
+      return 29 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
     default:
       break;
+  }
+} 
+export function getFullEndWeek(week,month) {
+  switch (week) {
+    case 1:
+      return 7 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
+    case 2:
+      return 14 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
+    case 3:
+      return 21 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
+    case 4:
+      return 28 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
+    case 5:
+      if(month % 2===0){
+        return 30 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
+      }
+      if(month===2){
+        return 29 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
+      }
+      else{
+        return 31 + '/' + getCurrentMonth()+ '/' + getCurrentYear()
+      }
+    default:
+      break;
+  }
+} 
+export function setWeek(Date) {
+  if(Date<8){
+    return 1;
+  }
+  if(Date>7&&Date<15){
+    return 2;
+  }
+  if(Date>14&&Date<22){
+    return 3;
+  }
+  if(Date>21&&Date<29){
+    return 4;
+  }
+  if(Date>28&&Date<=31){
+    return 5;
   }
 }
