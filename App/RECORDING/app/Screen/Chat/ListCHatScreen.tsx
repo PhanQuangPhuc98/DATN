@@ -54,7 +54,7 @@ const ListChatScreen = () => {
     });
     useEffect(() => {
         const onValueChange = database()
-            .ref(`/users`)
+            .ref(`/Users`)
             .on('value', (snapshot) => {
                 let users = [];
                 let currentUser = {

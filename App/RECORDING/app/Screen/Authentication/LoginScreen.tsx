@@ -112,7 +112,7 @@ const LoginScreen = ({ navigation }) => {
 
     try {
       Data
-      .ref("users")
+      .ref("Users")
       .once("value",Snapshot=>{
         Snapshot.forEach((snap)=>{
           const {email,Phone,Category} =snap.val();
@@ -157,9 +157,11 @@ const LoginScreen = ({ navigation }) => {
     }
   }
   useEffect(() => {
-    DB()
     CallOnlineUser()
     CallUser()
+  }, [CheckOnline])
+  useEffect(() => {
+    DB()
     const unsubscribe = navigation.addListener('blur', () => {
       setPayload({
         Username: '',
@@ -167,7 +169,7 @@ const LoginScreen = ({ navigation }) => {
       });
     });
     return unsubscribe;
-  }, [navigation,CheckOnline,checkUser,checkStudio]);
+  }, [navigation]);
   const UpdateOnlineUser =(token)=>{
     try {
       //ChangeUserIdOnesignal(token)
@@ -248,36 +250,16 @@ const LoginScreen = ({ navigation }) => {
       console.log(error);
     }
   }
-  const ChangeUserIdOnesignal =(token)=>{
-    // Setting External User Id with Callback Available in SDK Version 3.7.0+
-  OneSignal.setExternalUserId(token, (results) => {
-  console.log('Results of setting external user id');
-  console.log(results);
-
-   });
-  }
   Reactotron.log('payload', payload);
-  //console.log("checkuser",checkUser);
+ // console.log("CheckOnline",CheckOnline);
+  console.log("Checkuser",checkUser);
   
   return (
     <SafeAreaView style={styles.Container}>
       <Header
         containerStyle={styles.ContainerHeader}
         leftComponent={
-          category.id==="0"?
           <TouchableOpacity
-            style={styles.LeftHeader}
-            onPress={() => {
-              NavigationUtil.navigate(SCREEN_ROUTER.MAIN)
-            }}>
-            <FastImage
-              source={image.ic_back}
-              style={styles.ImageBack}
-              resizeMode="contain"
-            />
-            <Text style={styles.TextLeft}>{R.string.log_in}</Text>
-          </TouchableOpacity>
-          :<TouchableOpacity
           style={styles.LeftHeader}
           onPress={() => {
             NavigationUtil.navigate(SCREEN_ROUTER.INTRO)
@@ -343,36 +325,47 @@ const LoginScreen = ({ navigation }) => {
                 showMessages(R.string.notification, 'Mật khẩu không đúng');
                 return;
               }
-              // category.id===DEFAULT_PARAMS.USER?
-              // checkStudio.forEach((item)=>{
-              //   if(item.email===payload.Username){
-              //     showMessages(R.string.notification,R.string.NotificationNotStudio)
-              //   }
-              // }):
-              // checkUser.forEach((item)=>{
-              //   if(item.email===payload.Username){
-              //     showMessages(R.string.notification,R.string.NotificationNotUser)
-              //   }
-              // })
-              // category.id===DEFAULT_PARAMS.USER?
-              // CheckOnline.forEach((item)=>{
-              //   if((item.Email===payload.Username)&&(item.OnlineUser===DEFAULT_PARAMS.NO)){
-              //     signInWithEmail()
-              //     //alert("hello")
-              //   }
-              //   else  if((item.Email===payload.Username)&&(item.OnlineUser===DEFAULT_PARAMS.YES)) {
-              //     //alert("no")
-              //     showMessages(R.string.notification,R.string.NotifiLogin)
-              //   }
-              // }):
-              // CheckOnline.forEach((item)=>{
-              //   if((item.Email===payload.Username)&&(item.OnlineStudio===DEFAULT_PARAMS.NO)){
-              //     signInWithEmail()
-              //   }
-              //   else if((item.Email===payload.Username)&&(item.OnlineStudio===DEFAULT_PARAMS.YES)){
-              //     showMessages(R.string.notification,R.string.NotifiLogin)
-              //   }
-              // })
+              if(category.id===DEFAULT_PARAMS.USER){
+                checkStudio.forEach((item)=>{
+                  if(item.email===payload.Username){
+                    showMessages(R.string.notification,R.string.NotificationNotStudio)
+                  }
+                })
+               return;
+              }
+              if(category.id===DEFAULT_PARAMS.STUDIO){
+                checkUser.forEach((item)=>{
+                  if(item.email===payload.Username){
+                    showMessages(R.string.notification,R.string.NotificationNotUser)
+                  }
+                })
+                return;
+              }
+              if(category.id===DEFAULT_PARAMS.USER){
+                              
+              CheckOnline.forEach((item)=>{
+                if((item.Email===payload.Username)&&(item.OnlineUser===DEFAULT_PARAMS.NO)){
+                  signInWithEmail()
+                  //alert("hello")
+                }
+                else  if((item.Email===payload.Username)&&(item.OnlineUser===DEFAULT_PARAMS.YES)) {
+                  //alert("no")
+                  showMessages(R.string.notification,R.string.NotifiLogin)
+                }
+              })
+              return ;
+              }
+              if(category.id===DEFAULT_PARAMS.STUDIO){
+                CheckOnline.forEach((item)=>{
+                  if((item.Email===payload.Username)&&(item.OnlineStudio===DEFAULT_PARAMS.NO)){
+                    signInWithEmail()
+                  }
+                  else if((item.Email===payload.Username)&&(item.OnlineStudio===DEFAULT_PARAMS.YES)){
+                    showMessages(R.string.notification,R.string.NotifiLogin)
+                  }
+                })
+                return;
+              }
               signInWithEmail()
             },
             category.id

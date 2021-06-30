@@ -84,7 +84,7 @@ const PostAvatarScreen = () => {
   const [Zoom, setKey] = useState([])
 
   const checkRoomsStudio =  () => {
-    const check = database().ref("rooms").on('value', (snal) => {
+    const check = database().ref("Rooms").on('value', (snal) => {
         const Zoomkey = []
         snal.forEach(keyroom => {
             const { friend, key, me,avatar,messagesUser,name } = keyroom.val();
@@ -139,11 +139,11 @@ useEffect(() => {
           .ref('image/' + Fire.uid)
           .getDownloadURL()
           .then((downloadURL) => {
-            database().ref(`/users/${Fire.uid}`).update({
+            database().ref(`/Users/${Fire.uid}`).update({
               Image: downloadURL
             })
             category.id==="0"?Zoom.map((item)=>{
-              database().ref(`/rooms/${item.key}`).update({
+              database().ref(`/Rooms/${item.key}`).update({
                 avatar:downloadURL
               })
             }):null

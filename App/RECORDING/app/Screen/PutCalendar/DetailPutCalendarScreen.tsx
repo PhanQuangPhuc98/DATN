@@ -258,7 +258,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
             if (user) {
                 console.log("state = definitely signed in")
                 const onValueChange = database()
-                    .ref('/users/' + Fire.uid)
+                    .ref('/Users/' + Fire.uid)
                     .on('value', (snapshot) => {
                         setUsers({
                             ...Users,
@@ -312,7 +312,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
         });
       }
     const checkRoomsUSer = async () => {
-        const check = await database().ref("rooms").on('value', (snal) => {
+        const check = await database().ref("Rooms").on('value', (snal) => {
             snal ? snal.forEach(keyroom => {
                 if (params.user.Category === "0" && keyroom.val().friend === data._id) {
 
@@ -324,7 +324,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
         })
     }
     const checkRoomsStudio = async () => {
-        const check = await database().ref("rooms").on('value', (snal) => {
+        const check = await database().ref("Rooms").on('value', (snal) => {
             snal ? snal.forEach(keyroom => {
                 if (params.user.Category === "1" && keyroom.val().me === data._id) {
                     if (keyroom.val().friend === params.user._id) {
@@ -381,7 +381,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
     //console.log("studioOnesignal",studioOnesignal);
     var x = parseInt('1000',10);
     var y = parseInt('1000',10);
-    console.log("Number",x+y);
+    //console.log("Number",x+y);
     //console.log("params",data._id)
     // Reactotron.log("content",intro) 
     return (

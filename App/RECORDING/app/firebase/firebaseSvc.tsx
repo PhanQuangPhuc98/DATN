@@ -30,7 +30,7 @@ class FirebaseSvc {
   get ref() {
     const currentUser = firebase.auth().currentUser.uid;
     if (currentUser != null) {
-      return firebase.database().ref('messages')
+      return firebase.database().ref('Messages')
     }
   }
   get email() {
@@ -38,16 +38,16 @@ class FirebaseSvc {
   }
   creatZoom = async (me, friend, data) => {
     const db = await firebase.database();
-    const roomKey = db.ref(`rooms`).push().key;
+    const roomKey = db.ref(`Rooms`).push().key;
     const update = {};
     /**
      * update room
      */
-    update[`rooms/${roomKey}/me`] = me._id;
-    update[`rooms/${roomKey}/friend`] = friend._id;
-    update[`rooms/${roomKey}/key`] = roomKey;
+    update[`Rooms/${roomKey}/me`] = me._id;
+    update[`Rooms/${roomKey}/friend`] = friend._id;
+    update[`Rooms/${roomKey}/key`] = roomKey;
     db.ref().update(update).catch(error => console.log('registerRoomError', error));
-    db.ref(`messages/${roomKey}/`).push({
+    db.ref(`Messages/${roomKey}/`).push({
       _id: 1,
       text: R.string.help,
       createdAt: new Date().getTime(),
@@ -73,18 +73,18 @@ class FirebaseSvc {
     const updateUser = {};
     if (Category != "1" || Category != 1) {
       /**Update Room */
-      updateUser[`rooms/${roomKey}/messagesUser`] = text;
-      updateUser[`rooms/${roomKey}/name`] = user.name;
-      updateUser[`rooms/${roomKey}/avatar`] = user.avatar;
-      updateUser[`rooms/${roomKey}/newCategory`] = DEFAULT_PARAMS.USER;
+      updateUser[`Rooms/${roomKey}/messagesUser`] = text;
+      updateUser[`Rooms/${roomKey}/name`] = user.name;
+      updateUser[`Rooms/${roomKey}/avatar`] = user.avatar;
+      updateUser[`Rooms/${roomKey}/newCategory`] = DEFAULT_PARAMS.USER;
       if(newMessStudio===DEFAULT_PARAMS.NO||newMessStudio===DEFAULT_PARAMS.UNDEFINED){
-        updateUser[`rooms/${roomKey}/newMessUser`] = DEFAULT_PARAMS.YES;
+        updateUser[`Rooms/${roomKey}/newMessUser`] = DEFAULT_PARAMS.YES;
       }
-    //  ` updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.NO;`
+    //  ` updateUser[`Rooms/${roomKey}/Read`] = DEFAULT_PARAMS.NO;`
     if (RedStudio === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED) {
-      updateUser[`rooms/${roomKey}/RedStudio`] = DEFAULT_PARAMS.NO;
+      updateUser[`Rooms/${roomKey}/RedStudio`] = DEFAULT_PARAMS.NO;
     }
-      updateUser[`rooms/${roomKey}/RedUser`] = DEFAULT_PARAMS.YES;
+      updateUser[`Rooms/${roomKey}/RedUser`] = DEFAULT_PARAMS.YES;
       /** Update Notification */
       if (OnlineStudio === DEFAULT_PARAMS.NO) {
       updateUser[`Notification/${NotificationKey}/NameUser`] = user.name;
@@ -103,14 +103,14 @@ class FirebaseSvc {
     }
     if (Category === "1" || Category === 1) {
       /**Update Room */
-      updateUser[`rooms/${roomKey}/newCategory`] = DEFAULT_PARAMS.STUDIO;
-      updateUser[`rooms/${roomKey}/newMessStudio`] = DEFAULT_PARAMS.YES;
-      updateUser[`rooms/${roomKey}/messagesStudio`] = text;
-      // updateUser[`rooms/${roomKey}/Read`] = DEFAULT_PARAMS.YES;
+      updateUser[`Rooms/${roomKey}/newCategory`] = DEFAULT_PARAMS.STUDIO;
+      updateUser[`Rooms/${roomKey}/newMessStudio`] = DEFAULT_PARAMS.YES;
+      updateUser[`Rooms/${roomKey}/messagesStudio`] = text;
+      // updateUser[`Rooms/${roomKey}/Read`] = DEFAULT_PARAMS.YES;
       if (RedUser === DEFAULT_PARAMS.NO||RedStudio === DEFAULT_PARAMS.UNDEFINED){
-        updateUser[`rooms/${roomKey}/RedUser`] = DEFAULT_PARAMS.NO;
+        updateUser[`Rooms/${roomKey}/RedUser`] = DEFAULT_PARAMS.NO;
       }
-      updateUser[`rooms/${roomKey}/RedStudio`] = DEFAULT_PARAMS.YES;
+      updateUser[`Rooms/${roomKey}/RedStudio`] = DEFAULT_PARAMS.YES;
       /** Update Notification */
       if (OnlineUser === DEFAULT_PARAMS.NO) {
       updateUser[`Notification/${NotificationKey}/NameUser`] = user.name;
@@ -129,7 +129,7 @@ class FirebaseSvc {
       }
     }
     db.ref().update(updateUser).catch(error => console.log('registerRoomError', error));
-    db.ref(`messages/${roomKey}/`).push({
+    db.ref(`Messages/${roomKey}/`).push({
       _id,
       text,
       user,

@@ -108,7 +108,7 @@ const ListChatScreen = () => {
     const UpdateRead = (roomKey) => {
         try {
             DB
-                .ref(`rooms/${roomKey}/`)
+                .ref(`Rooms/${roomKey}/`)
                 .update({
                     RedStudio: DEFAULT_PARAMS.YES,
                     newMessUser: DEFAULT_PARAMS.NO
@@ -119,7 +119,7 @@ const ListChatScreen = () => {
     }
     const checkRoomsStudio = () => {
         setTimeout(() => {
-            const check = DB.ref("rooms")
+            const check = DB.ref("Rooms")
                 .once('value', (snal) => {
                     snal.forEach(keyroom => {
                         const { friend, key, me, avatar, messagesUser, name, newMessStudio, newMessUser, messagesStudio, newCategory, RedStudio, RedUser } = keyroom.val();
@@ -155,7 +155,7 @@ const ListChatScreen = () => {
             if (user) {
                 // console.log("state = definitely signed in")
                 const onValueChange = database()
-                    .ref('/users/')
+                    .ref('/Users/')
                     .on('value', (snapshot) => {
                         snapshot.forEach((child) => {
                             if (child.val().Category === "1" && child.val()._id === Fire.uid) {

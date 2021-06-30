@@ -71,7 +71,7 @@ const UpdatePricePutCalendarScreen = () => {
             try {
                 setLoading(false)
                 DB
-                .ref(`/users/${Fire.uid}`)
+                .ref(`/Users/${Fire.uid}`)
                 .update({ newPrice:price.newPrice,oldPrice:price.oldPrice})
                 showMessages(R.string.notification, R.string.Update_Sucess);
                 NavigationUtil.goBack()

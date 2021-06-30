@@ -109,7 +109,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const checkRoomsUSer = async () => {
     setLoading(true)
     setIsCheck(true)
-    const check = await database().ref("rooms").on('value', (snal) => {
+    const check = await database().ref("Rooms").on('value', (snal) => {
       setLoading(false)
       snal ? snal.forEach(keyroom => {
         if (params.user.Category === "0" && keyroom.val().friend === data._id) {
@@ -166,7 +166,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const CallBackMess = (key) => {
     setLoading(true)
     setTimeout(async () => {
-      const db = database().ref(`messages/${key}/`)
+      const db = database().ref(`Messages/${key}/`)
       if (!db) {
         console.log("not network");
         alert("not network")

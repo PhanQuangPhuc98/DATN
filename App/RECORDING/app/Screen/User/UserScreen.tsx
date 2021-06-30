@@ -149,7 +149,7 @@ const UserScreen = () => {
       if (user) {
         console.log("state = definitely signed in")
         const onValueChange = database()
-        .ref('/users/' + Fire.uid)
+        .ref('/Users/' + Fire.uid)
         .on('value', (snapshot) => {
           setUsers({
             ...Users,

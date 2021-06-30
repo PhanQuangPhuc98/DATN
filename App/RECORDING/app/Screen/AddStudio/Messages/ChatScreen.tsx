@@ -158,7 +158,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const CallBackMess = (key) => {
     setLoading(true)
     setTimeout(async () => {
-      const db = await database().ref(`messages/${key}/`)
+      const db = await database().ref(`Messages/${key}/`)
       if (!db) {
         console.log("not network");
         alert("not network")
@@ -192,7 +192,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
   const UpdateRead = (roomKey) => {
     try {
       Data
-        .ref(`rooms/${roomKey}/`)
+        .ref(`Rooms/${roomKey}/`)
         .update({
           RedStudio: DEFAULT_PARAMS.NO,
           newMessStudio: DEFAULT_PARAMS.NO
@@ -217,7 +217,7 @@ const ChatScreen = ({ route, navigation, ...props }) => {
     setTimeout(() => {
       try {
         Data
-          .ref(`/users/${data.me}`)
+          .ref(`/Users/${data.me}`)
           .once("value", snaphot => {
             setCustomer({
               ...customer,

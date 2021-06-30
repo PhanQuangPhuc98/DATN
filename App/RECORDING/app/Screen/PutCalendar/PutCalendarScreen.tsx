@@ -94,7 +94,7 @@ const PutCalendarScreen = () => {
             if (user) {
                 // console.log("state = definitely signed in")
                 const onValueChange = database()
-                    .ref('/users/')
+                    .ref('/Users/')
                     .once('value', (snapshot) => {
                         snapshot.forEach((snap)=>{
                             const {_id,Image,Name,Category,email,Phone,Sex,Birth_Day,City,District,Address,newPrice,oldPrice,latitude,longitude}= snap.val()
@@ -239,7 +239,7 @@ const PutCalendarScreen = () => {
             </View>
         )
     }
-    console.log('studio', Studio.data)
+    //console.log('studio', Studio.data)
     // Reactotron.log('user', User.DataUsers)
     // Reactotron.log('Categoty', Categoty)
     return (

@@ -87,7 +87,7 @@ const string = {
   NotifiLogin:"Tài khoản của bạn đang đăng nhập trên thiết bị khác.Vui lòng đăng nhập bằng tài khoản khác,hoặc bạn có thể tạo một tài khoản khác! ",
   NotifiNotAceesLogin:"Mật khẩu hoặc tài khoản không chính xác. Vui lòng đăng nhập lại hoặc có thể tạo tài khoản mới!",
   NotificationCheckEmail:"Email đã tồn tai vui lòng nhập lại!",
-  NotificationNotStudio:"Tài khoản của bạn là phòng thu. Vui lòng đăng nhập lại!",
-  NotificationNotUser:"Tài khoản của bạn là của khách hàng. Vui lòng đăng nhập lại!",
+  NotificationNotStudio:"Tài khoản của bạn thuộc loại tài khoản Phòng thu. Vui lòng đăng nhập lại!",
+  NotificationNotUser:"Tài khoản của bạn thuộc loại tài khoản Người dùng. Vui lòng đăng nhập lại!",
 };
 export default string;

@@ -209,7 +209,7 @@ const UpdateUserScreen = ({ route, ...props }) => {
         setLoading(true)
         try {
             const update = await database()
-                .ref(`/users/${Fire.uid}`)
+                .ref(`/Users/${Fire.uid}`)
                 .update({
                     Name: payload.Name,
                     Email: payload.Email,

@@ -171,13 +171,17 @@ const RegisterScreen = ({ route, navigation, ...props }) => {
     }, 500);
   }
   useEffect(() => {
+    CallCity()
+  }, [city])
+  useEffect(() => {
+    CallUser()
+  }, [checkUser])
+  useEffect(() => {
     DB()
     // CallUser()
     location()
     getUser()
-    CallUser()
-    CallCity()
-  }, [checkUser, city])
+  }, [])
   // console.log("lucation",current_position);
 
   const CreatIntro = () => {
@@ -195,7 +199,7 @@ const RegisterScreen = ({ route, navigation, ...props }) => {
 
     try {
       Database
-        .ref("users")
+        .ref("Users")
         .once("value", Snapshot => {
           Snapshot.forEach((snap) => {
             const { email, Phone } = snap.val();
@@ -255,7 +259,7 @@ const RegisterScreen = ({ route, navigation, ...props }) => {
       var userf = Auth().currentUser;
       userf.updateProfile({ displayName: payload.Name })
       database()
-        .ref(`/users/${Fire.uid}`)
+        .ref(`/Users/${Fire.uid}`)
         .set({
           Name: payload.Name,
           _id: Fire.uid, Category: data,
@@ -302,7 +306,7 @@ const RegisterScreen = ({ route, navigation, ...props }) => {
     }
   };
   //console.log("city", city)
-  //console.log("CategoryRegister",data);
+   //console.log("checkUser",checkUser);
 
   return (
     <SafeAreaView style={styles.Container}>
