@@ -232,6 +232,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                     .ref(`/PutCaledar/${putKey}`)
                     .update({
                         idUser:params.user._id,
+                        Key:putKey,
                         ImageUser:params.user.Image,
                         ImageStudio:data.Image,
                         NameStudio:data.Name,

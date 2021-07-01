@@ -89,5 +89,6 @@ const string = {
   NotificationCheckEmail:"Email đã tồn tai vui lòng nhập lại!",
   NotificationNotStudio:"Tài khoản của bạn thuộc loại tài khoản Phòng thu. Vui lòng đăng nhập lại!",
   NotificationNotUser:"Tài khoản của bạn thuộc loại tài khoản Người dùng. Vui lòng đăng nhập lại!",
+  NotificationDeletePut:"Bạn muốn xóa đơn đặt lịch thu âm"
 };
 export default string;

@@ -305,7 +305,7 @@ const RegisterScreen = ({ route, navigation, ...props }) => {
       setLoading(false), Reactotron.log('error', error);
     }
   };
-  //console.log("city", city)
+  console.log("city", city)
    //console.log("checkUser",checkUser);
 
   return (

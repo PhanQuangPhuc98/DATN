@@ -159,7 +159,7 @@ const LoginScreen = ({ navigation }) => {
   useEffect(() => {
     CallOnlineUser()
     CallUser()
-  }, [CheckOnline])
+  }, [])
   useEffect(() => {
     DB()
     const unsubscribe = navigation.addListener('blur', () => {
@@ -252,7 +252,7 @@ const LoginScreen = ({ navigation }) => {
   }
   Reactotron.log('payload', payload);
  // console.log("CheckOnline",CheckOnline);
-  console.log("Checkuser",checkUser);
+  // console.log("Checkuser",checkUser);
   
   return (
     <SafeAreaView style={styles.Container}>
@@ -331,7 +331,7 @@ const LoginScreen = ({ navigation }) => {
                     showMessages(R.string.notification,R.string.NotificationNotStudio)
                   }
                 })
-               return;
+               
               }
               if(category.id===DEFAULT_PARAMS.STUDIO){
                 checkUser.forEach((item)=>{
@@ -339,7 +339,7 @@ const LoginScreen = ({ navigation }) => {
                     showMessages(R.string.notification,R.string.NotificationNotUser)
                   }
                 })
-                return;
+               
               }
               if(category.id===DEFAULT_PARAMS.USER){
                               
@@ -353,7 +353,7 @@ const LoginScreen = ({ navigation }) => {
                   showMessages(R.string.notification,R.string.NotifiLogin)
                 }
               })
-              return ;
+             
               }
               if(category.id===DEFAULT_PARAMS.STUDIO){
                 CheckOnline.forEach((item)=>{
@@ -364,9 +364,9 @@ const LoginScreen = ({ navigation }) => {
                     showMessages(R.string.notification,R.string.NotifiLogin)
                   }
                 })
-                return;
+                
               }
-              signInWithEmail()
+              //signInWithEmail()
             },
             category.id
             )}
