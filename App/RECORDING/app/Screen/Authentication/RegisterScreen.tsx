@@ -219,7 +219,7 @@ const RegisterScreen = ({ route, navigation, ...props }) => {
     try {
       db
         .ref(`/PriceStudio/${Fire.uid}`)
-        .set({ oldPrice: '0', newPrice: '0', SalesPromotion: '0' })
+        .set({ oldPrice: '0', newPrice: '0'})
 
     } catch (error) {
       console.log(error);
@@ -263,7 +263,7 @@ const RegisterScreen = ({ route, navigation, ...props }) => {
         .set({
           Name: payload.Name,
           _id: Fire.uid, Category: data,
-          email: payload.Email,
+          Email: payload.Email,
           Image: "",
           Phone: payload.Phone,
           Address: payload.Address,

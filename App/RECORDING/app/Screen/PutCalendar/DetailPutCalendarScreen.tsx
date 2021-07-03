@@ -306,7 +306,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
         };
         const jsonString = JSON.stringify(notificationObj);
         OneSignal.postNotification(jsonString, (success) => {
-        PutNotification(success.id)
+        PutNotification()
           console.log("Success:", success);
         }, (error) => {
           console.log("Error:", error );
@@ -357,7 +357,7 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
             
         }
     }
-    const PutNotification =(IdNoti)=>{
+    const PutNotification =()=>{
         try {
             DB
             .ref(`/Notification/${putKey}`)
@@ -370,7 +370,6 @@ const DetailPutCalendarScreen = ({ route, navigation }) => {
                 Put:DEFAULT_PARAMS.YES,
                 Messages:DEFAULT_PARAMS.NO,
                 key:putKey,
-                IdNoti:IdNoti
             })
         } catch (error) {
             
