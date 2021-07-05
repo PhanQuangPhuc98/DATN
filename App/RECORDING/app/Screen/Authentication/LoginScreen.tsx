@@ -366,7 +366,7 @@ const LoginScreen = ({ navigation }) => {
                 })
                 
               }
-              //signInWithEmail()
+              signInWithEmail()
             },
             category.id
             )}
